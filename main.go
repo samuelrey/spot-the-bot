@@ -6,12 +6,12 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/slack-go/slack"
+	"github.com/bwmarrin/discordgo"
 )
 
 type Secret struct {
-	Token        string `json:"SLACK_TOKEN"`
-	ChannelID    string `json:"SLACK_CHANNEL_ID"`
+	Token        string `json:"DISCORD_TOKEN"`
+	ChannelID    string `json:"DISCORD_CHANNEL_ID"`
 	PlaylistLink string `json:"SPOTIFY_PLAYLIST"`
 }
 
@@ -25,21 +25,18 @@ func main() {
 	var secret Secret
 	json.Unmarshal(byteValue, &secret)
 
-	api := slack.New(secret.Token)
-	attachment := slack.Attachment{
-		Pretext: "Playlist link",
-		Text:    secret.PlaylistLink,
-	}
-
-	channelID, timestamp, err := api.PostMessage(
-		secret.ChannelID,
-		slack.MsgOptionText("This week's playlist", false),
-		slack.MsgOptionAttachments(attachment),
-	)
+	dg, err := discordgo.New("Bot " + secret.Token)
 	if err != nil {
-		fmt.Printf("%s\n", err)
+		fmt.Println(err)
 		return
 	}
 
-	fmt.Printf("Message successfully sent to channel %s at %s\n", channelID, timestamp)
+	err = dg.Open()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	dg.ChannelMessageSend(secret.ChannelID, secret.PlaylistLink)
+	dg.Close()
 }
