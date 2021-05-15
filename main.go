@@ -40,20 +40,19 @@ func main() {
 
 	defer dg.Close()
 
-	// Sending a message
-	// dg.ChannelMessageSend(secret.ChannelID, secret.PlaylistLink)
+	members, err := dg.GuildMembers(secret.ServerID, "", 1000)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
-	// Trying to understand channel-user relationships
-	// channels, _ := dg.GuildChannels(secret.ServerID)
-	// for _, c := range channels {
-	// 	fmt.Printf("%+v\n", c)
-	// 	for _, p := range c.PermissionOverwrites {
-	// 		fmt.Printf("%+v\n", p)
-	// 	}
-	// }
+	for _, m := range members {
+		p, err := dg.UserChannelPermissions(m.User.ID, secret.ChannelID)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 
-	// fmt.Println("Bot is now running.  Press CTRL-C to exit.")
-	// sc := make(chan os.Signal, 1)
-	// signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
-	// <-sc
+		fmt.Printf("%v: %v\n", m.User.Username, p)
+	}
 }
