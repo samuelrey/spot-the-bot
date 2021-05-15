@@ -53,15 +53,17 @@ func main() {
 		users = append(users, u)
 	}
 
-	u := users[0]
-	users = append(users[1:], u)
+	_, err = messageStartUser(dg, &users, secret.ChannelID)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+}
+
+func messageStartUser(s *discordgo.Session, users *[]*discordgo.User, channelID string) (*discordgo.Message, error) {
+	u := (*users)[0]
+	*users = append((*users)[1:], u)
 	m := u.Mention()
 	msg := fmt.Sprintf("%v, it's your turn to start the playlist!", m)
-	dg.ChannelMessageSend(secret.ChannelID, msg)
-
-	u = users[0]
-	users = append(users[1:], u)
-	m = u.Mention()
-	msg = fmt.Sprintf("%v, it's your turn to start the playlist!", m)
-	dg.ChannelMessageSend(secret.ChannelID, msg)
+	return s.ChannelMessageSend(channelID, msg)
 }
