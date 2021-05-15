@@ -1,33 +1,25 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"os"
+
+	"./framework"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-type Secret struct {
-	Token        string   `json:"DISCORD_TOKEN"`
-	ServerID     string   `json:"DISCORD_SERVER_ID"`
-	ChannelID    string   `json:"DISCORD_CHANNEL_ID"`
-	PlaylistLink string   `json:"SPOTIFY_PLAYLIST"`
-	UserIDs      []string `json:"USERS"`
+var (
+	config  *framework.Config
+	userIDs []string
+)
+
+func init() {
+	config = framework.LoadConfig("secrets.json")
+	userIDs = framework.LoadUsers("users.json")
 }
 
 func main() {
-	f, err := os.Open("secrets.json")
-	if err != nil {
-		panic(err)
-	}
-
-	byteValue, _ := ioutil.ReadAll(f)
-	var secret Secret
-	json.Unmarshal(byteValue, &secret)
-
-	dg, err := discordgo.New("Bot " + secret.Token)
+	dg, err := discordgo.New("Bot " + config.Token)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -43,7 +35,7 @@ func main() {
 
 	// hardcoded users.
 	users := make([]*discordgo.User, 0)
-	for _, id := range secret.UserIDs {
+	for _, id := range userIDs {
 		u, err := dg.User(id)
 		if err != nil {
 			fmt.Println(err)
@@ -53,7 +45,7 @@ func main() {
 		users = append(users, u)
 	}
 
-	_, err = messageStartUser(dg, &users, secret.ChannelID)
+	_, err = messageStartUser(dg, &users, config.ChannelID)
 	if err != nil {
 		fmt.Println(err)
 		return
