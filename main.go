@@ -10,10 +10,11 @@ import (
 )
 
 type Secret struct {
-	Token        string `json:"DISCORD_TOKEN"`
-	ServerID     string `json:"DISCORD_SERVER_ID"`
-	ChannelID    string `json:"DISCORD_CHANNEL_ID"`
-	PlaylistLink string `json:"SPOTIFY_PLAYLIST"`
+	Token        string   `json:"DISCORD_TOKEN"`
+	ServerID     string   `json:"DISCORD_SERVER_ID"`
+	ChannelID    string   `json:"DISCORD_CHANNEL_ID"`
+	PlaylistLink string   `json:"SPOTIFY_PLAYLIST"`
+	UserIDs      []string `json:"USERS"`
 }
 
 func main() {
@@ -40,19 +41,27 @@ func main() {
 
 	defer dg.Close()
 
-	members, err := dg.GuildMembers(secret.ServerID, "", 1000)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	for _, m := range members {
-		p, err := dg.UserChannelPermissions(m.User.ID, secret.ChannelID)
+	// hardcoded users.
+	users := make([]*discordgo.User, 0)
+	for _, id := range secret.UserIDs {
+		u, err := dg.User(id)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 
-		fmt.Printf("%v: %v\n", m.User.Username, p)
+		users = append(users, u)
 	}
+
+	u := users[0]
+	users = append(users[1:], u)
+	m := u.Mention()
+	msg := fmt.Sprintf("%v, it's your turn to start the playlist!", m)
+	dg.ChannelMessageSend(secret.ChannelID, msg)
+
+	u = users[0]
+	users = append(users[1:], u)
+	m = u.Mention()
+	msg = fmt.Sprintf("%v, it's your turn to start the playlist!", m)
+	dg.ChannelMessageSend(secret.ChannelID, msg)
 }
