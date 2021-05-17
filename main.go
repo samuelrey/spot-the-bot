@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"./framework"
 
@@ -31,6 +34,9 @@ func main() {
 		return
 	}
 
+	dg.AddHandler(handleUserOpt)
+	dg.Identify.Intents = discordgo.IntentsGuildMessages
+
 	defer dg.Close()
 
 	// hardcoded users.
@@ -45,11 +51,10 @@ func main() {
 		users = append(users, u)
 	}
 
-	_, err = messageStartUser(dg, &users, config.ChannelID)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	fmt.Println("Spot is now running. Press CTRL-C to exit.")
+	sc := make(chan os.Signal, 1)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
+	<-sc
 }
 
 func messageStartUser(s *discordgo.Session, users *[]*discordgo.User, channelID string) (*discordgo.Message, error) {
@@ -58,4 +63,19 @@ func messageStartUser(s *discordgo.Session, users *[]*discordgo.User, channelID 
 	m := u.Mention()
 	msg := fmt.Sprintf("%v, it's your turn to start the playlist!", m)
 	return s.ChannelMessageSend(channelID, msg)
+}
+
+func handleUserOpt(s *discordgo.Session, m *discordgo.MessageCreate) {
+	// how to check whether message is in specific channel.
+	// TODO: replace this with context
+	if m.ChannelID != "" {
+		fmt.Println("ignore!")
+		return
+	}
+
+	if m.Content == "optin" {
+		fmt.Println("new user: ", m.Author.ID)
+	} else if m.Content == "optout" {
+		fmt.Println("remove user: ", m.Author.ID)
+	}
 }
