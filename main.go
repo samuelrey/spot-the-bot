@@ -81,8 +81,9 @@ func commandHandler(discord *discordgo.Session, message *discordgo.MessageCreate
 		return
 	}
 
+	ctx := framework.NewContext(discord, user, &userIDs)
 	c := *command
-	c()
+	c(ctx)
 }
 
 func registerCommands() {

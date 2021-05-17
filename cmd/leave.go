@@ -1,22 +1,21 @@
 package cmd
 
-import "fmt"
+import (
+	"fmt"
 
-func Leave() {
-	fmt.Println("leave")
-	// TODO these should come from an app Context
-	userIDs := []string{}
-	userID := "ex"
+	"../framework"
+)
 
+func Leave(ctx *framework.Context) {
 	found := -1
-	for i, id := range userIDs {
-		if id == userID {
+	for i, id := range *ctx.UserIDs {
+		if id == ctx.User.ID {
 			found = i
 			break
 		}
 	}
 	if found != -1 {
-		userIDs = append(userIDs[:found], userIDs[found+1:]...)
-		fmt.Println("remove user: ", userID)
+		*ctx.UserIDs = append((*ctx.UserIDs)[:found], (*ctx.UserIDs)[found+1:]...)
+		fmt.Println("remove user: ", ctx.User.ID)
 	}
 }

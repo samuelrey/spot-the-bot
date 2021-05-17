@@ -1,7 +1,7 @@
 package framework
 
 type (
-	Command        func()
+	Command        func(*Context)
 	CmdMap         map[string]Command
 	CommandHandler struct {
 		cmds CmdMap
@@ -9,7 +9,7 @@ type (
 )
 
 func NewCommandHandler() *CommandHandler {
-	return &CommandHandler{}
+	return &CommandHandler{make(CmdMap)}
 }
 
 func (cmdHandler CommandHandler) Get(name string) (*Command, bool) {

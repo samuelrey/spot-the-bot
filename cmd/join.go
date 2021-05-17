@@ -1,22 +1,21 @@
 package cmd
 
-import "fmt"
+import (
+	"fmt"
 
-func Join() {
-	fmt.Println("join")
-	// TODO these should come from an app Context
-	userIDs := []string{}
-	userID := "ex"
+	"../framework"
+)
 
+func Join(ctx *framework.Context) {
 	enrolled := false
-	for _, id := range userIDs {
-		if id == userID {
+	for _, id := range *ctx.UserIDs {
+		if id == ctx.User.ID {
 			enrolled = true
 			break
 		}
 	}
 	if !enrolled {
-		userIDs = append(userIDs, userID)
-		fmt.Println("new user: ", userID)
+		*ctx.UserIDs = append(*ctx.UserIDs, ctx.User.ID)
+		fmt.Println("new user: ", ctx.User.ID)
 	}
 }
