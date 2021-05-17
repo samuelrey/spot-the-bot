@@ -7,6 +7,10 @@ import (
 )
 
 func Join(ctx *framework.Context) {
-	ctx.EnrolledUsers[ctx.User.ID] = true
-	fmt.Println("new user: ", ctx.User.ID)
+	if enrolled := ctx.EnrolledUsers[ctx.User.ID]; !enrolled {
+		ctx.EnrolledUsers[ctx.User.ID] = true
+
+		content := fmt.Sprintf("Welcome to the club, %v!\n", ctx.User.Username)
+		ctx.Reply(content)
+	}
 }

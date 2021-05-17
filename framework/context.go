@@ -1,6 +1,10 @@
 package framework
 
-import "github.com/bwmarrin/discordgo"
+import (
+	"fmt"
+
+	"github.com/bwmarrin/discordgo"
+)
 
 type Context struct {
 	Discord       *discordgo.Session
@@ -20,6 +24,11 @@ func NewContext(discord *discordgo.Session, channel *discordgo.Channel, enrolled
 	return ctx
 }
 
-func (ctx Context) Reply(content string) (*discordgo.Message, error) {
-	return ctx.Discord.ChannelMessageSend(ctx.Channel.ID, content)
+func (ctx Context) Reply(content string) *discordgo.Message {
+	msg, err := ctx.Discord.ChannelMessageSend(ctx.Channel.ID, content)
+	if err != nil {
+		fmt.Println("Error sending message, ", err)
+		return nil
+	}
+	return msg
 }
