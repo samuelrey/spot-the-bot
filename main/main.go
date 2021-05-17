@@ -6,8 +6,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"./cmd"
-	"./framework"
+	"../cmd"
+	"../framework"
 
 	"github.com/bwmarrin/discordgo"
 )
