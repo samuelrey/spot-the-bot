@@ -1,7 +1,5 @@
 package framework
 
-import "fmt"
-
 type (
 	Command        func()
 	CmdMap         map[string]Command
@@ -11,20 +9,14 @@ type (
 )
 
 func NewCommandHandler() *CommandHandler {
-	cmdHandler := CommandHandler{
-		cmds: map[string]Command{
-			"optin": func() {
-				fmt.Println("optin")
-			},
-			"optout": func() {
-				fmt.Println("optout")
-			},
-		},
-	}
-	return &cmdHandler
+	return &CommandHandler{}
 }
 
 func (cmdHandler CommandHandler) Get(name string) (*Command, bool) {
 	cmd, found := cmdHandler.cmds[name]
 	return &cmd, found
+}
+
+func (cmdHandler CommandHandler) Register(name string, command Command) {
+	cmdHandler.cmds[name] = command
 }
