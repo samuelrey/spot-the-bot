@@ -5,7 +5,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"./framework"
 
@@ -13,8 +12,10 @@ import (
 )
 
 var (
-	config  *framework.Config
-	userIDs []string
+	botID      string
+	CmdHandler *framework.CommandHandler
+	config     *framework.Config
+	userIDs    []string
 )
 
 func init() {
@@ -23,6 +24,7 @@ func init() {
 }
 
 func main() {
+	CmdHandler = framework.NewCommandHandler()
 	dg, err := discordgo.New("Bot " + config.Token)
 	if err != nil {
 		fmt.Println(err)
@@ -35,7 +37,14 @@ func main() {
 		return
 	}
 
-	dg.AddHandler(handleUserOpt)
+	user, err := dg.User("@me")
+	if err != nil {
+		fmt.Println("Error obtaining account details,", err)
+		return
+	}
+	botID = user.ID
+
+	dg.AddHandler(commandHandler)
 	dg.Identify.Intents = discordgo.IntentsGuildMessages
 
 	defer dg.Close()
@@ -52,12 +61,31 @@ func main() {
 		users = append(users, u)
 	}
 
-	go dummy()
-
 	fmt.Println("Spot is now running. Press CTRL-C to exit.")
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
+}
+
+func commandHandler(discord *discordgo.Session, message *discordgo.MessageCreate) {
+	user := message.Author
+	if user.ID == botID || user.Bot {
+		return
+	}
+	content := message.Content
+	// TODO use a command prefix to filter through messages.
+	if len(content) == 0 {
+		return
+	}
+
+	// TODO split content into command name and arguments.
+	command, found := CmdHandler.Get(content)
+	if !found {
+		return
+	}
+
+	c := *command
+	c()
 }
 
 func messageStartUser(s *discordgo.Session, users *[]*discordgo.User, channelID string) (*discordgo.Message, error) {
@@ -66,19 +94,6 @@ func messageStartUser(s *discordgo.Session, users *[]*discordgo.User, channelID 
 	m := u.Mention()
 	msg := fmt.Sprintf("%v, it's your turn to start the playlist!", m)
 	return s.ChannelMessageSend(channelID, msg)
-}
-
-func dummy() {
-	ticker := time.NewTicker(10 * time.Second)
-
-	for {
-		select {
-		case <-ticker.C:
-			u := userIDs[0]
-			userIDs = append(userIDs[1:], u)
-			fmt.Printf("%v, it's your turn!", u)
-		}
-	}
 }
 
 func handleUserOpt(s *discordgo.Session, m *discordgo.MessageCreate) {
