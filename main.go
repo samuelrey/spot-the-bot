@@ -66,16 +66,36 @@ func messageStartUser(s *discordgo.Session, users *[]*discordgo.User, channelID 
 }
 
 func handleUserOpt(s *discordgo.Session, m *discordgo.MessageCreate) {
-	// how to check whether message is in specific channel.
-	// TODO: replace this with context
-	if m.ChannelID != "" {
+	if m.ChannelID != config.ChannelID {
 		fmt.Println("ignore!")
 		return
 	}
 
+	user := m.Author
 	if m.Content == "optin" {
-		fmt.Println("new user: ", m.Author.ID)
+		enrolled := false
+		for _, id := range userIDs {
+			if id == user.ID {
+				enrolled = true
+				break
+			}
+		}
+		if !enrolled {
+			userIDs = append(userIDs, user.ID)
+			fmt.Println("new user: ", user.ID)
+		}
 	} else if m.Content == "optout" {
-		fmt.Println("remove user: ", m.Author.ID)
+		found := -1
+		for i, id := range userIDs {
+			if id == user.ID {
+				found = i
+				break
+			}
+		}
+		if found != -1 {
+			userIDs = append(userIDs[:found], userIDs[found+1:]...)
+			fmt.Println("remove user: ", m.Author.ID)
+		}
 	}
+	fmt.Println(userIDs)
 }
