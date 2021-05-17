@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"./framework"
 
@@ -51,6 +52,8 @@ func main() {
 		users = append(users, u)
 	}
 
+	go dummy()
+
 	fmt.Println("Spot is now running. Press CTRL-C to exit.")
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
@@ -63,6 +66,19 @@ func messageStartUser(s *discordgo.Session, users *[]*discordgo.User, channelID 
 	m := u.Mention()
 	msg := fmt.Sprintf("%v, it's your turn to start the playlist!", m)
 	return s.ChannelMessageSend(channelID, msg)
+}
+
+func dummy() {
+	ticker := time.NewTicker(10 * time.Second)
+
+	for {
+		select {
+		case <-ticker.C:
+			u := userIDs[0]
+			userIDs = append(userIDs[1:], u)
+			fmt.Printf("%v, it's your turn!", u)
+		}
+	}
 }
 
 func handleUserOpt(s *discordgo.Session, m *discordgo.MessageCreate) {
