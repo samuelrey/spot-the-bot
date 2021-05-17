@@ -23,14 +23,3 @@ func LoadConfig(filename string) *Config {
 	json.Unmarshal(body, &config)
 	return &config
 }
-
-func LoadUsers(filename string) []string {
-	body, err := ioutil.ReadFile(filename)
-	if err != nil {
-		fmt.Println("error loading user file, ", err)
-		return nil
-	}
-	var userFile []string
-	json.Unmarshal(body, &userFile)
-	return userFile
-}

@@ -13,15 +13,13 @@ import (
 )
 
 var (
-	botID      string
-	CmdHandler *framework.CommandHandler
-	config     *framework.Config
-	userIDs    []string
+	CmdHandler    *framework.CommandHandler
+	config        *framework.Config
+	enrolledUsers map[string]bool
 )
 
 func init() {
 	config = framework.LoadConfig("secrets.json")
-	userIDs = framework.LoadUsers("users.json")
 }
 
 func main() {
@@ -40,12 +38,17 @@ func main() {
 		return
 	}
 
-	user, err := discord.User("@me")
+	enrolledUsers = make(map[string]bool)
+	members, err := discord.GuildMembers(config.ServerID, "", 1000)
 	if err != nil {
-		fmt.Println("Error obtaining account details,", err)
+		fmt.Println("Error retrieving guild members, ", err)
 		return
 	}
-	botID = user.ID
+	for _, member := range members {
+		if !member.User.Bot {
+			enrolledUsers[member.User.ID] = false
+		}
+	}
 
 	discord.AddHandler(commandHandler)
 	discord.Identify.Intents = discordgo.IntentsGuildMessages
@@ -60,7 +63,7 @@ func main() {
 
 func commandHandler(discord *discordgo.Session, message *discordgo.MessageCreate) {
 	user := message.Author
-	if user.ID == botID || user.Bot {
+	if user.Bot {
 		return
 	}
 
@@ -81,7 +84,7 @@ func commandHandler(discord *discordgo.Session, message *discordgo.MessageCreate
 		return
 	}
 
-	ctx := framework.NewContext(discord, user, &userIDs)
+	ctx := framework.NewContext(discord, user, enrolledUsers)
 	c := *command
 	c(ctx)
 }
