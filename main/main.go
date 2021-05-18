@@ -55,6 +55,13 @@ func main() {
 
 	defer discord.Close()
 
+	spotify := framework.NewSpotifyClient(config)
+	playlist, err := spotify.GetPlaylist("")
+	if err != nil {
+		fmt.Println("Error retrieving playlist, ", err)
+		return
+	}
+
 	fmt.Println("Spot is now running. Press CTRL-C to exit.")
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
