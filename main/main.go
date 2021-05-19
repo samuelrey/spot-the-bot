@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -10,16 +11,22 @@ import (
 	"../framework"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/zmb3/spotify"
 )
 
 var (
-	CmdHandler    *framework.CommandHandler
-	config        *framework.Config
-	enrolledUsers map[string]bool
+	CmdHandler           *framework.CommandHandler
+	config               *framework.Config
+	enrolledUsers        = make(map[string]bool)
+	spotifyAuthenticator = spotify.NewAuthenticator(
+		"http://localhost:8080/callback", spotify.ScopePlaylistModifyPublic)
+	state = ""
 )
 
 func init() {
 	config = framework.LoadConfig("secrets.json")
+	spotifyAuthenticator.SetAuthInfo(
+		config.SpotifyClientID, config.SpotifyClientSecret)
 }
 
 func main() {
@@ -38,7 +45,11 @@ func main() {
 		return
 	}
 
-	enrolledUsers = make(map[string]bool)
+	discord.AddHandler(commandHandler)
+	discord.Identify.Intents = discordgo.IntentsGuildMessages
+
+	defer discord.Close()
+
 	members, err := discord.GuildMembers(config.ServerID, "", 1000)
 	if err != nil {
 		fmt.Println("Error retrieving guild members, ", err)
@@ -50,17 +61,11 @@ func main() {
 		}
 	}
 
-	discord.AddHandler(commandHandler)
-	discord.Identify.Intents = discordgo.IntentsGuildMessages
-
-	defer discord.Close()
-
-	spotify := framework.NewSpotifyClient(config)
-	playlist, err := spotify.GetPlaylist("")
-	if err != nil {
-		fmt.Println("Error retrieving playlist, ", err)
-		return
-	}
+	http.HandleFunc("/callback", func(w http.ResponseWriter, r *http.Request) {
+		// TODO store tokens for user in-memory to avoid reauthenticating user
+		fmt.Println("User authorized Spot.")
+	})
+	go http.ListenAndServe(":8080", nil)
 
 	fmt.Println("Spot is now running. Press CTRL-C to exit.")
 	sc := make(chan os.Signal, 1)
@@ -96,6 +101,10 @@ func commandHandler(discord *discordgo.Session, message *discordgo.MessageCreate
 		fmt.Println("Error retrieving channel, ", err)
 		return
 	}
+
+	// The user must visit this URL to authorize Spot.
+	url := spotifyAuthenticator.AuthURL(state)
+	fmt.Println(url)
 
 	ctx := framework.NewContext(discord, channel, enrolledUsers, config.PlaylistLink, user)
 	c := *command
