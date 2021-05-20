@@ -12,11 +12,14 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/zmb3/spotify"
+	"golang.org/x/oauth2"
 )
 
 var (
 	CmdHandler           *framework.CommandHandler
 	config               *framework.Config
+	TknHandler           *framework.TokenHandler
+	ch                   = make(chan *oauth2.Token)
 	enrolledUsers        = make(map[string]bool)
 	spotifyAuthenticator = spotify.NewAuthenticator(
 		"http://localhost:8080/callback", spotify.ScopePlaylistModifyPublic)
@@ -32,6 +35,8 @@ func init() {
 func main() {
 	CmdHandler = framework.NewCommandHandler()
 	registerCommands()
+
+	TknHandler = framework.NewTokenHandler()
 
 	discord, err := discordgo.New("Bot " + config.Token)
 	if err != nil {
@@ -62,8 +67,17 @@ func main() {
 	}
 
 	http.HandleFunc("/callback", func(w http.ResponseWriter, r *http.Request) {
-		// TODO store tokens for user in-memory to avoid reauthenticating user
+		tok, err := spotifyAuthenticator.Token(state, r)
+		if err != nil {
+			http.Error(w, "Couldn't get token", http.StatusForbidden)
+			fmt.Println("Error getting token, ", err)
+		}
+		if st := r.FormValue("state"); st != state {
+			http.NotFound(w, r)
+			fmt.Println("Error validating state")
+		}
 		fmt.Println("User authorized Spot.")
+		ch <- tok
 	})
 	go http.ListenAndServe(":8080", nil)
 
@@ -90,6 +104,23 @@ func commandHandler(discord *discordgo.Session, message *discordgo.MessageCreate
 		return
 	}
 
+	if content == "auth" {
+		if _, found := TknHandler.Get(user.ID); found {
+			fmt.Println("already authenticated")
+			return
+		}
+		// The user must visit this URL to authorize Spot.
+		// TODO DM the url to the user directly.
+		url := spotifyAuthenticator.AuthURL(state)
+		fmt.Println(url)
+
+		token := <-ch
+
+		TknHandler.Register(user.ID, token)
+
+		return
+	}
+
 	// TODO split content into command name and arguments.
 	command, found := CmdHandler.Get(content)
 	if !found {
@@ -101,10 +132,6 @@ func commandHandler(discord *discordgo.Session, message *discordgo.MessageCreate
 		fmt.Println("Error retrieving channel, ", err)
 		return
 	}
-
-	// The user must visit this URL to authorize Spot.
-	url := spotifyAuthenticator.AuthURL(state)
-	fmt.Println(url)
 
 	ctx := framework.NewContext(discord, channel, enrolledUsers, config.PlaylistLink, user)
 	c := *command
