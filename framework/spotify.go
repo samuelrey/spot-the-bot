@@ -50,6 +50,9 @@ func SpotifyClient(token *oauth2.Token) *spotify.Client {
 func AuthorizeSpotForUser(userID string) (*oauth2.Token, error) {
 	// Start the auth callback server before messaging the user.
 	// TODO DM the url to the user directly.
+
+	// BUG if user does not complete flow, ie server does not get callback,
+	// the server stays alive.
 	server := serveAuthCallback()
 	authUrl := spotifyAuthenticator.AuthURL(state)
 	fmt.Printf("%v, %v\n", userID, authUrl)
