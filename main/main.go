@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -11,25 +10,17 @@ import (
 	"../framework"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/zmb3/spotify"
-	"golang.org/x/oauth2"
 )
 
 var (
-	CmdHandler           *framework.CommandHandler
-	config               *framework.Config
-	TknHandler           *framework.TokenHandler
-	ch                   = make(chan *oauth2.Token)
-	enrolledUsers        = make(map[string]bool)
-	spotifyAuthenticator = spotify.NewAuthenticator(
-		"http://localhost:8080/callback", spotify.ScopePlaylistModifyPublic)
-	state = ""
+	CmdHandler    *framework.CommandHandler
+	config        *framework.Config
+	TknHandler    *framework.TokenHandler
+	enrolledUsers = make(map[string]bool)
 )
 
 func init() {
 	config = framework.LoadConfig("secrets.json")
-	spotifyAuthenticator.SetAuthInfo(
-		config.SpotifyClientID, config.SpotifyClientSecret)
 }
 
 func main() {
@@ -50,10 +41,10 @@ func main() {
 		return
 	}
 
+	defer discord.Close()
+
 	discord.AddHandler(commandHandler)
 	discord.Identify.Intents = discordgo.IntentsGuildMessages
-
-	defer discord.Close()
 
 	members, err := discord.GuildMembers(config.ServerID, "", 1000)
 	if err != nil {
@@ -65,21 +56,6 @@ func main() {
 			enrolledUsers[member.User.ID] = false
 		}
 	}
-
-	http.HandleFunc("/callback", func(w http.ResponseWriter, r *http.Request) {
-		tok, err := spotifyAuthenticator.Token(state, r)
-		if err != nil {
-			http.Error(w, "Couldn't get token", http.StatusForbidden)
-			fmt.Println("Error getting token, ", err)
-		}
-		if st := r.FormValue("state"); st != state {
-			http.NotFound(w, r)
-			fmt.Println("Error validating state")
-		}
-		fmt.Println("User authorized Spot.")
-		ch <- tok
-	})
-	go http.ListenAndServe(":8080", nil)
 
 	fmt.Println("Spot is now running. Press CTRL-C to exit.")
 	sc := make(chan os.Signal, 1)
@@ -105,20 +81,25 @@ func commandHandler(discord *discordgo.Session, message *discordgo.MessageCreate
 	}
 
 	if content == "auth" {
-		if _, found := TknHandler.Get(user.ID); found {
-			fmt.Println("already authenticated")
+		token, found := TknHandler.Get(user.ID)
+		if !found {
+			var err error
+			token, err = framework.AuthorizeSpotForUser(user.ID)
+			if err != nil {
+				fmt.Println("Error authorizing Spot, ", err)
+				return
+			}
+			TknHandler.Register(user.ID, token)
+		}
+		spotifyClient := framework.SpotifyClient(token)
+
+		// Verify we got a good token.
+		u, err := spotifyClient.CurrentUser()
+		if err != nil {
+			fmt.Println("Error using spotify client, ", err)
 			return
 		}
-		// The user must visit this URL to authorize Spot.
-		// TODO DM the url to the user directly.
-		url := spotifyAuthenticator.AuthURL(state)
-		fmt.Println(url)
-
-		token := <-ch
-
-		TknHandler.Register(user.ID, token)
-
-		return
+		fmt.Println(u.ID)
 	}
 
 	// TODO split content into command name and arguments.
