@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"../cmd"
@@ -17,6 +18,10 @@ var (
 	config        *framework.Config
 	TknHandler    *framework.TokenHandler
 	enrolledUsers = make(map[string]bool)
+)
+
+const (
+	prefix = "!"
 )
 
 func init() {
@@ -69,18 +74,27 @@ func commandHandler(discord *discordgo.Session, message *discordgo.MessageCreate
 		return
 	}
 
-	// For now only check messages in a specific channel.
+	// TODO remove
 	if message.ChannelID != config.ChannelID {
 		return
 	}
 
 	content := message.Content
-	// TODO use a command prefix to filter through messages.
-	if len(content) == 0 {
+
+	// Check message for command prefix.
+	if len(content) <= len(prefix) {
 		return
 	}
 
-	if content == "auth" {
+	if content[:len(prefix)] != prefix {
+		return
+	}
+
+	args := strings.Fields(content[len(prefix):])
+	name := strings.ToLower(args[0])
+
+	// TODO remove
+	if name == "auth" {
 		token, found := TknHandler.Get(user.ID)
 		if !found {
 			var err error
@@ -102,8 +116,7 @@ func commandHandler(discord *discordgo.Session, message *discordgo.MessageCreate
 		fmt.Println(u.ID)
 	}
 
-	// TODO split content into command name and arguments.
-	command, found := CmdHandler.Get(content)
+	command, found := CmdHandler.Get(name)
 	if !found {
 		return
 	}
