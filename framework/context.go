@@ -9,12 +9,18 @@ import (
 type Context struct {
 	Discord       *discordgo.Session
 	Channel       *discordgo.Channel
-	EnrolledUsers map[string]bool
+	EnrolledUsers *[]string
 	SpotifyLink   string
 	User          *discordgo.User
 }
 
-func NewContext(discord *discordgo.Session, channel *discordgo.Channel, enrolledUsers map[string]bool, spotifyLink string, user *discordgo.User) *Context {
+func NewContext(
+	discord *discordgo.Session,
+	channel *discordgo.Channel,
+	enrolledUsers *[]string,
+	spotifyLink string,
+	user *discordgo.User,
+) *Context {
 	ctx := new(Context)
 	ctx.Discord = discord
 	ctx.Channel = channel

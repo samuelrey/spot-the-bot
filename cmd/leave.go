@@ -7,10 +7,18 @@ import (
 )
 
 func Leave(ctx *framework.Context) {
-	if enrolled := ctx.EnrolledUsers[ctx.User.ID]; enrolled {
-		ctx.EnrolledUsers[ctx.User.ID] = false
-
-		content := fmt.Sprintf("Until next time, %v!\n", ctx.User.Username)
+	found := -1
+	for i, id := range *ctx.EnrolledUsers {
+		if ctx.User.ID == id {
+			found = i
+		}
+	}
+	if found != -1 {
+		(*ctx.EnrolledUsers) = append(
+			(*ctx.EnrolledUsers)[:found],
+			(*ctx.EnrolledUsers)[found+1:]...,
+		)
+		content := fmt.Sprintf("No hard feelings, %v!\n", ctx.User.Username)
 		ctx.Reply(content)
 	}
 }

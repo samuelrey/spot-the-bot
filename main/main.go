@@ -17,7 +17,7 @@ var (
 	CmdHandler    *framework.CommandHandler
 	config        *framework.Config
 	TknHandler    *framework.TokenHandler
-	enrolledUsers = make(map[string]bool)
+	enrolledUsers = make([]string, 0)
 )
 
 const (
@@ -50,17 +50,6 @@ func main() {
 
 	discord.AddHandler(commandHandler)
 	discord.Identify.Intents = discordgo.IntentsGuildMessages
-
-	members, err := discord.GuildMembers(config.ServerID, "", 1000)
-	if err != nil {
-		fmt.Println("Error retrieving guild members, ", err)
-		return
-	}
-	for _, member := range members {
-		if !member.User.Bot {
-			enrolledUsers[member.User.ID] = false
-		}
-	}
 
 	fmt.Println("Spot is now running. Press CTRL-C to exit.")
 	sc := make(chan os.Signal, 1)
@@ -127,7 +116,8 @@ func commandHandler(discord *discordgo.Session, message *discordgo.MessageCreate
 		return
 	}
 
-	ctx := framework.NewContext(discord, channel, enrolledUsers, config.PlaylistLink, user)
+	ctx := framework.NewContext(
+		discord, channel, &enrolledUsers, config.PlaylistLink, user)
 	c := *command
 	c(ctx)
 }
