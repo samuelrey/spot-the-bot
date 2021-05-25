@@ -126,4 +126,5 @@ func registerCommands() {
 	CmdHandler.Register("join", cmd.Join)
 	CmdHandler.Register("leave", cmd.Leave)
 	CmdHandler.Register("link", cmd.Link)
+	CmdHandler.Register("list", cmd.List)
 }
