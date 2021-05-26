@@ -53,7 +53,7 @@ func AuthorizeSpotForUser(userID string) (*oauth2.Token, error) {
 	token := <-tokenChan
 
 	if token == nil {
-		return nil, fmt.Errorf("Error getting token from Spotify")
+		return nil, fmt.Errorf("didn't get token from Spotify")
 	}
 
 	return token, nil
@@ -86,12 +86,6 @@ func authCallback(w http.ResponseWriter, r *http.Request) {
 			// Protect against blocking the goroutine.
 			fmt.Println("Error endpoint accessed directly")
 		}
-		return
-	}
-
-	if s := r.FormValue("state"); s != state {
-		fmt.Println("Error validating state")
-		tokenChan <- nil
 		return
 	}
 
