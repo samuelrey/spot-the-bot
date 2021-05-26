@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"../framework"
+	"github.com/samuelrey/spot-discord/framework"
 )
 
 func List(ctx *framework.Context) {

@@ -7,8 +7,8 @@ import (
 	"strings"
 	"syscall"
 
-	"../cmd"
-	"../framework"
+	"github.com/samuelrey/spot-discord/cmd"
+	"github.com/samuelrey/spot-discord/framework"
 
 	"github.com/bwmarrin/discordgo"
 )
