@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/signal"
@@ -34,6 +35,7 @@ func main() {
 
 	TknHandler = framework.NewTokenHandler()
 
+	// Configure discord client.
 	discord, err := discordgo.New("Bot " + config.Token)
 	if err != nil {
 		fmt.Println(err)
@@ -51,10 +53,24 @@ func main() {
 	discord.AddHandler(commandHandler)
 	discord.Identify.Intents = discordgo.IntentsGuildMessages
 
+	// Start server to handle Spotify OAuth callback.
+	authServer := framework.StartAuthServer()
+
+	defer func() {
+		if err := authServer.Shutdown(context.Background()); err != nil {
+			fmt.Println(err)
+			return
+		} else {
+			fmt.Println("Authentication server shutdown.")
+		}
+	}()
+
 	fmt.Println("Spot is now running. Press CTRL-C to exit.")
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
+
+	fmt.Println()
 }
 
 func commandHandler(discord *discordgo.Session, message *discordgo.MessageCreate) {

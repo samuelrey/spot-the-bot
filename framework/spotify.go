@@ -1,7 +1,6 @@
 package framework
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 
@@ -26,7 +25,6 @@ var (
 
 func init() {
 	spotifyAuthenticator.SetAuthInfo("", "")
-	http.HandleFunc("/callback", authCallback)
 }
 
 func NewTokenHandler() *TokenHandler {
@@ -48,21 +46,11 @@ func SpotifyClient(token *oauth2.Token) *spotify.Client {
 }
 
 func AuthorizeSpotForUser(userID string) (*oauth2.Token, error) {
-	// Start the auth callback server before messaging the user.
 	// TODO DM the url to the user directly.
-
-	// BUG if user does not complete flow, ie server does not get callback,
-	// the server stays alive.
-	server := serveAuthCallback()
 	authUrl := spotifyAuthenticator.AuthURL(state)
 	fmt.Printf("%v, %v\n", userID, authUrl)
 
 	token := <-tokenChan
-
-	// Shutdown the HTTP server after receiving the Token.
-	if err := server.Shutdown(context.Background()); err != nil {
-		return nil, err
-	}
 
 	if token == nil {
 		return nil, fmt.Errorf("Error getting token from Spotify")
@@ -71,13 +59,16 @@ func AuthorizeSpotForUser(userID string) (*oauth2.Token, error) {
 	return token, nil
 }
 
-func serveAuthCallback() *http.Server {
-	// Create HTTP server to receive callback from Spotify.
+// StartAuthServer creates HTTP server to handle callback request from Spotify.
+// This function is meant to be called only once.
+func StartAuthServer() *http.Server {
 	server := &http.Server{Addr: ":8080"}
+	http.HandleFunc("/callback", authCallback)
 
 	go func() {
+		fmt.Println("Authentication server starting")
 		if err := server.ListenAndServe(); err != http.ErrServerClosed {
-			fmt.Println("Error starting server: ", err)
+			panic(err)
 		}
 	}()
 
@@ -88,8 +79,13 @@ func authCallback(w http.ResponseWriter, r *http.Request) {
 	token, err := spotifyAuthenticator.Token(state, r)
 
 	if err != nil {
-		fmt.Println("Error getting token, ", err)
-		tokenChan <- nil
+		select {
+		case tokenChan <- nil:
+			fmt.Println("Error getting token,", err)
+		default:
+			// Protect against blocking the goroutine.
+			fmt.Println("Error endpoint accessed directly")
+		}
 		return
 	}
 
