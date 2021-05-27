@@ -10,7 +10,6 @@ type Context struct {
 	Discord       *discordgo.Session
 	Channel       *discordgo.Channel
 	EnrolledUsers *[]string
-	SpotifyLink   string
 	User          *discordgo.User
 }
 

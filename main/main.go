@@ -9,15 +9,17 @@ import (
 	"syscall"
 
 	"github.com/samuelrey/spot-discord/cmd"
+	"github.com/samuelrey/spot-discord/discord"
 	"github.com/samuelrey/spot-discord/framework"
+	"github.com/samuelrey/spot-discord/spotify"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 var (
 	CmdHandler    *framework.CommandHandler
-	config        *framework.Config
-	TknHandler    *framework.TokenHandler
+	discordConfig *discord.Config
+	TknHandler    *spotify.TokenHandler
 	enrolledUsers = make([]string, 0)
 )
 
@@ -26,17 +28,17 @@ const (
 )
 
 func init() {
-	config = framework.LoadConfig("secrets.json")
+	discordConfig = discord.LoadConfig("secrets_discord.json")
 }
 
 func main() {
 	CmdHandler = framework.NewCommandHandler()
 	registerCommands()
 
-	TknHandler = framework.NewTokenHandler()
+	TknHandler = spotify.NewTokenHandler()
 
 	// Configure discord client.
-	discord, err := discordgo.New("Bot " + config.Token)
+	discord, err := discordgo.New("Bot " + discordConfig.Token)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -54,7 +56,7 @@ func main() {
 	discord.Identify.Intents = discordgo.IntentsGuildMessages
 
 	// Start server to handle Spotify OAuth callback.
-	authServer := framework.StartAuthServer()
+	authServer := spotify.StartAuthServer()
 
 	defer func() {
 		if err := authServer.Shutdown(context.Background()); err != nil {
@@ -80,7 +82,7 @@ func commandHandler(discord *discordgo.Session, message *discordgo.MessageCreate
 	}
 
 	// TODO remove
-	if message.ChannelID != config.ChannelID {
+	if message.ChannelID != discordConfig.ChannelID {
 		return
 	}
 
@@ -103,14 +105,14 @@ func commandHandler(discord *discordgo.Session, message *discordgo.MessageCreate
 		token, found := TknHandler.Get(user.ID)
 		if !found {
 			var err error
-			token, err = framework.AuthorizeSpotForUser(user.ID)
+			token, err = spotify.AuthorizeSpotForUser(user.ID)
 			if err != nil {
 				fmt.Println("Error authorizing Spot, ", err)
 				return
 			}
 			TknHandler.Register(user.ID, token)
 		}
-		spotifyClient := framework.SpotifyClient(token)
+		spotifyClient := spotify.SpotifyClient(token)
 
 		// Verify we got a good token.
 		u, err := spotifyClient.CurrentUser()

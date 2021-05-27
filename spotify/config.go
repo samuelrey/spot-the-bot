@@ -1,4 +1,4 @@
-package framework
+package spotify
 
 import (
 	"encoding/json"
@@ -7,11 +7,10 @@ import (
 )
 
 type Config struct {
-	Token               string `json:"DISCORD_TOKEN"`
-	ServerID            string `json:"DISCORD_SERVER_ID"`
-	ChannelID           string `json:"DISCORD_CHANNEL_ID"`
-	SpotifyClientID     string `json:"SPOTIFY_CLIENT_ID"`
-	SpotifyClientSecret string `json:"SPOTIFY_CLIENT_SECRET"`
+	ClientID    string `json:"CLIENT_ID"`
+	RedirectURL string `json:"REDIRECT_URL"`
+	Secret      string `json:"SECRET"`
+	State       string `json:"STATE"`
 }
 
 func LoadConfig(filename string) *Config {
