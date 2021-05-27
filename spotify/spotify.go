@@ -9,8 +9,10 @@ import (
 )
 
 var (
+	authURL              string
 	config               *Config
 	spotifyAuthenticator spotify.Authenticator
+	tknHandler           *TokenHandler
 	tokenChan            = make(chan *oauth2.Token)
 )
 
@@ -19,20 +21,32 @@ func init() {
 	spotifyAuthenticator = spotify.NewAuthenticator(
 		config.RedirectURL, spotify.ScopePlaylistModifyPublic)
 	spotifyAuthenticator.SetAuthInfo(config.ClientID, config.Secret)
+	authURL = spotifyAuthenticator.AuthURL(config.State)
+	tknHandler = NewTokenHandler()
 }
 
-func SpotifyClient(token *oauth2.Token) *spotify.Client {
+func SpotifyClient(userID string) *spotify.Client {
+	token, found := tknHandler.Get(userID)
+	if !found {
+		// TODO DM the url to the user directly.
+		fmt.Printf("%v, %v\n", userID, authURL)
+
+		var err error
+		token, err = getToken()
+		if err != nil {
+			fmt.Println("Error authorizing Spot, ", err)
+			return nil
+		}
+
+		tknHandler.Register(userID, token)
+	}
+
 	client := spotifyAuthenticator.NewClient(token)
 	return &client
 }
 
-func AuthorizeSpotForUser(userID string) (*oauth2.Token, error) {
-	// TODO DM the url to the user directly.
-	authUrl := spotifyAuthenticator.AuthURL(config.State)
-	fmt.Printf("%v, %v\n", userID, authUrl)
-
+func getToken() (*oauth2.Token, error) {
 	token := <-tokenChan
-
 	if token == nil {
 		return nil, fmt.Errorf("didn't get token from Spotify")
 	}
@@ -70,6 +84,11 @@ func authCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("User authorized Spot.")
-	tokenChan <- token
+	select {
+	case tokenChan <- token:
+		fmt.Println("User authorized Spot.")
+	default:
+		// Protect against blocking the goroutine.
+		fmt.Println("User already authorized Spot.")
+	}
 }

@@ -102,17 +102,7 @@ func commandHandler(discord *discordgo.Session, message *discordgo.MessageCreate
 
 	// TODO remove
 	if name == "auth" {
-		token, found := TknHandler.Get(user.ID)
-		if !found {
-			var err error
-			token, err = spotify.AuthorizeSpotForUser(user.ID)
-			if err != nil {
-				fmt.Println("Error authorizing Spot, ", err)
-				return
-			}
-			TknHandler.Register(user.ID, token)
-		}
-		spotifyClient := spotify.SpotifyClient(token)
+		spotifyClient := spotify.SpotifyClient(user.ID)
 
 		// Verify we got a good token.
 		u, err := spotifyClient.CurrentUser()
