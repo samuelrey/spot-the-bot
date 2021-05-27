@@ -132,8 +132,7 @@ func commandHandler(discord *discordgo.Session, message *discordgo.MessageCreate
 		return
 	}
 
-	ctx := framework.NewContext(
-		discord, channel, &enrolledUsers, config.PlaylistLink, user)
+	ctx := framework.NewContext(discord, channel, &enrolledUsers, user)
 	c := *command
 	c(ctx)
 }
@@ -141,6 +140,5 @@ func commandHandler(discord *discordgo.Session, message *discordgo.MessageCreate
 func registerCommands() {
 	CmdHandler.Register("join", cmd.Join)
 	CmdHandler.Register("leave", cmd.Leave)
-	CmdHandler.Register("link", cmd.Link)
 	CmdHandler.Register("list", cmd.List)
 }

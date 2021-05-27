@@ -10,7 +10,6 @@ type Config struct {
 	Token               string `json:"DISCORD_TOKEN"`
 	ServerID            string `json:"DISCORD_SERVER_ID"`
 	ChannelID           string `json:"DISCORD_CHANNEL_ID"`
-	PlaylistLink        string `json:"SPOTIFY_PLAYLIST"`
 	SpotifyClientID     string `json:"SPOTIFY_CLIENT_ID"`
 	SpotifyClientSecret string `json:"SPOTIFY_CLIENT_SECRET"`
 }

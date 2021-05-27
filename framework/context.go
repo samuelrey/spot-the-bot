@@ -18,14 +18,12 @@ func NewContext(
 	discord *discordgo.Session,
 	channel *discordgo.Channel,
 	enrolledUsers *[]string,
-	spotifyLink string,
 	user *discordgo.User,
 ) *Context {
 	ctx := new(Context)
 	ctx.Discord = discord
 	ctx.Channel = channel
 	ctx.EnrolledUsers = enrolledUsers
-	ctx.SpotifyLink = spotifyLink
 	ctx.User = user
 	return ctx
 }
