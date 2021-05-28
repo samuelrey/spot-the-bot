@@ -7,10 +7,10 @@ import (
 )
 
 type Context struct {
-	Replyer       Replyer
+	replyer       Replyer
 	Discord       *discordgo.Session
 	EnrolledUsers *[]string
-	User          *discordgo.User
+	User          User
 }
 
 func NewContext(
@@ -24,15 +24,18 @@ func NewContext(
 		Session: session,
 		Channel: channel,
 	}
-	ctx.Replyer = discordReplyer
+	ctx.replyer = discordReplyer
 	ctx.Discord = session
 	ctx.EnrolledUsers = enrolledUsers
-	ctx.User = user
+	ctx.User = User{
+		ID:       user.ID,
+		Username: user.Username,
+	}
 	return ctx
 }
 
 func (ctx Context) Reply(content string) {
-	err := ctx.Replyer.Reply(content)
+	err := ctx.replyer.Reply(content)
 	if err != nil {
 		fmt.Println("Error sending message, ", err)
 	}
