@@ -9,7 +9,6 @@ import (
 type Context struct {
 	Replyer       Replyer
 	Discord       *discordgo.Session
-	Channel       *discordgo.Channel
 	EnrolledUsers *[]string
 	User          *discordgo.User
 }
@@ -27,19 +26,16 @@ func NewContext(
 	}
 	ctx.Replyer = discordReplyer
 	ctx.Discord = session
-	ctx.Channel = channel
 	ctx.EnrolledUsers = enrolledUsers
 	ctx.User = user
 	return ctx
 }
 
-func (ctx Context) Reply(content string) *discordgo.Message {
-	msg, err := ctx.Discord.ChannelMessageSend(ctx.Channel.ID, content)
+func (ctx Context) Reply(content string) {
+	err := ctx.Replyer.Reply(content)
 	if err != nil {
 		fmt.Println("Error sending message, ", err)
-		return nil
 	}
-	return msg
 }
 
 type DiscordReplyer struct {
