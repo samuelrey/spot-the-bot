@@ -7,6 +7,7 @@ import (
 )
 
 type Context struct {
+	Replyer       Replyer
 	Discord       *discordgo.Session
 	Channel       *discordgo.Channel
 	EnrolledUsers *[]string
@@ -14,13 +15,18 @@ type Context struct {
 }
 
 func NewContext(
-	discord *discordgo.Session,
+	session *discordgo.Session,
 	channel *discordgo.Channel,
 	enrolledUsers *[]string,
 	user *discordgo.User,
 ) *Context {
 	ctx := new(Context)
-	ctx.Discord = discord
+	discordReplyer := DiscordReplyer{
+		Session: session,
+		Channel: channel,
+	}
+	ctx.Replyer = discordReplyer
+	ctx.Discord = session
 	ctx.Channel = channel
 	ctx.EnrolledUsers = enrolledUsers
 	ctx.User = user
