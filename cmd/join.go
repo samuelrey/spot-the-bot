@@ -7,13 +7,17 @@ import (
 )
 
 func Join(ctx *framework.Context) {
-	for _, id := range *ctx.EnrolledUsers {
-		if ctx.User.ID == id {
+	for _, user := range *ctx.EnrolledUsers {
+		if ctx.User.ID == user.ID {
 			return
 		}
 	}
 
-	(*ctx.EnrolledUsers) = append((*ctx.EnrolledUsers), ctx.User.ID)
+	user := framework.User{
+		ID:       ctx.User.ID,
+		Username: ctx.User.Username,
+	}
+	(*ctx.EnrolledUsers) = append((*ctx.EnrolledUsers), user)
 	content := fmt.Sprintf("Welcome to the club, %v!\n", ctx.User.Username)
 	ctx.Reply(content)
 }

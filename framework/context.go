@@ -8,15 +8,14 @@ import (
 
 type Context struct {
 	replyer       Replyer
-	Discord       *discordgo.Session
-	EnrolledUsers *[]string
+	EnrolledUsers *[]User
 	User          User
 }
 
 func NewContext(
 	session *discordgo.Session,
 	channel *discordgo.Channel,
-	enrolledUsers *[]string,
+	enrolledUsers *[]User,
 	user *discordgo.User,
 ) *Context {
 	ctx := new(Context)
@@ -25,7 +24,6 @@ func NewContext(
 		Channel: channel,
 	}
 	ctx.replyer = discordReplyer
-	ctx.Discord = session
 	ctx.EnrolledUsers = enrolledUsers
 	ctx.User = User{
 		ID:       user.ID,

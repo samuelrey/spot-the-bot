@@ -8,8 +8,8 @@ import (
 
 func Leave(ctx *framework.Context) {
 	found := -1
-	for i, id := range *ctx.EnrolledUsers {
-		if ctx.User.ID == id {
+	for i, user := range *ctx.EnrolledUsers {
+		if ctx.User.ID == user.ID {
 			found = i
 		}
 	}

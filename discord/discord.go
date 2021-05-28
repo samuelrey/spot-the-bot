@@ -11,7 +11,7 @@ import (
 var (
 	CmdHandler    *framework.CommandHandler
 	config        *Config
-	enrolledUsers = make([]string, 0)
+	enrolledUsers = make([]framework.User, 0)
 )
 
 const (

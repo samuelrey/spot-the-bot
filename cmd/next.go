@@ -11,21 +11,16 @@ func Next(ctx *framework.Context) {
 		return
 	}
 
-	skipUserID := (*ctx.EnrolledUsers)[0]
-	if ctx.User.ID != skipUserID {
+	skipUser := (*ctx.EnrolledUsers)[0]
+	if ctx.User.ID != skipUser.ID {
 		return
 	}
 
-	(*ctx.EnrolledUsers) = append((*ctx.EnrolledUsers)[1:], skipUserID)
+	(*ctx.EnrolledUsers) = append((*ctx.EnrolledUsers)[1:], skipUser)
 	content := fmt.Sprintf("%v, see you next time around!", ctx.User.Username)
 	ctx.Reply(content)
 
-	nextUserID := (*ctx.EnrolledUsers)[0]
-	nextUser, err := ctx.Discord.User(nextUserID)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	nextUser := (*ctx.EnrolledUsers)[0]
 
 	content = fmt.Sprintf("%v, you're up next!", nextUser.Username)
 	ctx.Reply(content)
