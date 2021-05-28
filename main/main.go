@@ -19,7 +19,6 @@ import (
 var (
 	CmdHandler    *framework.CommandHandler
 	discordConfig *discord.Config
-	TknHandler    *spotify.TokenHandler
 	enrolledUsers = make([]string, 0)
 )
 
@@ -34,8 +33,6 @@ func init() {
 func main() {
 	CmdHandler = framework.NewCommandHandler()
 	registerCommands()
-
-	TknHandler = spotify.NewTokenHandler()
 
 	// Configure discord client.
 	discord, err := discordgo.New("Bot " + discordConfig.Token)
