@@ -35,3 +35,13 @@ func (ctx Context) Reply(content string) *discordgo.Message {
 	}
 	return msg
 }
+
+type DiscordReplyer struct {
+	Session *discordgo.Session
+	Channel *discordgo.Channel
+}
+
+func (dr DiscordReplyer) Reply(content string) error {
+	_, err := dr.Session.ChannelMessageSend(dr.Channel.ID, content)
+	return err
+}
