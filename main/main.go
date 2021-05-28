@@ -35,26 +35,11 @@ func main() {
 	registerCommands()
 
 	// Configure discord client.
-	discord, err := discordgo.New("Bot " + discordConfig.Token)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	err = discord.Open()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	defer discord.Close()
-
-	discord.AddHandler(commandHandler)
-	discord.Identify.Intents = discordgo.IntentsGuildMessages
+	discordClient := discord.DiscordClient(commandHandler)
+	defer discordClient.Close()
 
 	// Start server to handle Spotify OAuth callback.
 	authServer := spotify.StartAuthServer()
-
 	defer func() {
 		if err := authServer.Shutdown(context.Background()); err != nil {
 			fmt.Println(err)
@@ -72,7 +57,7 @@ func main() {
 	fmt.Println()
 }
 
-func commandHandler(discord *discordgo.Session, message *discordgo.MessageCreate) {
+func commandHandler(dg *discordgo.Session, message *discordgo.MessageCreate) {
 	user := message.Author
 	if user.Bot {
 		return
@@ -115,13 +100,13 @@ func commandHandler(discord *discordgo.Session, message *discordgo.MessageCreate
 		return
 	}
 
-	channel, err := discord.Channel(message.ChannelID)
+	channel, err := dg.Channel(message.ChannelID)
 	if err != nil {
 		fmt.Println("Error retrieving channel, ", err)
 		return
 	}
 
-	ctx := framework.NewContext(discord, channel, &enrolledUsers, user)
+	ctx := framework.NewContext(dg, channel, &enrolledUsers, user)
 	c := *command
 	c(ctx)
 }
