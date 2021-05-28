@@ -78,7 +78,7 @@ func handleMessage(dg *discordgo.Session, message *discordgo.MessageCreate) {
 		return
 	}
 
-	ctx := framework.NewContext(dg, channel, &enrolledUsers, user)
+	ctx := NewContext(dg, channel, &enrolledUsers, user)
 	c := *command
 	c(ctx)
 }
