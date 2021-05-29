@@ -5,30 +5,18 @@ import (
 	"testing"
 
 	"github.com/samuelrey/spot-discord/framework"
-	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
 
-type ListTestSuite struct {
-	suite.Suite
-	ctx     framework.Context
-	replyer MockReplyer
-}
-
-type MockReplyer struct{ mock.Mock }
-
-func (m *MockReplyer) Reply(content string) error {
-	m.Called(content)
-	return nil
-}
+type ListTestSuite struct{ framework.CommandTestSuite }
 
 func (suite *ListTestSuite) SetupTest() {
-	suite.replyer = MockReplyer{}
+	suite.Replyer = framework.MockReplyer{}
 	enrolledUsers := make([]framework.User, 0)
 	user := framework.User{ID: "amethyst#4422", Username: "amethyst"}
 
-	suite.ctx = framework.Context{
-		Replyer:       &suite.replyer,
+	suite.Ctx = framework.Context{
+		Replyer:       &suite.Replyer,
 		EnrolledUsers: &enrolledUsers,
 		User:          user,
 	}
@@ -36,23 +24,23 @@ func (suite *ListTestSuite) SetupTest() {
 
 // Test that we reply with the expected content given no users have enrolled.
 func (suite *ListTestSuite) TestListNoUsers() {
-	suite.replyer.On("Reply", StrListNoUsers).Return(nil)
+	suite.Replyer.On("Reply", StrListNoUsers).Return(nil)
 
-	List(&suite.ctx)
+	List(&suite.Ctx)
 
-	suite.replyer.AssertCalled(suite.T(), "Reply", StrListNoUsers)
+	suite.Replyer.AssertCalled(suite.T(), "Reply", StrListNoUsers)
 }
 
 // Test that we reply with the expected content given users have enrolled.
 func (suite *ListTestSuite) TestListWithUsers() {
-	*suite.ctx.EnrolledUsers = []framework.User{suite.ctx.User}
+	*suite.Ctx.EnrolledUsers = []framework.User{suite.Ctx.User}
 
-	content := fmt.Sprintf(StrListUsersFmt, suite.ctx.EnrolledUsers)
-	suite.replyer.On("Reply", content).Return(nil)
+	content := fmt.Sprintf(StrListUsersFmt, suite.Ctx.EnrolledUsers)
+	suite.Replyer.On("Reply", content).Return(nil)
 
-	List(&suite.ctx)
+	List(&suite.Ctx)
 
-	suite.replyer.AssertCalled(suite.T(), "Reply", content)
+	suite.Replyer.AssertCalled(suite.T(), "Reply", content)
 }
 
 func TestListCommand(t *testing.T) {
