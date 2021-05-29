@@ -12,15 +12,7 @@ import (
 type JoinTestSuite struct{ framework.CommandTestSuite }
 
 func (suite *JoinTestSuite) SetupTest() {
-	suite.Replyer = framework.MockReplyer{}
-	enrolledUsers := make([]framework.User, 0)
-	suite.User = framework.User{ID: "amethyst#4422", Username: "amethyst"}
-
-	suite.Ctx = framework.Context{
-		Replyer:       &suite.Replyer,
-		EnrolledUsers: &enrolledUsers,
-		User:          suite.User,
-	}
+	suite.CommandTestSuite.SetupTest()
 }
 
 // Test that the acting user is added to the list of enrolled users.

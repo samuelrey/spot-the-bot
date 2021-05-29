@@ -11,15 +11,7 @@ import (
 type ListTestSuite struct{ framework.CommandTestSuite }
 
 func (suite *ListTestSuite) SetupTest() {
-	suite.Replyer = framework.MockReplyer{}
-	enrolledUsers := make([]framework.User, 0)
-	user := framework.User{ID: "amethyst#4422", Username: "amethyst"}
-
-	suite.Ctx = framework.Context{
-		Replyer:       &suite.Replyer,
-		EnrolledUsers: &enrolledUsers,
-		User:          user,
-	}
+	suite.CommandTestSuite.SetupTest()
 }
 
 // Test that we reply with the expected content given no users have enrolled.
