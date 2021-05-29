@@ -10,10 +10,6 @@ import (
 
 type ListTestSuite struct{ framework.CommandTestSuite }
 
-func (suite *ListTestSuite) SetupTest() {
-	suite.CommandTestSuite.SetupTest()
-}
-
 // Test that we reply with the expected content given no users have enrolled.
 func (suite *ListTestSuite) TestListNoUsers() {
 	suite.Replyer.On("Reply", StrListNoUsers).Return(nil)
@@ -25,9 +21,9 @@ func (suite *ListTestSuite) TestListNoUsers() {
 
 // Test that we reply with the expected content given users have enrolled.
 func (suite *ListTestSuite) TestListWithUsers() {
-	*suite.Ctx.EnrolledUsers = []framework.User{suite.Ctx.User}
+	suite.EnrolledUsers = []framework.User{suite.Actor}
 
-	content := fmt.Sprintf(StrListUsersFmt, suite.Ctx.EnrolledUsers)
+	content := fmt.Sprintf(StrListUsersFmt, suite.EnrolledUsers)
 	suite.Replyer.On("Reply", content).Return(nil)
 
 	List(&suite.Ctx)

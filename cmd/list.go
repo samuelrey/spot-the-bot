@@ -17,6 +17,6 @@ func List(ctx *framework.Context) {
 		return
 	}
 
-	content := fmt.Sprintf(StrListUsersFmt, ctx.EnrolledUsers)
+	content := fmt.Sprintf(StrListUsersFmt, *ctx.EnrolledUsers)
 	ctx.Reply(content)
 }

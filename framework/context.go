@@ -7,7 +7,7 @@ import (
 type Context struct {
 	Replyer       Replyer
 	EnrolledUsers *[]User
-	User          User
+	Actor         User
 }
 
 func (ctx Context) Reply(content string) {

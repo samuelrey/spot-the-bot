@@ -9,7 +9,7 @@ func NewContext(
 	session *discordgo.Session,
 	channel *discordgo.Channel,
 	enrolledUsers *[]framework.User,
-	user *discordgo.User,
+	actor *discordgo.User,
 ) *framework.Context {
 	ctx := new(framework.Context)
 	discordReplyer := DiscordReplyer{
@@ -18,9 +18,9 @@ func NewContext(
 	}
 	ctx.Replyer = discordReplyer
 	ctx.EnrolledUsers = enrolledUsers
-	ctx.User = framework.User{
-		ID:       user.ID,
-		Username: user.Username,
+	ctx.Actor = framework.User{
+		ID:       actor.ID,
+		Username: actor.Username,
 	}
 	return ctx
 }

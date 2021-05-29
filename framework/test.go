@@ -14,19 +14,20 @@ func (m *MockReplyer) Reply(content string) error {
 
 type CommandTestSuite struct {
 	suite.Suite
-	Ctx     Context
-	Replyer MockReplyer
-	User    User
+	Actor         User
+	Ctx           Context
+	EnrolledUsers []User
+	Replyer       MockReplyer
 }
 
 func (suite *CommandTestSuite) SetupTest() {
+	suite.Actor = User{ID: "amethyst#4422", Username: "amethyst"}
 	suite.Replyer = MockReplyer{}
-	enrolledUsers := make([]User, 0)
-	suite.User = User{ID: "amethyst#4422", Username: "amethyst"}
+	suite.EnrolledUsers = make([]User, 0)
 
 	suite.Ctx = Context{
 		Replyer:       &suite.Replyer,
-		EnrolledUsers: &enrolledUsers,
-		User:          suite.User,
+		EnrolledUsers: &suite.EnrolledUsers,
+		Actor:         suite.Actor,
 	}
 }

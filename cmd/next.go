@@ -12,12 +12,12 @@ func Next(ctx *framework.Context) {
 	}
 
 	skipUser := (*ctx.EnrolledUsers)[0]
-	if ctx.User.ID != skipUser.ID {
+	if ctx.Actor.ID != skipUser.ID {
 		return
 	}
 
 	(*ctx.EnrolledUsers) = append((*ctx.EnrolledUsers)[1:], skipUser)
-	content := fmt.Sprintf("%v, see you next time around!", ctx.User.Username)
+	content := fmt.Sprintf("%v, see you next time around!", ctx.Actor.Username)
 	ctx.Reply(content)
 
 	nextUser := (*ctx.EnrolledUsers)[0]

@@ -6,20 +6,20 @@ import (
 	"github.com/samuelrey/spot-discord/framework"
 )
 
-const StrJoinWelcomeFmt = "Welcome to the club, %s!\n"
+const StrJoinFmt = "Welcome to the club, %s!\n"
 
 func Join(ctx *framework.Context) {
 	for _, user := range *ctx.EnrolledUsers {
-		if ctx.User.ID == user.ID {
+		if ctx.Actor.ID == user.ID {
 			return
 		}
 	}
 
 	user := framework.User{
-		ID:       ctx.User.ID,
-		Username: ctx.User.Username,
+		ID:       ctx.Actor.ID,
+		Username: ctx.Actor.Username,
 	}
 	(*ctx.EnrolledUsers) = append((*ctx.EnrolledUsers), user)
-	content := fmt.Sprintf(StrJoinWelcomeFmt, ctx.User)
+	content := fmt.Sprintf(StrJoinFmt, ctx.Actor)
 	ctx.Reply(content)
 }

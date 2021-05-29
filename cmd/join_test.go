@@ -11,35 +11,31 @@ import (
 
 type JoinTestSuite struct{ framework.CommandTestSuite }
 
-func (suite *JoinTestSuite) SetupTest() {
-	suite.CommandTestSuite.SetupTest()
-}
-
 // Test that the acting user is added to the list of enrolled users.
 func (suite *JoinTestSuite) TestJoinUser() {
-	content := fmt.Sprintf(StrJoinWelcomeFmt, suite.User)
+	content := fmt.Sprintf(StrJoinFmt, suite.Actor)
 	suite.Replyer.On("Reply", content).Return(nil)
 
 	Join(&suite.Ctx)
 
 	suite.Replyer.AssertCalled(suite.T(), "Reply", content)
 	suite.Require().Equal(
-		[]framework.User{suite.User},
-		*suite.Ctx.EnrolledUsers,
+		[]framework.User{suite.Actor},
+		suite.EnrolledUsers,
 	)
 }
 
 // Test that the acting user is not added again if they are already enrolled.
 func (suite *JoinTestSuite) TestJoinUserAlreadyEnrolled() {
-	*suite.Ctx.EnrolledUsers = []framework.User{suite.Ctx.User}
+	suite.EnrolledUsers = []framework.User{suite.Actor}
 	suite.Replyer.On("Reply", mock.Anything).Return(nil)
 
 	Join(&suite.Ctx)
 
 	suite.Replyer.AssertNotCalled(suite.T(), "Reply", mock.Anything)
 	suite.Require().Equal(
-		[]framework.User{suite.User},
-		*suite.Ctx.EnrolledUsers,
+		[]framework.User{suite.Actor},
+		suite.EnrolledUsers,
 	)
 }
 

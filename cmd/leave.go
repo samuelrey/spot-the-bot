@@ -6,10 +6,12 @@ import (
 	"github.com/samuelrey/spot-discord/framework"
 )
 
+const StrLeaveFmt = "No hard feelings, %s!\n"
+
 func Leave(ctx *framework.Context) {
 	found := -1
 	for i, user := range *ctx.EnrolledUsers {
-		if ctx.User.ID == user.ID {
+		if ctx.Actor.ID == user.ID {
 			found = i
 		}
 	}
@@ -18,7 +20,7 @@ func Leave(ctx *framework.Context) {
 			(*ctx.EnrolledUsers)[:found],
 			(*ctx.EnrolledUsers)[found+1:]...,
 		)
-		content := fmt.Sprintf("No hard feelings, %v!\n", ctx.User.Username)
+		content := fmt.Sprintf(StrLeaveFmt, ctx.Actor)
 		ctx.Reply(content)
 	}
 }
