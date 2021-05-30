@@ -6,6 +6,11 @@ import (
 	"github.com/samuelrey/spot-discord/framework"
 )
 
+const (
+	StrSkipUser = "%s, see you next time around!"
+	StrNextUser = "%s, you're up next!"
+)
+
 func Next(ctx *framework.Context) {
 	if len(*ctx.EnrolledUsers) <= 1 {
 		return
@@ -17,11 +22,11 @@ func Next(ctx *framework.Context) {
 	}
 
 	(*ctx.EnrolledUsers) = append((*ctx.EnrolledUsers)[1:], skipUser)
-	content := fmt.Sprintf("%v, see you next time around!", ctx.Actor.Username)
+	content := fmt.Sprintf(StrSkipUser, ctx.Actor)
 	ctx.Reply(content)
 
 	nextUser := (*ctx.EnrolledUsers)[0]
 
-	content = fmt.Sprintf("%v, you're up next!", nextUser.Username)
+	content = fmt.Sprintf(StrNextUser, nextUser)
 	ctx.Reply(content)
 }
