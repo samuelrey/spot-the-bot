@@ -5,6 +5,8 @@ import (
 	"github.com/samuelrey/spot-discord/framework"
 )
 
+// NewContext takes discord specific data and produces a Context which can be
+// used by commands.
 func NewContext(
 	session *discordgo.Session,
 	channel *discordgo.Channel,

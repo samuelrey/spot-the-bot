@@ -16,3 +16,12 @@ func (ctx Context) Reply(content string) {
 		fmt.Println("Error sending message, ", err)
 	}
 }
+
+type User struct {
+	ID       string
+	Username string
+}
+
+func (u User) String() string {
+	return u.Username
+}

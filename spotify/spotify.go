@@ -22,6 +22,8 @@ func init() {
 	tknHandler = NewTokenHandler()
 }
 
+// SpotifyClient provides an interface to perform actions in Spotify on behalf
+// of an authenticated user.
 func SpotifyClient(userID string) *spotify.Client {
 	token, found := tknHandler.Get(userID)
 	if !found {
