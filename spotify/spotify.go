@@ -22,9 +22,9 @@ func init() {
 	tknHandler = NewTokenHandler()
 }
 
-// SpotifyClient provides an interface to perform actions in Spotify on behalf
-// of an authenticated user.
-func SpotifyClient(userID string) *spotify.Client {
+// Client provides an interface to perform actions in Spotify on behalf
+// of an authenticated user. Authenticate the user if they haven't already.
+func Client(userID string) *spotify.Client {
 	token, found := tknHandler.Get(userID)
 	if !found {
 		// TODO DM the url to the user directly.

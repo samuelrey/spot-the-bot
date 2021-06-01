@@ -60,4 +60,5 @@ func registerCommands() {
 	CmdHandler.Register("leave", cmd.Leave)
 	CmdHandler.Register("list", cmd.List)
 	CmdHandler.Register("next", cmd.Next)
+	CmdHandler.Register("create", cmd.Create)
 }
