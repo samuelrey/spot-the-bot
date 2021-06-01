@@ -5,10 +5,15 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type MockReplyer struct{ mock.Mock }
+type MockMessager struct{ mock.Mock }
 
-func (m *MockReplyer) Reply(content string) error {
+func (m *MockMessager) Reply(content string) error {
 	m.Called(content)
+	return nil
+}
+
+func (m *MockMessager) DirectMessage(recipient, content string) error {
+	m.Called(recipient, content)
 	return nil
 }
 
@@ -17,16 +22,16 @@ type CommandTestSuite struct {
 	Actor         User
 	Ctx           Context
 	EnrolledUsers []User
-	Replyer       MockReplyer
+	Replyer       MockMessager
 }
 
 func (suite *CommandTestSuite) SetupTest() {
 	suite.Actor = User{ID: "amethyst#4422", Username: "amethyst"}
-	suite.Replyer = MockReplyer{}
+	suite.Replyer = MockMessager{}
 	suite.EnrolledUsers = make([]User, 0)
 
 	suite.Ctx = Context{
-		Replyer:       &suite.Replyer,
+		Messager:      &suite.Replyer,
 		EnrolledUsers: &suite.EnrolledUsers,
 		Actor:         suite.Actor,
 	}

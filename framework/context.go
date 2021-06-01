@@ -5,15 +5,22 @@ import (
 )
 
 type Context struct {
-	Replyer       Replyer
+	Messager      Messager
 	EnrolledUsers *[]User
 	Actor         User
 }
 
 func (ctx Context) Reply(content string) {
-	err := ctx.Replyer.Reply(content)
+	err := ctx.Messager.Reply(content)
 	if err != nil {
 		fmt.Println("Error sending message, ", err)
+	}
+}
+
+func (ctx Context) DirectMessage(recipient, content string) {
+	err := ctx.Messager.DirectMessage(recipient, content)
+	if err != nil {
+		fmt.Println("Error sending direct message, ", err)
 	}
 }
 
