@@ -16,7 +16,7 @@ func Create(ctx *framework.Context) {
 		return
 	}
 
-	spotifyClient := spotify.Client(ctx.Actor.ID)
+	spotifyClient := spotify.Client(ctx)
 	if spotifyClient == nil {
 		return
 	}

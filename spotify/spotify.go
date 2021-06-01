@@ -3,6 +3,7 @@ package spotify
 import (
 	"fmt"
 
+	"github.com/samuelrey/spot-discord/framework"
 	"github.com/zmb3/spotify"
 )
 
@@ -11,6 +12,10 @@ var (
 	config               *Config
 	spotifyAuthenticator spotify.Authenticator
 	tknHandler           *TokenHandler
+)
+
+const (
+	StrAuthMessageFmt = "Click this link so we can create your playlist on Spotify:\n%s"
 )
 
 func init() {
@@ -24,20 +29,21 @@ func init() {
 
 // Client provides an interface to perform actions in Spotify on behalf
 // of an authenticated user. Authenticate the user if they haven't already.
-func Client(userID string) *spotify.Client {
-	token, found := tknHandler.Get(userID)
+func Client(ctx *framework.Context) *spotify.Client {
+	token, found := tknHandler.Get(ctx.Actor.ID)
 	if !found {
-		// TODO DM the url to the user directly.
-		fmt.Printf("%v, %v\n", userID, authURL)
+		content := fmt.Sprintf(StrAuthMessageFmt, authURL)
+		ctx.DirectMessage(ctx.Actor.ID, content)
 
 		var err error
 		token, err = getToken()
 		if err != nil {
-			fmt.Println("Error authorizing Spot, ", err)
+			fmt.Printf(
+				"Error authorizing Spot for user [%s], %v\n", ctx.Actor, err)
 			return nil
 		}
 
-		tknHandler.Register(userID, token)
+		tknHandler.Register(ctx.Actor.ID, token)
 	}
 
 	client := spotifyAuthenticator.NewClient(token)
