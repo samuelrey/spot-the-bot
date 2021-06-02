@@ -26,18 +26,18 @@ func Create(ctx *framework.Context) {
 		return
 	}
 
-	user, err := spotifyClient.CurrentUser()
+	id, err := spotifyClient.CurrentUserID()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	playlist, err := spotifyClient.CreatePlaylistForUser(user.ID, "einstock", "", true)
+	playlist, err := spotifyClient.CreatePlaylist(*id, "einstock")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	content := fmt.Sprintf(StrPlaylistCreatedFmt, playlist.ExternalURLs["spotify"])
+	content := fmt.Sprintf(StrPlaylistCreatedFmt, playlist.URL)
 	ctx.DirectMessage(ctx.Actor.ID, content)
 }

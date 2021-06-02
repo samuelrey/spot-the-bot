@@ -29,7 +29,7 @@ func init() {
 
 // Client provides an interface to perform actions in Spotify on behalf
 // of an authenticated user. Authenticate the user if they haven't already.
-func Client(ctx *framework.Context) *spotify.Client {
+func Client(ctx *framework.Context) *SpotifyPlaylister {
 	token, found := tknHandler.Get(ctx.Actor.ID)
 	if !found {
 		content := fmt.Sprintf(StrAuthMessageFmt, authURL)
@@ -47,5 +47,34 @@ func Client(ctx *framework.Context) *spotify.Client {
 	}
 
 	client := spotifyAuthenticator.NewClient(token)
-	return &client
+	return &SpotifyPlaylister{client: &client}
+}
+
+type SpotifyPlaylister struct {
+	client *spotify.Client
+}
+
+func (s SpotifyPlaylister) CreatePlaylist(
+	userID string,
+	playlistName string,
+) (*framework.Playlist, error) {
+	playlist, err := s.client.CreatePlaylistForUser(
+		userID, playlistName, "", true)
+	if err != nil {
+		return nil, err
+	}
+
+	return &framework.Playlist{
+		ID:  playlist.ID.String(),
+		URL: playlist.ExternalURLs["spotify"],
+	}, nil
+}
+
+func (s SpotifyPlaylister) CurrentUserID() (*string, error) {
+	user, err := s.client.CurrentUser()
+	if err != nil {
+		return nil, err
+	}
+
+	return &user.ID, nil
 }

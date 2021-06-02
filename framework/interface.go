@@ -12,3 +12,7 @@ type Replyer interface {
 type DirectMessager interface {
 	DirectMessage(recipient, content string) error
 }
+
+type Playlister interface {
+	CreatePlaylist(userID, playlistName string) (*Playlist, error)
+}
