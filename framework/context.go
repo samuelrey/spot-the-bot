@@ -32,8 +32,3 @@ type User struct {
 func (u User) String() string {
 	return u.Username
 }
-
-type Playlist struct {
-	ID  string
-	URL string
-}
