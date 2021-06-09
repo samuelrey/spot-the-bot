@@ -10,6 +10,6 @@ type Playlist struct {
 }
 
 type MusicServiceBuilder interface {
-	AuthorizeUser()
+	AuthorizeUser() error
 	CreatePlaylist(playlistName string) (*Playlist, error)
 }

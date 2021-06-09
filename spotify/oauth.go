@@ -1,7 +1,8 @@
 package spotify
 
 import (
-	"fmt"
+	"errors"
+	"log"
 	"net/http"
 
 	"golang.org/x/oauth2"
@@ -16,7 +17,7 @@ func StartAuthServer() *http.Server {
 	http.HandleFunc("/callback", authCallback)
 
 	go func() {
-		fmt.Println("Authentication server starting")
+		log.Println("Authentication server starting")
 		if err := server.ListenAndServe(); err != http.ErrServerClosed {
 			panic(err)
 		}
@@ -31,27 +32,27 @@ func authCallback(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		select {
 		case tokenChan <- nil:
-			fmt.Println("Error getting token,", err)
+			log.Println("Error getting token:", err)
 		default:
 			// Protect against blocking the goroutine.
-			fmt.Println("Error endpoint accessed directly")
+			log.Println("Error endpoint accessed directly")
 		}
 		return
 	}
 
 	select {
 	case tokenChan <- token:
-		fmt.Println("User authorized Spot.")
+		log.Println("User authorized Spot")
 	default:
 		// Protect against blocking the goroutine.
-		fmt.Println("User already authorized Spot.")
+		log.Println("User already authorized Spot")
 	}
 }
 
 func getToken() (*oauth2.Token, error) {
 	token := <-tokenChan
 	if token == nil {
-		return nil, fmt.Errorf("didn't get token from Spotify")
+		return nil, errors.New("Token not received")
 	}
 
 	return token, nil

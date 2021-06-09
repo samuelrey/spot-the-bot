@@ -5,7 +5,7 @@ import (
 )
 
 type Context struct {
-	Messager      Messager
+	Messager      MessageBuilder
 	EnrolledUsers *[]User
 	Actor         User
 }

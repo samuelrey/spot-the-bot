@@ -31,8 +31,8 @@ func init() {
 type SpotifyBuilder struct {
 	authenticator *spotify.Authenticator
 	authURL       string
-	client        spotify.Client
-	user          spotify.User
+	client        *spotify.Client
+	user          *spotify.User
 }
 
 func NewSpotifyBuilder(
@@ -53,8 +53,12 @@ func NewSpotifyBuilder(
 	}
 }
 
+// AuthorizeUser takes a user through the Spotify authorization flow. The
+// token we receive from Spotify is used to create a reusable client. The
+// client is tied to a single Spotify user. We recommend creating an account
+// on Spotify specific for this bot.
 func (sb *SpotifyBuilder) AuthorizeUser() error {
-	log.Printf("Authorize Spotify user: %s\n", authURL)
+	log.Printf("Navigate here to authorize Spotify user: %s\n", authURL)
 
 	token, err := getToken()
 	if err != nil {
@@ -67,12 +71,15 @@ func (sb *SpotifyBuilder) AuthorizeUser() error {
 		return errors.Wrap(err, "Authorize Spotify user")
 	}
 
-	sb.client = client
-	sb.user = spotifyUser.User
+	sb.client = &client
+	sb.user = &spotifyUser.User
 	return nil
 }
 
+// CreatePlaylist creates a playlist with the given name for the authorized
+// user.
 func (sb *SpotifyBuilder) CreatePlaylist(playlistName string) (*framework.Playlist, error) {
+	// TODO make the playlist collaborative
 	playlist, err := sb.client.CreatePlaylistForUser(sb.user.ID, playlistName, "", false)
 	if err != nil {
 		return nil, errors.Wrap(err, "Create Spotify playlist")
