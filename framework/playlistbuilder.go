@@ -10,9 +10,6 @@ type Playlist struct {
 }
 
 type MusicServiceBuilder interface {
-	AuthorizeUser(msgUserID string, sendAuthURL func(string)) MusicServiceClient
-}
-
-type MusicServiceClient interface {
-	CreatePlaylistForUser(userID, playlistName string) (*Playlist, error)
+	AuthorizeUser()
+	CreatePlaylist(playlistName string) (*Playlist, error)
 }
