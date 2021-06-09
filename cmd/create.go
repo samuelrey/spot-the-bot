@@ -21,8 +21,11 @@ func Create(ctx *framework.Context) {
 		return
 	}
 
-	spotifyClient := spotify.Client(ctx)
-	if spotifyClient == nil {
+	spotifyClient, err := spotify.NewClient(ctx.Actor.ID, func(url string) {
+		ctx.DirectMessage(ctx.Actor.ID, url)
+	})
+	if err != nil {
+		fmt.Println(err)
 		return
 	}
 

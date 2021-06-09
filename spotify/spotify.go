@@ -1,8 +1,7 @@
 package spotify
 
 import (
-	"fmt"
-
+	"github.com/pkg/errors"
 	"github.com/samuelrey/spot-discord/framework"
 	"github.com/zmb3/spotify"
 )
@@ -27,27 +26,27 @@ func init() {
 	tknHandler = NewTokenHandler()
 }
 
-// Client provides an interface to perform actions in Spotify on behalf
+// NewClient provides an interface to perform actions in Spotify on behalf
 // of an authenticated user. Authenticate the user if they haven't already.
-func Client(ctx *framework.Context) *SpotifyPlaylister {
-	token, found := tknHandler.Get(ctx.Actor.ID)
+func NewClient(
+	msgUserID string,
+	sendAuthURL func(string),
+) (*SpotifyPlaylister, error) {
+	token, found := tknHandler.Get(msgUserID)
 	if !found {
-		content := fmt.Sprintf(StrAuthMessageFmt, authURL)
-		ctx.DirectMessage(ctx.Actor.ID, content)
+		sendAuthURL(authURL)
 
 		var err error
 		token, err = getToken()
 		if err != nil {
-			fmt.Printf(
-				"Error authorizing Spot for user [%s], %v\n", ctx.Actor, err)
-			return nil
+			return nil, errors.Wrap(err, "Authenticate music service")
 		}
 
-		tknHandler.Register(ctx.Actor.ID, token)
+		tknHandler.Register(msgUserID, token)
 	}
 
 	client := spotifyAuthenticator.NewClient(token)
-	return &SpotifyPlaylister{client: &client}
+	return &SpotifyPlaylister{client: &client}, nil
 }
 
 type SpotifyPlaylister struct {
