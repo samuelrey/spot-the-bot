@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -13,19 +14,15 @@ import (
 	"github.com/samuelrey/spot-discord/spotify"
 )
 
-var (
-	CmdHandler *framework.CommandHandler
-)
-
 func main() {
-	CmdHandler = framework.NewCommandHandler()
-	registerCommands()
+	cmdHandler := framework.NewCommandHandler()
+	registerCommands(*cmdHandler)
 
 	// Open Discord session.
-	fmt.Println("Discord session opening.")
-	discordSession, err := discord.DiscordSession(CmdHandler)
+	log.Println("Discord session opening.")
+	discordSession, err := discord.DiscordSession(cmdHandler)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 
@@ -35,19 +32,19 @@ func main() {
 	// Cleanup
 	defer func() {
 		if err := discordSession.Close(); err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		} else {
-			fmt.Println("Discord session closed.")
+			log.Println("Discord session closed.")
 		}
 
 		if err := authServer.Shutdown(context.Background()); err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		} else {
-			fmt.Println("Authentication server shutdown.")
+			log.Println("Authentication server shutdown.")
 		}
 	}()
 
-	fmt.Println("Spot is now running. Press CTRL-C to exit.")
+	log.Println("Spot is now running. Press CTRL-C to exit.")
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
@@ -55,10 +52,10 @@ func main() {
 	fmt.Println()
 }
 
-func registerCommands() {
-	CmdHandler.Register("join", cmd.Join)
-	CmdHandler.Register("leave", cmd.Leave)
-	CmdHandler.Register("list", cmd.List)
-	CmdHandler.Register("next", cmd.Next)
-	CmdHandler.Register("create", cmd.Create)
+func registerCommands(cmdHandler framework.CommandHandler) {
+	cmdHandler.Register("join", cmd.Join)
+	cmdHandler.Register("leave", cmd.Leave)
+	cmdHandler.Register("list", cmd.List)
+	cmdHandler.Register("next", cmd.Next)
+	cmdHandler.Register("create", cmd.Create)
 }
