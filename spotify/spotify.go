@@ -35,7 +35,7 @@ type SpotifyBuilder struct {
 	user          *spotify.User
 }
 
-func NewSpotifyBuilder(config Config) SpotifyBuilder {
+func CreateSpotifyBuilder(config *Config) *SpotifyBuilder {
 	spotifyAuthenticator := spotify.NewAuthenticator(
 		config.RedirectURL,
 		spotify.ScopePlaylistModifyPrivate,
@@ -44,7 +44,7 @@ func NewSpotifyBuilder(config Config) SpotifyBuilder {
 
 	authURL = spotifyAuthenticator.AuthURL(config.State)
 
-	return SpotifyBuilder{
+	return &SpotifyBuilder{
 		authenticator: &spotifyAuthenticator,
 		authURL:       authURL,
 	}

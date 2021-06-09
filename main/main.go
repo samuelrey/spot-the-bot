@@ -18,6 +18,9 @@ func main() {
 	cmdHandler := framework.NewCommandHandler()
 	registerCommands(*cmdHandler)
 
+	spotifyConfig := spotify.LoadConfig("secrets_spotify.json")
+	_ = spotify.CreateSpotifyBuilder(spotifyConfig)
+
 	// Open Discord session.
 	log.Println("Discord session opening.")
 	discordSession, err := discord.DiscordSession(cmdHandler)
