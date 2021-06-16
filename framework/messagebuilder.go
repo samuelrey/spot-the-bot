@@ -9,6 +9,7 @@ type MessageBuilder interface {
 type V2MessageBuilder interface {
 	V2ReplyBuilder
 	DirectMessageBuilder
+	BotBuilder
 }
 
 type V2ReplyBuilder interface {
@@ -21,4 +22,9 @@ type ReplyBuilder interface {
 
 type DirectMessageBuilder interface {
 	DirectMessage(recipientID, content string) error
+}
+
+type BotBuilder interface {
+	Open() error
+	Close() error
 }

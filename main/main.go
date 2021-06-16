@@ -22,11 +22,32 @@ func main() {
 	_ = spotify.CreateSpotifyBuilder(spotifyConfig)
 
 	discordConfig := discord.LoadConfig("secrets_discord.json")	
-	_, err := discord.CreateDiscordBuilder(discordConfig)
+	d, err := discord.CreateDiscordBuilder(discordConfig)
 	if err != nil {
 		log.Println(err)
 		return
 	}
+
+	err = d.Open()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	defer func () {
+		err := d.Close()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+	}()
+
+	log.Println("Spot is now running. Press CTRL-C to exit.")
+	sc := make(chan os.Signal, 1)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
+	<-sc
+
+	fmt.Println()
 }
 
 func oldMainBody() {
