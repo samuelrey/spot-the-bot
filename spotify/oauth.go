@@ -52,7 +52,7 @@ func authCallback(w http.ResponseWriter, r *http.Request) {
 func getToken() (*oauth2.Token, error) {
 	token := <-tokenChan
 	if token == nil {
-		return nil, errors.New("Token not received")
+		return nil, errors.New("token not received")
 	}
 
 	return token, nil

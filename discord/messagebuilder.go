@@ -1,18 +1,26 @@
 package discord
 
-import "github.com/bwmarrin/discordgo"
+import (
+	"github.com/bwmarrin/discordgo"
+	"github.com/samuelrey/spot-discord/framework"
+)
+
 
 type DiscordBuilder struct {
-	session *discordgo.Session
+	commandHandler *framework.CommandHandler
+	session 	   *discordgo.Session
 }
 
-func CreateDiscordBuilder(config *Config) (*DiscordBuilder, error) {
+func CreateDiscordBuilder(config *Config, commandHandler *framework.CommandHandler) (*DiscordBuilder, error) {
 	session, err := discordgo.New("Bot " + config.Token)
 	if err != nil {
 		return nil, err
 	}
 
-	return &DiscordBuilder{session: session}, nil
+	return &DiscordBuilder{
+		commandHandler: commandHandler,
+		session: session,
+	}, nil
 }
 
 func (d *DiscordBuilder) Reply(channelID, content string) error {
