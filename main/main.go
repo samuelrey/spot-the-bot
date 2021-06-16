@@ -21,9 +21,18 @@ func main() {
 	spotifyConfig := spotify.LoadConfig("secrets_spotify.json")
 	_ = spotify.CreateSpotifyBuilder(spotifyConfig)
 
+	discordConfig := discord.LoadConfig("secrets_discord.json")	
+	_, err := discord.CreateDiscordBuilder(discordConfig)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+}
+
+func oldMainBody() {
 	// Open Discord session.
 	log.Println("Discord session opening.")
-	discordSession, err := discord.DiscordSession(cmdHandler)
+	discordSession, err := discord.DiscordSession(nil)
 	if err != nil {
 		log.Println(err)
 		return
