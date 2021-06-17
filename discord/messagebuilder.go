@@ -75,7 +75,7 @@ func (d *DiscordBuilder) handleMessage(
 	args := strings.Fields(content[len(prefix):])
 	name := strings.ToLower(args[0])
 
-	command, found := CmdHandler.Get(name)
+	command, found := d.commandHandler.Get(name)
 	if !found {
 		return
 	}
