@@ -13,15 +13,17 @@ const (
 )
 
 type DiscordBuilder struct {
-	commandHandler *framework.CommandHandler
-	session        *discordgo.Session
-	enrolledUsers  *[]framework.User
+	commandHandler  *framework.CommandHandler
+	session         *discordgo.Session
+	enrolledUsers   *[]framework.User
+	playlistBuilder framework.PlaylistBuilder
 }
 
 func NewDiscordBuilder(
 	config *Config,
 	commandHandler *framework.CommandHandler,
 	enrolledUsers *[]framework.User,
+	playlistBuilder framework.PlaylistBuilder,
 ) (*DiscordBuilder, error) {
 	session, err := discordgo.New("Bot " + config.Token)
 	if err != nil {
@@ -29,9 +31,10 @@ func NewDiscordBuilder(
 	}
 
 	d := DiscordBuilder{
-		commandHandler: commandHandler,
-		session:        session,
-		enrolledUsers:  enrolledUsers,
+		commandHandler:  commandHandler,
+		session:         session,
+		enrolledUsers:   enrolledUsers,
+		playlistBuilder: playlistBuilder,
 	}
 
 	d.session.AddHandler(d.handleMessage)

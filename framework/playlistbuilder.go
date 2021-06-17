@@ -1,15 +1,13 @@
 package framework
 
-type PlaylistBuilder struct {
-	MusicServiceBuilder
-}
-
 type Playlist struct {
 	ID  string
 	URL string
 }
-
-type MusicServiceBuilder interface {
-	AuthorizeUser() error
+type PlaylistBuilder interface {
 	CreatePlaylist(playlistName string) (*Playlist, error)
+}
+
+type MusicServiceAuthorizer interface {
+	AuthorizeUser() error
 }

@@ -20,10 +20,10 @@ func main() {
 	registerCommands(*cmdHandler)
 
 	spotifyConfig := spotify.LoadConfig("secrets_spotify.json")
-	_ = spotify.CreateSpotifyBuilder(spotifyConfig)
+	s := spotify.CreateSpotifyBuilder(spotifyConfig)
 
 	discordConfig := discord.LoadConfig("secrets_discord.json")
-	d, err := discord.NewDiscordBuilder(discordConfig, cmdHandler, &enrolledUsers)
+	d, err := discord.NewDiscordBuilder(discordConfig, cmdHandler, &enrolledUsers, s)
 	if err != nil {
 		log.Println(err)
 		return
