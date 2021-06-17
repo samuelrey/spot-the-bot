@@ -12,7 +12,7 @@ type DiscordBuilder struct {
 	session        *discordgo.Session
 }
 
-func CreateDiscordBuilder(
+func NewDiscordBuilder(
 	config *Config,
 	commandHandler *framework.CommandHandler,
 ) (*DiscordBuilder, error) {
@@ -21,10 +21,15 @@ func CreateDiscordBuilder(
 		return nil, err
 	}
 
-	return &DiscordBuilder{
+	d := DiscordBuilder{
 		commandHandler: commandHandler,
 		session:        session,
-	}, nil
+	}
+
+	d.session.AddHandler(d.handleMessage)
+	d.session.Identify.Intents = discordgo.IntentsGuildMessages
+
+	return &d, nil
 }
 
 func (d *DiscordBuilder) Reply(channelID, content string) error {
@@ -43,9 +48,6 @@ func (d *DiscordBuilder) DirectMessage(recipientID, content string) error {
 }
 
 func (d *DiscordBuilder) Open() error {
-	d.session.AddHandler(d.handleMessage)
-	d.session.Identify.Intents = discordgo.IntentsGuildMessages
-
 	return d.session.Open()
 }
 

@@ -22,7 +22,7 @@ func main() {
 	_ = spotify.CreateSpotifyBuilder(spotifyConfig)
 
 	discordConfig := discord.LoadConfig("secrets_discord.json")	
-	d, err := discord.CreateDiscordBuilder(discordConfig, cmdHandler)
+	d, err := discord.NewDiscordBuilder(discordConfig, cmdHandler)
 	if err != nil {
 		log.Println(err)
 		return
