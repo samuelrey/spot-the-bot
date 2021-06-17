@@ -9,14 +9,14 @@ import (
 // used by commands.
 func NewContext(
 	session *discordgo.Session,
-	channel *discordgo.Channel,
+	channelID string,
 	enrolledUsers *[]framework.User,
 	actor *discordgo.User,
 ) *framework.Context {
 	ctx := new(framework.Context)
 	discordMessager := DiscordMessager{
-		Session: session,
-		Channel: channel,
+		Session:   session,
+		ChannelID: channelID,
 	}
 	ctx.Messager = discordMessager
 	ctx.EnrolledUsers = enrolledUsers
@@ -28,12 +28,12 @@ func NewContext(
 }
 
 type DiscordMessager struct {
-	Session *discordgo.Session
-	Channel *discordgo.Channel
+	Session   *discordgo.Session
+	ChannelID string
 }
 
 func (d DiscordMessager) Reply(content string) error {
-	_, err := d.Session.ChannelMessageSend(d.Channel.ID, content)
+	_, err := d.Session.ChannelMessageSend(d.ChannelID, content)
 	return err
 }
 

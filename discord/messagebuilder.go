@@ -1,17 +1,21 @@
 package discord
 
 import (
+	"strings"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/samuelrey/spot-discord/framework"
 )
 
-
 type DiscordBuilder struct {
 	commandHandler *framework.CommandHandler
-	session 	   *discordgo.Session
+	session        *discordgo.Session
 }
 
-func CreateDiscordBuilder(config *Config, commandHandler *framework.CommandHandler) (*DiscordBuilder, error) {
+func CreateDiscordBuilder(
+	config *Config,
+	commandHandler *framework.CommandHandler,
+) (*DiscordBuilder, error) {
 	session, err := discordgo.New("Bot " + config.Token)
 	if err != nil {
 		return nil, err
@@ -19,7 +23,7 @@ func CreateDiscordBuilder(config *Config, commandHandler *framework.CommandHandl
 
 	return &DiscordBuilder{
 		commandHandler: commandHandler,
-		session: session,
+		session:        session,
 	}, nil
 }
 
@@ -49,13 +53,34 @@ func (d *DiscordBuilder) Close() error {
 	return d.session.Close()
 }
 
-func (d *DiscordBuilder) handleMessage(dg *discordgo.Session, message *discordgo.MessageCreate) {
+func (d *DiscordBuilder) handleMessage(
+	dg *discordgo.Session,
+	message *discordgo.MessageCreate,
+) {
 	user := message.Author
 	if user.Bot {
 		return
 	}
 
-	if message.Content == "testing" {
-		d.Reply(message.ChannelID, "this is another test")
+	content := message.Content
+
+	if len(content) <= len(prefix) {
+		return
 	}
+
+	if content[:len(prefix)] != prefix {
+		return
+	}
+
+	args := strings.Fields(content[len(prefix):])
+	name := strings.ToLower(args[0])
+
+	command, found := CmdHandler.Get(name)
+	if !found {
+		return
+	}
+
+	ctx := NewContext(dg, message.ChannelID, &enrolledUsers, user)
+	c := *command
+	c(ctx)
 }

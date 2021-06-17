@@ -1,7 +1,6 @@
 package discord
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -72,13 +71,7 @@ func handleMessage(dg *discordgo.Session, message *discordgo.MessageCreate) {
 		return
 	}
 
-	channel, err := dg.Channel(message.ChannelID)
-	if err != nil {
-		fmt.Println("Error retrieving channel, ", err)
-		return
-	}
-
-	ctx := NewContext(dg, channel, &enrolledUsers, user)
+	ctx := NewContext(dg, message.ChannelID, &enrolledUsers, user)
 	c := *command
 	c(ctx)
 }
