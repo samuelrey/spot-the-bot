@@ -7,6 +7,11 @@ import (
 	"github.com/samuelrey/spot-discord/framework"
 )
 
+// TODO make prefix configurable.
+const (
+	prefix = "!"
+)
+
 type DiscordBuilder struct {
 	commandHandler *framework.CommandHandler
 	session        *discordgo.Session

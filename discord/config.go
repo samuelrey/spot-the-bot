@@ -7,9 +7,7 @@ import (
 )
 
 type Config struct {
-	Token     string `json:"DISCORD_TOKEN"`
-	ServerID  string `json:"DISCORD_SERVER_ID"`
-	ChannelID string `json:"DISCORD_CHANNEL_ID"`
+	Token string `json:"DISCORD_TOKEN"`
 }
 
 func LoadConfig(filename string) *Config {
