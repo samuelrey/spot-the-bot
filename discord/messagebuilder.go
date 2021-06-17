@@ -10,11 +10,13 @@ import (
 type DiscordBuilder struct {
 	commandHandler *framework.CommandHandler
 	session        *discordgo.Session
+	enrolledUsers  *[]framework.User
 }
 
 func NewDiscordBuilder(
 	config *Config,
 	commandHandler *framework.CommandHandler,
+	enrolledUsers *[]framework.User,
 ) (*DiscordBuilder, error) {
 	session, err := discordgo.New("Bot " + config.Token)
 	if err != nil {
@@ -24,6 +26,7 @@ func NewDiscordBuilder(
 	d := DiscordBuilder{
 		commandHandler: commandHandler,
 		session:        session,
+		enrolledUsers:  enrolledUsers,
 	}
 
 	d.session.AddHandler(d.handleMessage)
@@ -82,7 +85,7 @@ func (d *DiscordBuilder) handleMessage(
 		return
 	}
 
-	ctx := NewContext(dg, message.ChannelID, &enrolledUsers, user)
+	ctx := NewContext(dg, message.ChannelID, d.enrolledUsers, user)
 	c := *command
 	c(ctx)
 }

@@ -15,14 +15,16 @@ import (
 )
 
 func main() {
+	enrolledUsers := make([]framework.User, 0)
+
 	cmdHandler := framework.NewCommandHandler()
 	registerCommands(*cmdHandler)
 
 	spotifyConfig := spotify.LoadConfig("secrets_spotify.json")
 	_ = spotify.CreateSpotifyBuilder(spotifyConfig)
 
-	discordConfig := discord.LoadConfig("secrets_discord.json")	
-	d, err := discord.NewDiscordBuilder(discordConfig, cmdHandler)
+	discordConfig := discord.LoadConfig("secrets_discord.json")
+	d, err := discord.NewDiscordBuilder(discordConfig, cmdHandler, &enrolledUsers)
 	if err != nil {
 		log.Println(err)
 		return
@@ -34,7 +36,7 @@ func main() {
 		return
 	}
 
-	defer func () {
+	defer func() {
 		err := d.Close()
 		if err != nil {
 			log.Println(err)
