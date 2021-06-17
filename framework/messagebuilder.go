@@ -22,8 +22,3 @@ type ReplyBuilder interface {
 type DirectMessageBuilder interface {
 	DirectMessage(recipientID, content string) error
 }
-
-type BotBuilder interface {
-	Open() error
-	Close() error
-}
