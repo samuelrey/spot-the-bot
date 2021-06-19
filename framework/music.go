@@ -4,10 +4,11 @@ type Playlist struct {
 	ID  string
 	URL string
 }
-type PlaylistBuilder interface {
+
+type PlaylistCreator interface {
 	CreatePlaylist(playlistName string) (*Playlist, error)
 }
 
-type MusicServiceAuthorizer interface {
+type MusicAuthorizer interface {
 	AuthorizeUser() error
 }
