@@ -14,7 +14,6 @@ const (
 
 type DiscordBuilder struct {
 	DiscordConnector
-	DiscordMessager
 	commandHandler  *framework.CommandHandler
 	enrolledUsers   *[]framework.User
 	playlistBuilder framework.PlaylistCreator
@@ -33,9 +32,6 @@ func NewDiscordBuilder(
 
 	d := DiscordBuilder{
 		DiscordConnector: DiscordConnector{
-			session: session,
-		},
-		DiscordMessager: DiscordMessager{
 			session: session,
 		},
 		commandHandler:  commandHandler,
@@ -76,9 +72,19 @@ func (d *DiscordBuilder) handleMessage(
 		return
 	}
 
-	ctx := NewContext(dg, message.ChannelID, d.enrolledUsers, user)
+	ctx := framework.CommandContext{
+		Messager: &DiscordMessager{
+			session:   dg,
+			channelID: message.ChannelID,
+		},
+		EnrolledUsers: d.enrolledUsers,
+		Actor: framework.User{
+			ID:       user.ID,
+			Username: user.Username,
+		},
+	}
 	c := *command
-	c(ctx)
+	c(&ctx)
 }
 
 type DiscordMessager struct {
