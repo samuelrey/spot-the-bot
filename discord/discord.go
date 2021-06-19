@@ -82,11 +82,12 @@ func (d *DiscordBuilder) handleMessage(
 }
 
 type DiscordMessager struct {
-	session *discordgo.Session
+	session   *discordgo.Session
+	channelID string
 }
 
-func (dm *DiscordMessager) Reply(channelID, content string) error {
-	_, err := dm.session.ChannelMessageSend(channelID, content)
+func (dm *DiscordMessager) Reply(content string) error {
+	_, err := dm.session.ChannelMessageSend(dm.channelID, content)
 	return err
 }
 

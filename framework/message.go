@@ -11,7 +11,7 @@ type Messager interface {
 }
 
 type Replyer interface {
-	Reply(channelID, content string) error
+	Reply(content string) error
 }
 
 type DirectMessager interface {

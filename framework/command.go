@@ -25,5 +25,4 @@ type CommandContext struct {
 	Messager
 	EnrolledUsers *[]User
 	Actor         User
-	ChannelID     string
 }

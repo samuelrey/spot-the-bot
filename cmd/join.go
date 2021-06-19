@@ -8,7 +8,7 @@ import (
 
 const StrJoinFmt = "Welcome to the club, %s!\n"
 
-func Join(ctx *framework.Context) {
+func Join(ctx *framework.CommandContext) {
 	for _, user := range *ctx.EnrolledUsers {
 		if ctx.Actor.ID == user.ID {
 			return
@@ -21,5 +21,5 @@ func Join(ctx *framework.Context) {
 	}
 	(*ctx.EnrolledUsers) = append((*ctx.EnrolledUsers), user)
 	content := fmt.Sprintf(StrJoinFmt, ctx.Actor)
-	ctx.Reply(ctx.ChannelID, content)
+	ctx.Reply(content)
 }

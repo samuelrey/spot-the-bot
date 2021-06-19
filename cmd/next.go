@@ -11,7 +11,7 @@ const (
 	StrNextUser = "%s, you're up next!"
 )
 
-func Next(ctx *framework.Context) {
+func Next(ctx *framework.CommandContext) {
 	if len(*ctx.EnrolledUsers) <= 1 {
 		return
 	}
@@ -23,10 +23,10 @@ func Next(ctx *framework.Context) {
 
 	(*ctx.EnrolledUsers) = append((*ctx.EnrolledUsers)[1:], skipUser)
 	content := fmt.Sprintf(StrSkipUser, ctx.Actor)
-	ctx.Reply(ctx.ChannelID, content)
+	ctx.Reply(content)
 
 	nextUser := (*ctx.EnrolledUsers)[0]
 
 	content = fmt.Sprintf(StrNextUser, nextUser)
-	ctx.Reply(ctx.ChannelID, content)
+	ctx.Reply(content)
 }

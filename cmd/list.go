@@ -11,12 +11,12 @@ const (
 	StrListUsersFmt = "Here's the queue:\n%s\n"
 )
 
-func List(ctx *framework.Context) {
+func List(ctx *framework.CommandContext) {
 	if len(*ctx.EnrolledUsers) == 0 {
-		ctx.Reply(ctx.ChannelID, StrListNoUsers)
+		ctx.Reply(StrListNoUsers)
 		return
 	}
 
 	content := fmt.Sprintf(StrListUsersFmt, *ctx.EnrolledUsers)
-	ctx.Reply(ctx.ChannelID, content)
+	ctx.Reply(content)
 }

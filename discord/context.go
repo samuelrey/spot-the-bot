@@ -12,12 +12,16 @@ func NewContext(
 	channelID string,
 	enrolledUsers *[]framework.User,
 	actor *discordgo.User,
-) *framework.Context {
-	ctx := new(framework.Context)
+) *framework.CommandContext {
+	ctx := new(framework.CommandContext)
 	ctx.EnrolledUsers = enrolledUsers
 	ctx.Actor = framework.User{
 		ID:       actor.ID,
 		Username: actor.Username,
+	}
+	ctx.Messager = &DiscordMessager{
+		session:   session,
+		channelID: channelID,
 	}
 	return ctx
 }

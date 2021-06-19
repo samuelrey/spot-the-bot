@@ -11,7 +11,7 @@ const StrPlaylistCreatedFmt = "Done! :tada: Now it's up to to you to " +
 	"add a few tracks to set the vibe :performing_arts:. " +
 	"Then share it in channel! :headphones:\n%v\n"
 
-func Create(ctx *framework.Context) {
+func Create(ctx *framework.CommandContext) {
 	if len(*ctx.EnrolledUsers) < 1 {
 		return
 	}

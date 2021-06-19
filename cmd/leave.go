@@ -8,7 +8,7 @@ import (
 
 const StrLeaveFmt = "No hard feelings, %s!\n"
 
-func Leave(ctx *framework.Context) {
+func Leave(ctx *framework.CommandContext) {
 	found := -1
 	for i, user := range *ctx.EnrolledUsers {
 		if ctx.Actor.ID == user.ID {
@@ -21,6 +21,6 @@ func Leave(ctx *framework.Context) {
 			(*ctx.EnrolledUsers)[found+1:]...,
 		)
 		content := fmt.Sprintf(StrLeaveFmt, ctx.Actor)
-		ctx.Reply(ctx.ChannelID, content)
+		ctx.Reply(content)
 	}
 }
