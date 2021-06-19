@@ -16,14 +16,14 @@ type DiscordBuilder struct {
 	commandHandler  *framework.CommandHandler
 	session         *discordgo.Session
 	enrolledUsers   *[]framework.User
-	playlistBuilder framework.Playlister
+	playlistBuilder framework.PlaylistCreator
 }
 
 func NewDiscordBuilder(
 	config *Config,
 	commandHandler *framework.CommandHandler,
 	enrolledUsers *[]framework.User,
-	playlistBuilder framework.Playlister,
+	playlistBuilder framework.PlaylistCreator,
 ) (*DiscordBuilder, error) {
 	session, err := discordgo.New("Bot " + config.Token)
 	if err != nil {

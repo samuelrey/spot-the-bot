@@ -1,28 +1,10 @@
 package framework
 
-import (
-	"fmt"
-)
-
 type Context struct {
-	Messager      MessageBuilder
+	Messager
 	EnrolledUsers *[]User
 	Actor         User
 	ChannelID     string
-}
-
-func (ctx Context) Reply(content string) {
-	err := ctx.Messager.Reply(ctx.ChannelID, content)
-	if err != nil {
-		fmt.Println("Error sending message, ", err)
-	}
-}
-
-func (ctx Context) DirectMessage(recipient, content string) {
-	err := ctx.Messager.DirectMessage(recipient, content)
-	if err != nil {
-		fmt.Println("Error sending direct message, ", err)
-	}
 }
 
 type User struct {

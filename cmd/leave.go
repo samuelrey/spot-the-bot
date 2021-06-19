@@ -21,6 +21,6 @@ func Leave(ctx *framework.Context) {
 			(*ctx.EnrolledUsers)[found+1:]...,
 		)
 		content := fmt.Sprintf(StrLeaveFmt, ctx.Actor)
-		ctx.Reply(content)
+		ctx.Reply(ctx.ChannelID, content)
 	}
 }

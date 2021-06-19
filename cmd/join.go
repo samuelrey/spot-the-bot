@@ -21,5 +21,5 @@ func Join(ctx *framework.Context) {
 	}
 	(*ctx.EnrolledUsers) = append((*ctx.EnrolledUsers), user)
 	content := fmt.Sprintf(StrJoinFmt, ctx.Actor)
-	ctx.Reply(content)
+	ctx.Reply(ctx.ChannelID, content)
 }

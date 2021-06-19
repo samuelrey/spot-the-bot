@@ -13,10 +13,10 @@ const (
 
 func List(ctx *framework.Context) {
 	if len(*ctx.EnrolledUsers) == 0 {
-		ctx.Reply(StrListNoUsers)
+		ctx.Reply(ctx.ChannelID, StrListNoUsers)
 		return
 	}
 
 	content := fmt.Sprintf(StrListUsersFmt, *ctx.EnrolledUsers)
-	ctx.Reply(content)
+	ctx.Reply(ctx.ChannelID, content)
 }

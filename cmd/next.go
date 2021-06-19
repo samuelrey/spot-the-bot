@@ -23,10 +23,10 @@ func Next(ctx *framework.Context) {
 
 	(*ctx.EnrolledUsers) = append((*ctx.EnrolledUsers)[1:], skipUser)
 	content := fmt.Sprintf(StrSkipUser, ctx.Actor)
-	ctx.Reply(content)
+	ctx.Reply(ctx.ChannelID, content)
 
 	nextUser := (*ctx.EnrolledUsers)[0]
 
 	content = fmt.Sprintf(StrNextUser, nextUser)
-	ctx.Reply(content)
+	ctx.Reply(ctx.ChannelID, content)
 }
