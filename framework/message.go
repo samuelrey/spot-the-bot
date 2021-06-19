@@ -17,3 +17,12 @@ type Replyer interface {
 type DirectMessager interface {
 	DirectMessage(recipientID, content string) error
 }
+
+type MessageUser struct {
+	ID       string
+	Username string
+}
+
+func (u MessageUser) String() string {
+	return u.Username
+}

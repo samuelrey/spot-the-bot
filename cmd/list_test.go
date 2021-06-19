@@ -21,7 +21,7 @@ func (suite *ListTestSuite) TestListNoUsers() {
 
 // Test that we reply with the expected content given users have enrolled.
 func (suite *ListTestSuite) TestListWithUsers() {
-	suite.EnrolledUsers = []framework.User{suite.Actor}
+	suite.EnrolledUsers = []framework.MessageUser{suite.Actor}
 
 	content := fmt.Sprintf(StrListUsersFmt, suite.EnrolledUsers)
 	suite.Replyer.On("Reply", content).Return(nil)

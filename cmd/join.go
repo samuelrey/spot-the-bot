@@ -15,7 +15,7 @@ func Join(ctx *framework.CommandContext) {
 		}
 	}
 
-	user := framework.User{
+	user := framework.MessageUser{
 		ID:       ctx.Actor.ID,
 		Username: ctx.Actor.Username,
 	}

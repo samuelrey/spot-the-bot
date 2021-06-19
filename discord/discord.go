@@ -15,14 +15,14 @@ const (
 type DiscordBuilder struct {
 	DiscordConnector
 	commandHandler  *framework.CommandHandler
-	enrolledUsers   *[]framework.User
+	enrolledUsers   *[]framework.MessageUser
 	playlistBuilder framework.PlaylistCreator
 }
 
 func NewDiscordBuilder(
 	config *Config,
 	commandHandler *framework.CommandHandler,
-	enrolledUsers *[]framework.User,
+	enrolledUsers *[]framework.MessageUser,
 	playlistBuilder framework.PlaylistCreator,
 ) (*DiscordBuilder, error) {
 	session, err := discordgo.New("Bot " + config.Token)
@@ -78,7 +78,7 @@ func (d *DiscordBuilder) handleMessage(
 			channelID: message.ChannelID,
 		},
 		EnrolledUsers: d.enrolledUsers,
-		Actor: framework.User{
+		Actor: framework.MessageUser{
 			ID:       user.ID,
 			Username: user.Username,
 		},

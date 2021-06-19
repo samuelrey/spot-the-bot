@@ -11,31 +11,31 @@ import (
 
 type NextTestSuite struct {
 	framework.CommandTestSuite
-	notActor framework.User
+	notActor framework.MessageUser
 }
 
 func (suite *NextTestSuite) SetupTest() {
 	suite.CommandTestSuite.SetupTest()
-	suite.notActor = framework.User{ID: "osh#1219", Username: "osh"}
+	suite.notActor = framework.MessageUser{ID: "osh#1219", Username: "osh"}
 }
 
 // Test that we do not pop/push the user at the head if it is not the actor.
 func (suite *NextTestSuite) TestNextActorNotHeadOfQueue() {
-	suite.EnrolledUsers = []framework.User{suite.notActor, suite.Actor}
+	suite.EnrolledUsers = []framework.MessageUser{suite.notActor, suite.Actor}
 	suite.Replyer.On("Reply", mock.Anything).Return(nil)
 
 	Next(&suite.Ctx)
 
 	suite.Replyer.AssertNotCalled(suite.T(), "Reply", mock.Anything)
 	suite.Require().Equal(
-		[]framework.User{suite.notActor, suite.Actor},
+		[]framework.MessageUser{suite.notActor, suite.Actor},
 		suite.EnrolledUsers,
 	)
 }
 
 // Test that we pop/push the user at the head if it is the actor.
 func (suite *NextTestSuite) TestNextActor() {
-	suite.EnrolledUsers = []framework.User{suite.Actor, suite.notActor}
+	suite.EnrolledUsers = []framework.MessageUser{suite.Actor, suite.notActor}
 	suite.Replyer.On("Reply", mock.Anything).Return(nil)
 
 	Next(&suite.Ctx)
@@ -45,7 +45,7 @@ func (suite *NextTestSuite) TestNextActor() {
 	content = fmt.Sprintf(StrNextUser, suite.notActor)
 	suite.Replyer.AssertCalled(suite.T(), "Reply", content)
 	suite.Require().Equal(
-		[]framework.User{suite.notActor, suite.Actor},
+		[]framework.MessageUser{suite.notActor, suite.Actor},
 		suite.EnrolledUsers,
 	)
 }

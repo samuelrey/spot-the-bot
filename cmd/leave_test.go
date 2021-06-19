@@ -11,13 +11,13 @@ import (
 
 type LeaveTestSuite struct {
 	framework.CommandTestSuite
-	notActor framework.User
+	notActor framework.MessageUser
 }
 
 func (suite *LeaveTestSuite) SetupTest() {
 	suite.CommandTestSuite.SetupTest()
-	suite.notActor = framework.User{ID: "osh#1219", Username: "osh"}
-	suite.EnrolledUsers = []framework.User{suite.notActor}
+	suite.notActor = framework.MessageUser{ID: "osh#1219", Username: "osh"}
+	suite.EnrolledUsers = []framework.MessageUser{suite.notActor}
 }
 
 // Test that we do not remove any users if the actor is not enrolled.
@@ -28,7 +28,7 @@ func (suite *LeaveTestSuite) TestLeaveUserNotEnrolled() {
 
 	suite.Replyer.AssertNotCalled(suite.T(), "Reply", mock.Anything)
 	suite.Require().Equal(
-		[]framework.User{suite.notActor},
+		[]framework.MessageUser{suite.notActor},
 		suite.EnrolledUsers,
 	)
 }
@@ -44,7 +44,7 @@ func (suite *LeaveTestSuite) TestLeaveUser() {
 
 	suite.Replyer.AssertCalled(suite.T(), "Reply", content)
 	suite.Require().Equal(
-		[]framework.User{suite.notActor},
+		[]framework.MessageUser{suite.notActor},
 		suite.EnrolledUsers,
 	)
 }

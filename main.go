@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	enrolledUsers := make([]framework.User, 0)
+	enrolledUsers := make([]framework.MessageUser, 0)
 
 	cmdHandler := framework.NewCommandHandler()
 	registerCommands(*cmdHandler)
