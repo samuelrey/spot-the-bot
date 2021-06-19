@@ -7,7 +7,7 @@ import (
 
 type MockMessager struct{ mock.Mock }
 
-func (m *MockMessager) Reply(content string) error {
+func (m *MockMessager) Reply(channelID, content string) error {
 	m.Called(content)
 	return nil
 }

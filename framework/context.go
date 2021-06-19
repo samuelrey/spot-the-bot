@@ -8,10 +8,11 @@ type Context struct {
 	Messager      MessageBuilder
 	EnrolledUsers *[]User
 	Actor         User
+	ChannelID     string
 }
 
 func (ctx Context) Reply(content string) {
-	err := ctx.Messager.Reply(content)
+	err := ctx.Messager.Reply(ctx.ChannelID, content)
 	if err != nil {
 		fmt.Println("Error sending message, ", err)
 	}

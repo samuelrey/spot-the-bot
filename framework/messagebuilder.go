@@ -5,18 +5,8 @@ type MessageBuilder interface {
 	DirectMessageBuilder
 }
 
-// TODO use only one message builder interface
-type V2MessageBuilder interface {
-	V2ReplyBuilder
-	DirectMessageBuilder
-}
-
-type V2ReplyBuilder interface {
-	Reply(channelID, content string) error
-}
-
 type ReplyBuilder interface {
-	Reply(content string) error
+	Reply(channelID, content string) error
 }
 
 type DirectMessageBuilder interface {
