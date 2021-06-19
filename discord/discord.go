@@ -13,8 +13,9 @@ const (
 )
 
 type DiscordBuilder struct {
+	DiscordConnector
+	DiscordMessager
 	commandHandler  *framework.CommandHandler
-	session         *discordgo.Session
 	enrolledUsers   *[]framework.User
 	playlistBuilder framework.PlaylistCreator
 }
@@ -31,14 +32,19 @@ func NewDiscordBuilder(
 	}
 
 	d := DiscordBuilder{
+		DiscordConnector: DiscordConnector{
+			session: session,
+		},
+		DiscordMessager: DiscordMessager{
+			session: session,
+		},
 		commandHandler:  commandHandler,
-		session:         session,
 		enrolledUsers:   enrolledUsers,
 		playlistBuilder: playlistBuilder,
 	}
 
-	d.session.AddHandler(d.handleMessage)
-	d.session.Identify.Intents = discordgo.IntentsGuildMessages
+	session.AddHandler(d.handleMessage)
+	session.Identify.Intents = discordgo.IntentsGuildMessages
 
 	return &d, nil
 }
@@ -73,4 +79,35 @@ func (d *DiscordBuilder) handleMessage(
 	ctx := NewContext(dg, message.ChannelID, d.enrolledUsers, user)
 	c := *command
 	c(ctx)
+}
+
+type DiscordMessager struct {
+	session *discordgo.Session
+}
+
+func (dm *DiscordMessager) Reply(channelID, content string) error {
+	_, err := dm.session.ChannelMessageSend(channelID, content)
+	return err
+}
+
+func (dm *DiscordMessager) DirectMessage(recipientID, content string) error {
+	userChannel, err := dm.session.UserChannelCreate(recipientID)
+	if err != nil {
+		return err
+	}
+
+	_, err = dm.session.ChannelMessageSend(userChannel.ID, content)
+	return err
+}
+
+type DiscordConnector struct {
+	session *discordgo.Session
+}
+
+func (dc *DiscordConnector) Open() error {
+	return dc.session.Open()
+}
+
+func (dc *DiscordConnector) Close() error {
+	return dc.session.Close()
 }
