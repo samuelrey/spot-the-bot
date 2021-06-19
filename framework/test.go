@@ -20,7 +20,7 @@ func (m *MockMessager) DirectMessage(recipient, content string) error {
 type CommandTestSuite struct {
 	suite.Suite
 	Actor         User
-	Ctx           Context
+	Ctx           CommandContext
 	EnrolledUsers []User
 	Replyer       MockMessager
 }
@@ -30,7 +30,7 @@ func (suite *CommandTestSuite) SetupTest() {
 	suite.Replyer = MockMessager{}
 	suite.EnrolledUsers = make([]User, 0)
 
-	suite.Ctx = Context{
+	suite.Ctx = CommandContext{
 		Messager:      &suite.Replyer,
 		EnrolledUsers: &suite.EnrolledUsers,
 		Actor:         suite.Actor,
