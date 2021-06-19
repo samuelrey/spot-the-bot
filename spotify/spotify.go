@@ -76,8 +76,7 @@ func (sb *SpotifyBuilder) AuthorizeUser() error {
 // CreatePlaylist creates a playlist with the given name for the authorized
 // user.
 func (sb *SpotifyBuilder) CreatePlaylist(playlistName string) (*framework.Playlist, error) {
-	// TODO make the playlist collaborative
-	playlist, err := sb.client.CreatePlaylistForUser(sb.user.ID, playlistName, "", false)
+	playlist, err := sb.client.CreateCollaborativePlaylistForUser(sb.user.ID, playlistName, "")
 	if err != nil {
 		return nil, errors.Wrap(err, "Create Spotify playlist")
 	}
