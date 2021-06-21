@@ -13,7 +13,7 @@ const (
 )
 
 type DiscordBuilder struct {
-	DiscordConnector
+	session         *discordgo.Session
 	commandHandler  *framework.CommandHandler
 	enrolledUsers   *[]framework.MessageUser
 	playlistBuilder framework.PlaylistCreator
@@ -31,9 +31,7 @@ func NewDiscordBuilder(
 	}
 
 	d := DiscordBuilder{
-		DiscordConnector: DiscordConnector{
-			session: session,
-		},
+		session:         session,
 		commandHandler:  commandHandler,
 		enrolledUsers:   enrolledUsers,
 		playlistBuilder: playlistBuilder,
@@ -90,6 +88,14 @@ func (d *DiscordBuilder) handleMessage(
 	c(&ctx)
 }
 
+func (db *DiscordBuilder) Open() error {
+	return db.session.Open()
+}
+
+func (db *DiscordBuilder) Close() error {
+	return db.session.Close()
+}
+
 type DiscordMessager struct {
 	session   *discordgo.Session
 	channelID string
@@ -108,16 +114,4 @@ func (dm *DiscordMessager) DirectMessage(recipientID, content string) error {
 
 	_, err = dm.session.ChannelMessageSend(userChannel.ID, content)
 	return err
-}
-
-type DiscordConnector struct {
-	session *discordgo.Session
-}
-
-func (dc *DiscordConnector) Open() error {
-	return dc.session.Open()
-}
-
-func (dc *DiscordConnector) Close() error {
-	return dc.session.Close()
 }

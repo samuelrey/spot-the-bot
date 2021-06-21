@@ -1,10 +1,5 @@
 package framework
 
-type MessageConnecter interface {
-	Open() error
-	Close() error
-}
-
 type Messager interface {
 	Replyer
 	DirectMessager
