@@ -34,6 +34,7 @@ func main() {
 		return
 	}
 
+	log.Println("Discord session opening.")
 	err = d.Open()
 	if err != nil {
 		log.Println(err)
@@ -55,41 +56,6 @@ func main() {
 
 	fmt.Println()
 }
-
-// func oldMainBody() {
-// 	// Open Discord session.
-// 	log.Println("Discord session opening.")
-// 	discordSession, err := discord.DiscordSession(nil)
-// 	if err != nil {
-// 		log.Println(err)
-// 		return
-// 	}
-
-// 	// Start server to handle Spotify OAuth callback.
-// 	authServer := spotify.StartAuthServer()
-
-// 	// Cleanup
-// 	defer func() {
-// 		if err := discordSession.Close(); err != nil {
-// 			log.Println(err)
-// 		} else {
-// 			log.Println("Discord session closed.")
-// 		}
-
-// 		if err := authServer.Shutdown(context.Background()); err != nil {
-// 			log.Println(err)
-// 		} else {
-// 			log.Println("Authentication server shutdown.")
-// 		}
-// 	}()
-
-// 	log.Println("Spot is now running. Press CTRL-C to exit.")
-// 	sc := make(chan os.Signal, 1)
-// 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
-// 	<-sc
-
-// 	fmt.Println()
-// }
 
 func registerCommands(cmdHandler framework.CommandHandler) {
 	cmdHandler.Register("join", cmd.Join)
