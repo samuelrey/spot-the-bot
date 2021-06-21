@@ -77,7 +77,8 @@ func (d *DiscordBuilder) handleMessage(
 			session:   dg,
 			channelID: message.ChannelID,
 		},
-		EnrolledUsers: d.enrolledUsers,
+		PlaylistCreator: d.playlistBuilder,
+		EnrolledUsers:   d.enrolledUsers,
 		Actor: framework.MessageUser{
 			ID:       user.ID,
 			Username: user.Username,

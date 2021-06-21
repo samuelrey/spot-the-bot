@@ -23,6 +23,7 @@ func (cmdHandler CommandHandler) Register(name string, command Command) {
 
 type CommandContext struct {
 	Messager
+	PlaylistCreator
 	EnrolledUsers *[]MessageUser
 	Actor         MessageUser
 }
