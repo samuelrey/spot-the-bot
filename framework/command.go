@@ -2,23 +2,23 @@ package framework
 
 type (
 	Command        func(*CommandContext)
-	CmdMap         map[string]Command
+	CommandMap     map[string]Command
 	CommandHandler struct {
-		CmdMap
+		CommandMap
 	}
 )
 
 func NewCommandHandler() *CommandHandler {
-	return &CommandHandler{make(CmdMap)}
+	return &CommandHandler{make(CommandMap)}
 }
 
-func (cmdHandler CommandHandler) Get(name string) (*Command, bool) {
-	cmd, found := cmdHandler.CmdMap[name]
-	return &cmd, found
+func (ch CommandHandler) Get(name string) (*Command, bool) {
+	command, found := ch.CommandMap[name]
+	return &command, found
 }
 
-func (cmdHandler CommandHandler) Register(name string, command Command) {
-	cmdHandler.CmdMap[name] = command
+func (ch CommandHandler) Register(name string, command Command) {
+	ch.CommandMap[name] = command
 }
 
 type CommandContext struct {
