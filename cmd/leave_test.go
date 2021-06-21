@@ -22,11 +22,11 @@ func (suite *LeaveTestSuite) SetupTest() {
 
 // Test that we do not remove any users if the actor is not enrolled.
 func (suite *LeaveTestSuite) TestLeaveUserNotEnrolled() {
-	suite.Replyer.On("Reply", mock.Anything).Return(nil)
+	suite.Messager.On("Reply", mock.Anything).Return(nil)
 
 	Leave(&suite.Ctx)
 
-	suite.Replyer.AssertNotCalled(suite.T(), "Reply", mock.Anything)
+	suite.Messager.AssertNotCalled(suite.T(), "Reply", mock.Anything)
 	suite.Require().Equal(
 		[]framework.MessageUser{suite.notActor},
 		suite.EnrolledUsers,
@@ -38,11 +38,11 @@ func (suite *LeaveTestSuite) TestLeaveUser() {
 	suite.EnrolledUsers = append(suite.EnrolledUsers, suite.Actor)
 
 	content := fmt.Sprintf(StrLeaveFmt, suite.Actor)
-	suite.Replyer.On("Reply", content).Return(nil)
+	suite.Messager.On("Reply", content).Return(nil)
 
 	Leave(&suite.Ctx)
 
-	suite.Replyer.AssertCalled(suite.T(), "Reply", content)
+	suite.Messager.AssertCalled(suite.T(), "Reply", content)
 	suite.Require().Equal(
 		[]framework.MessageUser{suite.notActor},
 		suite.EnrolledUsers,

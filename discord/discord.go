@@ -72,12 +72,14 @@ func (d *DiscordBuilder) handleMessage(
 		return
 	}
 
+	// TODO get playlist name from config
 	ctx := framework.CommandContext{
 		Messager: &DiscordMessager{
 			session:   dg,
 			channelID: message.ChannelID,
 		},
 		PlaylistCreator: d.playlistBuilder,
+		PlaylistName:    "Einstok",
 		EnrolledUsers:   d.enrolledUsers,
 		Actor: framework.MessageUser{
 			ID:       user.ID,

@@ -12,11 +12,11 @@ type ListTestSuite struct{ framework.CommandTestSuite }
 
 // Test that we reply with the expected content given no users have enrolled.
 func (suite *ListTestSuite) TestListNoUsers() {
-	suite.Replyer.On("Reply", StrListNoUsers).Return(nil)
+	suite.Messager.On("Reply", StrListNoUsers).Return(nil)
 
 	List(&suite.Ctx)
 
-	suite.Replyer.AssertCalled(suite.T(), "Reply", StrListNoUsers)
+	suite.Messager.AssertCalled(suite.T(), "Reply", StrListNoUsers)
 }
 
 // Test that we reply with the expected content given users have enrolled.
@@ -24,11 +24,11 @@ func (suite *ListTestSuite) TestListWithUsers() {
 	suite.EnrolledUsers = []framework.MessageUser{suite.Actor}
 
 	content := fmt.Sprintf(StrListUsersFmt, suite.EnrolledUsers)
-	suite.Replyer.On("Reply", content).Return(nil)
+	suite.Messager.On("Reply", content).Return(nil)
 
 	List(&suite.Ctx)
 
-	suite.Replyer.AssertCalled(suite.T(), "Reply", content)
+	suite.Messager.AssertCalled(suite.T(), "Reply", content)
 }
 
 func TestListCommand(t *testing.T) {

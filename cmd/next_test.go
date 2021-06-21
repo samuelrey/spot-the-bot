@@ -20,13 +20,13 @@ func (suite *NextTestSuite) SetupTest() {
 }
 
 // Test that we do not pop/push the user at the head if it is not the actor.
-func (suite *NextTestSuite) TestNextActorNotHeadOfQueue() {
+func (suite *NextTestSuite) TestActorNotHeadOfQueue() {
 	suite.EnrolledUsers = []framework.MessageUser{suite.notActor, suite.Actor}
-	suite.Replyer.On("Reply", mock.Anything).Return(nil)
+	suite.Messager.On("Reply", mock.Anything).Return(nil)
 
 	Next(&suite.Ctx)
 
-	suite.Replyer.AssertNotCalled(suite.T(), "Reply", mock.Anything)
+	suite.Messager.AssertNotCalled(suite.T(), "Reply", mock.Anything)
 	suite.Require().Equal(
 		[]framework.MessageUser{suite.notActor, suite.Actor},
 		suite.EnrolledUsers,
@@ -34,16 +34,16 @@ func (suite *NextTestSuite) TestNextActorNotHeadOfQueue() {
 }
 
 // Test that we pop/push the user at the head if it is the actor.
-func (suite *NextTestSuite) TestNextActor() {
+func (suite *NextTestSuite) TestNext() {
 	suite.EnrolledUsers = []framework.MessageUser{suite.Actor, suite.notActor}
-	suite.Replyer.On("Reply", mock.Anything).Return(nil)
+	suite.Messager.On("Reply", mock.Anything).Return(nil)
 
 	Next(&suite.Ctx)
 
 	content := fmt.Sprintf(StrSkipUser, suite.Actor)
-	suite.Replyer.AssertCalled(suite.T(), "Reply", content)
+	suite.Messager.AssertCalled(suite.T(), "Reply", content)
 	content = fmt.Sprintf(StrNextUser, suite.notActor)
-	suite.Replyer.AssertCalled(suite.T(), "Reply", content)
+	suite.Messager.AssertCalled(suite.T(), "Reply", content)
 	suite.Require().Equal(
 		[]framework.MessageUser{suite.notActor, suite.Actor},
 		suite.EnrolledUsers,
