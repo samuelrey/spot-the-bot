@@ -11,8 +11,7 @@ type SpotifyPlaylistCreator struct {
 	user   *spotify.User
 }
 
-// CreatePlaylist creates a playlist with the given name for the authorized
-// user.
+// CreatePlaylist creates a playlist an authorized user.
 func (sp *SpotifyPlaylistCreator) CreatePlaylist(playlistName string) (*framework.Playlist, error) {
 	playlist, err := sp.client.CreateCollaborativePlaylistForUser(sp.user.ID, playlistName, "")
 	if err != nil {
