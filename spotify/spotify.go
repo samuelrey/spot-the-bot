@@ -1,6 +1,7 @@
 package spotify
 
 import (
+	"context"
 	"log"
 
 	"github.com/pkg/errors"
@@ -28,14 +29,17 @@ func init() {
 	tknHandler = NewTokenHandler()
 }
 
-type SpotifyBuilder struct {
+type SpotifyAuthorizer struct {
 	authenticator *spotify.Authenticator
 	authURL       string
-	client        *spotify.Client
-	user          *spotify.User
 }
 
-func CreateSpotifyBuilder(config *Config) *SpotifyBuilder {
+type SpotifyPlaylistCreator struct {
+	client *spotify.Client
+	user   *spotify.User
+}
+
+func NewSpotifyAuthorizer(config *Config) *SpotifyAuthorizer {
 	spotifyAuthenticator := spotify.NewAuthenticator(
 		config.RedirectURL,
 		spotify.ScopePlaylistModifyPrivate,
@@ -44,7 +48,7 @@ func CreateSpotifyBuilder(config *Config) *SpotifyBuilder {
 
 	authURL = spotifyAuthenticator.AuthURL(config.State)
 
-	return &SpotifyBuilder{
+	return &SpotifyAuthorizer{
 		authenticator: &spotifyAuthenticator,
 		authURL:       authURL,
 	}
@@ -54,29 +58,41 @@ func CreateSpotifyBuilder(config *Config) *SpotifyBuilder {
 // token we receive from Spotify is used to create a reusable client. The
 // client is tied to a single Spotify user. We recommend creating an account
 // on Spotify specific for this bot.
-func (sb *SpotifyBuilder) AuthorizeUser() error {
+func (sa *SpotifyAuthorizer) AuthorizeUser() (framework.PlaylistCreator, error) {
+	log.Println("Authentication server starting")
+	srv := StartAuthServer()
+
+	defer func() {
+		if err := srv.Shutdown(context.Background()); err != nil {
+			log.Println(err)
+		} else {
+			log.Println("Authentication server shutdown.")
+		}
+	}()
+
 	log.Printf("Navigate here to authorize Spotify user: %s\n", authURL)
 
 	token, err := getToken()
 	if err != nil {
-		return errors.Wrap(err, "Authorize Spotify user")
+		return nil, errors.Wrap(err, "Authorize Spotify user")
 	}
 
 	client := spotifyAuthenticator.NewClient(token)
 	spotifyUser, err := client.CurrentUser()
 	if err != nil {
-		return errors.Wrap(err, "Authorize Spotify user")
+		return nil, errors.Wrap(err, "Authorize Spotify user")
 	}
 
-	sb.client = &client
-	sb.user = &spotifyUser.User
-	return nil
+	return &SpotifyPlaylistCreator{
+		client: &client,
+		user:   &spotifyUser.User,
+	}, nil
 }
 
 // CreatePlaylist creates a playlist with the given name for the authorized
 // user.
-func (sb *SpotifyBuilder) CreatePlaylist(playlistName string) (*framework.Playlist, error) {
-	playlist, err := sb.client.CreateCollaborativePlaylistForUser(sb.user.ID, playlistName, "")
+func (sp *SpotifyPlaylistCreator) CreatePlaylist(playlistName string) (*framework.Playlist, error) {
+	playlist, err := sp.client.CreateCollaborativePlaylistForUser(sp.user.ID, playlistName, "")
 	if err != nil {
 		return nil, errors.Wrap(err, "Create Spotify playlist")
 	}

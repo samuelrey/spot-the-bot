@@ -10,5 +10,5 @@ type PlaylistCreator interface {
 }
 
 type MusicAuthorizer interface {
-	AuthorizeUser() error
+	AuthorizeUser() (PlaylistCreator, error)
 }

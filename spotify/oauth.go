@@ -8,6 +8,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
+// TODO create error channel.
 var tokenChan = make(chan *oauth2.Token)
 
 // StartAuthServer creates HTTP server to handle callback request from Spotify.
@@ -17,7 +18,6 @@ func StartAuthServer() *http.Server {
 	http.HandleFunc("/callback", authCallback)
 
 	go func() {
-		log.Println("Authentication server starting")
 		if err := server.ListenAndServe(); err != http.ErrServerClosed {
 			panic(err)
 		}
