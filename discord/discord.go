@@ -43,6 +43,8 @@ func NewDiscordBuilder(
 	return &d, nil
 }
 
+// handleMessage reads messages sent in the guild and runs commands based on
+// those messages.
 func (d *DiscordBuilder) handleMessage(
 	dg *discordgo.Session,
 	message *discordgo.MessageCreate,
@@ -71,6 +73,7 @@ func (d *DiscordBuilder) handleMessage(
 	}
 
 	// TODO get playlist name from config
+	// TODO optionally populate dependencies based on command
 	ctx := framework.CommandContext{
 		Messager: &DiscordMessager{
 			session:   dg,
@@ -88,10 +91,12 @@ func (d *DiscordBuilder) handleMessage(
 	c(&ctx)
 }
 
+// Open is a wrapper function to open a Discord session.
 func (db *DiscordBuilder) Open() error {
 	return db.session.Open()
 }
 
+// Close is a wrapper function to close a Discord session.
 func (db *DiscordBuilder) Close() error {
 	return db.session.Close()
 }
@@ -101,11 +106,15 @@ type DiscordMessager struct {
 	channelID string
 }
 
+// Reply sends a message with the given contents to the channel where the
+// command was received.
 func (dm *DiscordMessager) Reply(content string) error {
 	_, err := dm.session.ChannelMessageSend(dm.channelID, content)
 	return err
 }
 
+// DirectMessage sends a message with the given contents to a Discord user in
+// private.
 func (dm *DiscordMessager) DirectMessage(recipientID, content string) error {
 	userChannel, err := dm.session.UserChannelCreate(recipientID)
 	if err != nil {
