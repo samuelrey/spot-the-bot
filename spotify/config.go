@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"os"
 )
 
 type Config struct {
@@ -22,4 +23,13 @@ func LoadConfig(filename string) *Config {
 	var config Config
 	json.Unmarshal(body, &config)
 	return &config
+}
+
+func LoadConfigFromEnv() *Config {
+	return &Config{
+		ClientID: os.Getenv("SPOTIFY_CLIENT_ID"),
+		RedirectURL: os.Getenv("SPOTIFY_REDIRECT_URL"),
+		Secret: os.Getenv("SPOTIFY_SECRET"),
+		State: os.Getenv("SPOTIFY_STATE"),
+	}
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"os"
 )
 
 type Config struct {
@@ -19,4 +20,10 @@ func LoadConfig(filename string) *Config {
 	var config Config
 	json.Unmarshal(body, &config)
 	return &config
+}
+
+func LoadConfigFromEnv() *Config {
+	return &Config{
+		Token: os.Getenv("DISCORD_TOKEN"),
+	}
 }

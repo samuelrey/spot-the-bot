@@ -19,7 +19,7 @@ func main() {
 	cmdHandler := framework.NewCommandHandler()
 	registerCommands(*cmdHandler)
 
-	spotifyConfig := spotify.LoadConfig("secrets_spotify.json")
+	spotifyConfig := spotify.LoadConfigFromEnv()
 	sa := spotify.NewSpotifyAuthorizer(spotifyConfig)
 	sp, err := sa.AuthorizeUser()
 	if err != nil {
@@ -27,7 +27,7 @@ func main() {
 		return
 	}
 
-	discordConfig := discord.LoadConfig("secrets_discord.json")
+	discordConfig := discord.LoadConfigFromEnv()
 	d, err := discord.NewDiscordBuilder(discordConfig, cmdHandler, &enrolledUsers, sp)
 	if err != nil {
 		log.Println(err)
