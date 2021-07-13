@@ -21,11 +21,11 @@ Spot uses environment variables to interact with message & music services.
 
 Service | Variable | Description
 ------- | -------- | -----------
-Discord | DISCORD_TOKEN | Token found under the Bot section of the application.
-Spotify | CLIENT_ID | ID found in the overview of the application.
-Spotify | SECRET | Client secret found in the overview of the application.
-Spotify | REDIRECT_URL | The address where you deploy Spot, eg `http://example.com/callback`.
-Spotify | STATE | This variable is used to validate tokens received from Spotify. It can be set to anything, eg `spot-the-bot`. 
+Discord | `DISCORD_TOKEN` | Token found under the Bot section of the application.
+Spotify | `CLIENT_ID` | ID found in the overview of the application.
+Spotify | `SECRET` | Client secret found in the overview of the application.
+Spotify | `REDIRECT_URL` | The address where you deploy Spot, eg `http://example.com/callback`.
+Spotify | `STATE` | This variable is used to validate tokens received from Spotify. It can be set to anything, eg `spot-the-bot`. 
 
 ## Usage
 In this section we cover how to run and interact with Spot.
@@ -49,4 +49,11 @@ Command | Description
 **Anybody can add to the playlist, not just people in the queue!**
 
 ## Contibuting
-TODO
+I'm happy to work together--feel free to reach out!
+
+Checkout the GitHub Issues for feature and improvement ideas.
+
+Start at the **Installation** section. Most steps listed there are required for local development and testing. Any additional steps are covered below.
+
+### **Spotify**
+Add `http://localhost:8080/callback` to the list of redirect URLs in the developer portal and set the `REDIRECT_URL` environment variable accordingly.
