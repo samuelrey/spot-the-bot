@@ -11,6 +11,8 @@ import (
 	"golang.org/x/oauth2"
 )
 
+const STATE = "spot-the-bot"
+
 var tokenChan = make(chan *oauth2.Token)
 var errChan = make(chan error)
 
@@ -27,12 +29,12 @@ func NewSpotifyAuthorizer(config *Config) *SpotifyAuthorizer {
 	)
 	spotifyAuthenticator.SetAuthInfo(config.ClientID, config.Secret)
 
-	authURL := spotifyAuthenticator.AuthURL(config.State)
+	authURL := spotifyAuthenticator.AuthURL(STATE)
 
 	return &SpotifyAuthorizer{
 		authenticator: &spotifyAuthenticator,
 		authURL:       authURL,
-		state:         config.State,
+		state:         STATE,
 	}
 }
 

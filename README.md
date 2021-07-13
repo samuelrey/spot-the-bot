@@ -25,7 +25,6 @@ Discord | `DISCORD_TOKEN` | Token found under the Bot section of the application
 Spotify | `CLIENT_ID` | ID found in the overview of the application.
 Spotify | `SECRET` | Client secret found in the overview of the application.
 Spotify | `REDIRECT_URL` | The address where you deploy Spot, eg `http://example.com/callback`.
-Spotify | `STATE` | This variable is used to validate tokens received from Spotify. It can be set to anything, eg `spot-the-bot`. 
 
 ## Usage
 In this section we cover how to run and interact with Spot.

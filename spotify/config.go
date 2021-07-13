@@ -11,7 +11,6 @@ type Config struct {
 	ClientID    string `json:"CLIENT_ID"`
 	RedirectURL string `json:"REDIRECT_URL"`
 	Secret      string `json:"SECRET"`
-	State       string `json:"STATE"`
 }
 
 func LoadConfig(filename string) *Config {
@@ -30,6 +29,5 @@ func LoadConfigFromEnv() *Config {
 		ClientID: os.Getenv("SPOTIFY_CLIENT_ID"),
 		RedirectURL: os.Getenv("SPOTIFY_REDIRECT_URL"),
 		Secret: os.Getenv("SPOTIFY_SECRET"),
-		State: os.Getenv("SPOTIFY_STATE"),
 	}
 }
