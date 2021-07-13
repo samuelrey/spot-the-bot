@@ -1,15 +1,43 @@
-# spot-the-bot
+# spot-the-bot (aka Spot)
 Build collaborative playlists with friends.
 
 ## Installation
-TODO
+In this section we cover how to setup applications for message & music services, and how to configure environment variables for Spot.
+
+### **Discord**
+Start by creating a new application for Spot in the [Discord developer portal](https://discord.com/developers/applications).
+Next install Spot to your server. Replace your client ID and navigate to the authorization URL. Select the server on which you want to install Spot.
+
+> https://discord.com/oauth2/authorize?client_id=REPLACEME&scope=bot&permissions=2048
+
+Spot requires permission to send messages, hence 2048.
+
+### **Spotify**
+Start by creating a new application for Spot in the [Spotify developer portal](https://developer.spotify.com/dashboard/applications).
+In order to authenticate, you will have to set the redirect URL to the address where you deploy Spot, eg `http://example.com/callback`.
+
+### **Environment Variables**
+Spot uses environment variables to interact with message & music services.
+
+Service | Variable | Description
+------- | -------- | -----------
+Discord | DISCORD_TOKEN | Token found under the Bot section of the application.
+Spotify | CLIENT_ID | ID found in the overview of the application.
+Spotify | SECRET | Client secret found in the overview of the application.
+Spotify | REDIRECT_URL | The address where you deploy Spot, eg `http://example.com/callback`.
+Spotify | STATE | This variable is used to validate tokens received from Spotify. It can be set to anything, eg `spot-the-bot`. 
 
 ## Usage
+In this section we cover how to run and interact with Spot.
+
+### **Run**
 `go build && ./spot-the-bot`
 
 You will then be prompted to authorize Spot to create playlists for a Spotify user. This _could_ be your own personal account, but **we recommend you create a separate account for Spot**.
 
-### Commands
+### **Commands**
+At this point you can interact with Spot.
+
 Command | Description
 ------- | -----------
 `!join` | Jump into the queue of people that want to start a playlist.
