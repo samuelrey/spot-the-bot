@@ -7,10 +7,10 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/samuelrey/spot-discord/cmd"
-	"github.com/samuelrey/spot-discord/discord"
-	"github.com/samuelrey/spot-discord/framework"
-	"github.com/samuelrey/spot-discord/spotify"
+	"github.com/samuelrey/spot-the-bot/cmd"
+	"github.com/samuelrey/spot-the-bot/discord"
+	"github.com/samuelrey/spot-the-bot/framework"
+	"github.com/samuelrey/spot-the-bot/spotify"
 )
 
 func main() {

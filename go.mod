@@ -1,4 +1,4 @@
-module github.com/samuelrey/spot-discord
+module github.com/samuelrey/spot-the-bot
 
 go 1.13
 

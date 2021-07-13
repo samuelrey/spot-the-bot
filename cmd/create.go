@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/samuelrey/spot-discord/framework"
+	"github.com/samuelrey/spot-the-bot/framework"
 )
 
 const StrPlaylistCreatedFmt = "Done! :tada: Now it's up to to you to " +

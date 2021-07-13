@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/samuelrey/spot-discord/framework"
+	"github.com/samuelrey/spot-the-bot/framework"
 )
 
 // TODO make prefix configurable.

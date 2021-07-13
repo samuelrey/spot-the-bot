@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/samuelrey/spot-discord/framework"
+	"github.com/samuelrey/spot-the-bot/framework"
 )
 
 const StrJoinFmt = "Welcome to the club, %s!\n"

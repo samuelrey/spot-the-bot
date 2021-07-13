@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
-	"github.com/samuelrey/spot-discord/framework"
+	"github.com/samuelrey/spot-the-bot/framework"
 	"github.com/zmb3/spotify"
 	"golang.org/x/oauth2"
 )

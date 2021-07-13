@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/samuelrey/spot-discord/framework"
+	"github.com/samuelrey/spot-the-bot/framework"
 	"github.com/stretchr/testify/suite"
 )
 
