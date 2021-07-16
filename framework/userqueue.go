@@ -2,8 +2,8 @@ package framework
 
 type UserQueue interface {
 	Head() *MessageUser
+	Length() int
 	Pop() *MessageUser
-	Push(mu MessageUser) UserQueue
-	Remove(mu MessageUser) UserQueue
-	String() string
+	Push(mu MessageUser)
+	Remove(mu MessageUser)
 }
