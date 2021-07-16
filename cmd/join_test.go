@@ -19,24 +19,22 @@ func (suite *JoinTestSuite) TestJoinUser() {
 	Join(&suite.Ctx)
 
 	suite.Messager.AssertCalled(suite.T(), "Reply", content)
-	suite.Require().Equal(
-		[]framework.MessageUser{suite.Actor},
-		suite.EnrolledUsers,
-	)
+
+	expected := framework.NewSimpleUserQueue([]framework.MessageUser{suite.Actor})
+	suite.Require().Equal(&expected, suite.UserQueue)
 }
 
 // Test that the acting user is not added again if they are already enrolled.
 func (suite *JoinTestSuite) TestJoinUserAlreadyEnrolled() {
-	suite.EnrolledUsers = []framework.MessageUser{suite.Actor}
+	suite.UserQueue.Push(suite.Actor)
 	suite.Messager.On("Reply", mock.Anything).Return(nil)
 
 	Join(&suite.Ctx)
 
 	suite.Messager.AssertNotCalled(suite.T(), "Reply", mock.Anything)
-	suite.Require().Equal(
-		[]framework.MessageUser{suite.Actor},
-		suite.EnrolledUsers,
-	)
+
+	expected := framework.NewSimpleUserQueue([]framework.MessageUser{suite.Actor})
+	suite.Require().Equal(&expected, suite.UserQueue)
 }
 
 func TestJoinCommand(t *testing.T) {

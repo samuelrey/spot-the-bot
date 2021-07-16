@@ -15,15 +15,15 @@ const (
 type DiscordBuilder struct {
 	session         *discordgo.Session
 	commandHandler  *framework.CommandHandler
-	enrolledUsers   *[]framework.MessageUser
 	playlistBuilder framework.PlaylistCreator
+	userQueue       framework.UserQueue
 }
 
 func NewDiscordBuilder(
 	config *Config,
 	commandHandler *framework.CommandHandler,
-	enrolledUsers *[]framework.MessageUser,
 	playlistBuilder framework.PlaylistCreator,
+	userQueue framework.UserQueue,
 ) (*DiscordBuilder, error) {
 	session, err := discordgo.New("Bot " + config.Token)
 	if err != nil {
@@ -33,7 +33,7 @@ func NewDiscordBuilder(
 	d := DiscordBuilder{
 		session:         session,
 		commandHandler:  commandHandler,
-		enrolledUsers:   enrolledUsers,
+		userQueue:       userQueue,
 		playlistBuilder: playlistBuilder,
 	}
 
@@ -81,7 +81,7 @@ func (d *DiscordBuilder) handleMessage(
 		},
 		PlaylistCreator: d.playlistBuilder,
 		PlaylistName:    "Einstok",
-		EnrolledUsers:   d.enrolledUsers,
+		UserQueue:       d.userQueue,
 		Actor: framework.MessageUser{
 			ID:       user.ID,
 			Username: user.Username,

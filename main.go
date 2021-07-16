@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	enrolledUsers := make([]framework.MessageUser, 0)
+	userQueue := framework.NewSimpleUserQueue([]framework.MessageUser{})
 
 	cmdHandler := framework.NewCommandHandler()
 	registerCommands(*cmdHandler)
@@ -28,7 +28,7 @@ func main() {
 	}
 
 	discordConfig := discord.LoadConfigFromEnv()
-	d, err := discord.NewDiscordBuilder(discordConfig, cmdHandler, &enrolledUsers, sp)
+	d, err := discord.NewDiscordBuilder(discordConfig, cmdHandler, sp, &userQueue)
 	if err != nil {
 		log.Println(err)
 		return

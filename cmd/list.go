@@ -12,11 +12,11 @@ const (
 )
 
 func List(ctx *framework.CommandContext) {
-	if len(*ctx.EnrolledUsers) == 0 {
+	if ctx.UserQueue.Length() == 0 {
 		ctx.Reply(StrListNoUsers)
 		return
 	}
 
-	content := fmt.Sprintf(StrListUsersFmt, *ctx.EnrolledUsers)
+	content := fmt.Sprintf(StrListUsersFmt, ctx.UserQueue)
 	ctx.Reply(content)
 }
