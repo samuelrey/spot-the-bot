@@ -47,6 +47,9 @@ func main() {
 		return
 	}
 
+	discordSession.AddHandler(handleMessage)
+	discordSession.Identify.Intents = discordgo.IntentsGuildMessages
+
 	log.Println("Discord session opening.")
 	err = discordSession.Open()
 	if err != nil {

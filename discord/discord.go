@@ -4,7 +4,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// TODO make prefix configurable.
 type DiscordMessager struct {
 	Session   *discordgo.Session
 	ChannelID string
