@@ -8,8 +8,8 @@ type (
 	}
 )
 
-func NewCommandHandler() *CommandHandler {
-	return &CommandHandler{make(CommandMap)}
+func NewCommandHandler() CommandHandler {
+	return CommandHandler{make(CommandMap)}
 }
 
 func (ch CommandHandler) Get(name string) (*Command, bool) {

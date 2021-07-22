@@ -17,7 +17,7 @@ import (
 
 var (
 	c   config
-	ch  *framework.CommandHandler
+	ch  framework.CommandHandler
 	pc  framework.PlaylistCreator
 	uq  framework.UserQueue
 	err error
@@ -29,7 +29,7 @@ func main() {
 	uq = framework.NewUserQueue([]framework.MessageUser{})
 
 	ch = framework.NewCommandHandler()
-	registerCommands(*ch)
+	registerCommands(ch)
 
 	spotifyAuthorizer := spotify.NewSpotifyAuthorizer(c.SpotifyConfig)
 	pc, err = spotifyAuthorizer.AuthorizeUser()
