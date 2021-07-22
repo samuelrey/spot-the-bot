@@ -31,8 +31,7 @@ func main() {
 	ch = framework.NewCommandHandler()
 	registerCommands(ch)
 
-	spotifyAuthorizer := spotify.NewSpotifyAuthorizer(c.SpotifyConfig)
-	pc, err = spotifyAuthorizer.AuthorizeUser()
+	pc, err = spotify.NewPlaylistCreator(c.SpotifyConfig)
 	if err != nil {
 		log.Println(err)
 		return
@@ -72,7 +71,7 @@ func main() {
 
 type config struct {
 	*discord.DiscordConfig
-	*spotify.SpotifyConfig
+	spotify.SpotifyConfig
 	Prefix string
 }
 

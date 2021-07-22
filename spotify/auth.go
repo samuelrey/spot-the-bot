@@ -1,12 +1,8 @@
 package spotify
 
 import (
-	"context"
-	"log"
 	"net/http"
 
-	"github.com/pkg/errors"
-	"github.com/samuelrey/spot-the-bot/framework"
 	"github.com/zmb3/spotify"
 	"golang.org/x/oauth2"
 )
@@ -16,66 +12,42 @@ const STATE = "spot-the-bot"
 var tokenChan = make(chan *oauth2.Token)
 var errChan = make(chan error)
 
-type SpotifyAuthorizer struct {
-	authenticator *spotify.Authenticator
-	authURL       string
-	state         string
+type authenticator struct {
+	spotify.Authenticator
+	authURL string
 }
 
-func NewSpotifyAuthorizer(config *SpotifyConfig) *SpotifyAuthorizer {
-	spotifyAuthenticator := spotify.NewAuthenticator(
-		config.RedirectURL,
+func newAuthenticator(conf SpotifyConfig) authenticator {
+	a := spotify.NewAuthenticator(
+		conf.RedirectURL,
 		spotify.ScopePlaylistModifyPrivate,
 	)
-	spotifyAuthenticator.SetAuthInfo(config.ClientID, config.Secret)
+	a.SetAuthInfo(conf.ClientID, conf.Secret)
+	authURL := a.AuthURL(STATE)
 
-	authURL := spotifyAuthenticator.AuthURL(STATE)
-
-	return &SpotifyAuthorizer{
-		authenticator: &spotifyAuthenticator,
+	return authenticator{
+		Authenticator: a,
 		authURL:       authURL,
-		state:         STATE,
 	}
-}
-
-// AuthorizeUser takes a user through the Spotify authorization flow. Return
-// a PlaylistCreator which is tied to a single Spotify user's account. We
-// recommend creating an account on Spotify specific for this bot.
-func (sa *SpotifyAuthorizer) AuthorizeUser() (framework.PlaylistCreator, error) {
-	log.Println("Auth server starting.")
-	srv := sa.startAuthServer()
-
-	defer func() {
-		if err := srv.Shutdown(context.Background()); err != nil {
-			log.Println(err)
-		} else {
-			log.Println("Auth server shutdown.")
-		}
-	}()
-
-	log.Printf("Navigate here to authorize Spotify user: %s\n", sa.authURL)
-
-	token, err := getToken()
-	if err != nil {
-		return nil, errors.Wrap(err, "authorize spotify user")
-	}
-
-	client := sa.authenticator.NewClient(token)
-	spotifyUser, err := client.CurrentUser()
-	if err != nil {
-		return nil, errors.Wrap(err, "authorize spotify user")
-	}
-
-	return &SpotifyPlaylistCreator{
-		client: &client,
-		user:   &spotifyUser.User,
-	}, nil
 }
 
 // startAuthServer creates HTTP server to handle callback request from Spotify.
-func (sa SpotifyAuthorizer) startAuthServer() *http.Server {
+// authCallback waits for the request from Spotify containing the oauth2 token
+// for using their API.
+func (a authenticator) startAuthServer() *http.Server {
 	server := &http.Server{Addr: ":8080"}
-	http.HandleFunc("/callback", sa.authCallback)
+
+	authCallback := func(w http.ResponseWriter, r *http.Request) {
+		token, err := a.Token(STATE, r)
+		if err != nil {
+			errChan <- err
+			return
+		}
+
+		tokenChan <- token
+	}
+
+	http.HandleFunc("/callback", authCallback)
 
 	go func() {
 		if err := server.ListenAndServe(); err != http.ErrServerClosed {
@@ -86,19 +58,6 @@ func (sa SpotifyAuthorizer) startAuthServer() *http.Server {
 	return server
 }
 
-// authCallback writes the Spotify token or error to their respective channels.
-func (sa SpotifyAuthorizer) authCallback(w http.ResponseWriter, r *http.Request) {
-	token, err := sa.authenticator.Token(sa.state, r)
-
-	if err != nil {
-		errChan <- err
-		return
-	}
-
-	tokenChan <- token
-}
-
-// getToken reads the Spotify token or error written by
 func getToken() (*oauth2.Token, error) {
 	select {
 	case token := <-tokenChan:

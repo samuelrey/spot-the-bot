@@ -24,8 +24,8 @@ func LoadConfig(filename string) *SpotifyConfig {
 	return &config
 }
 
-func LoadConfigFromEnv() *SpotifyConfig {
-	return &SpotifyConfig{
+func LoadConfigFromEnv() SpotifyConfig {
+	return SpotifyConfig{
 		ClientID:    os.Getenv("SPOTIFY_CLIENT_ID"),
 		RedirectURL: os.Getenv("SPOTIFY_REDIRECT_URL"),
 		Secret:      os.Getenv("SPOTIFY_SECRET"),
