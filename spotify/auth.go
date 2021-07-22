@@ -22,7 +22,7 @@ type SpotifyAuthorizer struct {
 	state         string
 }
 
-func NewSpotifyAuthorizer(config *Config) *SpotifyAuthorizer {
+func NewSpotifyAuthorizer(config *SpotifyConfig) *SpotifyAuthorizer {
 	spotifyAuthenticator := spotify.NewAuthenticator(
 		config.RedirectURL,
 		spotify.ScopePlaylistModifyPrivate,

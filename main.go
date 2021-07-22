@@ -15,10 +15,8 @@ import (
 	"github.com/samuelrey/spot-the-bot/spotify"
 )
 
-// TODO make prefix configurable.
-const prefix = "!"
-
 var (
+	c   config
 	ch  *framework.CommandHandler
 	pc  framework.PlaylistCreator
 	uq  framework.UserQueue
@@ -26,22 +24,22 @@ var (
 )
 
 func main() {
+	c = loadConfigFromEnv()
+
 	q := framework.NewSimpleUserQueue([]framework.MessageUser{})
 	uq = &q
 
 	ch = framework.NewCommandHandler()
 	registerCommands(*ch)
 
-	spotifyConfig := spotify.LoadConfigFromEnv()
-	spotifyAuthorizer := spotify.NewSpotifyAuthorizer(spotifyConfig)
+	spotifyAuthorizer := spotify.NewSpotifyAuthorizer(c.SpotifyConfig)
 	pc, err = spotifyAuthorizer.AuthorizeUser()
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	discordConfig := discord.LoadConfigFromEnv()
-	discordSession, err := discordgo.New("Bot " + discordConfig.Token)
+	discordSession, err := discordgo.New("Bot " + c.Token)
 	if err != nil {
 		log.Println(err)
 		return
@@ -73,6 +71,20 @@ func main() {
 	fmt.Println()
 }
 
+type config struct {
+	*discord.DiscordConfig
+	*spotify.SpotifyConfig
+	Prefix string
+}
+
+func loadConfigFromEnv() config {
+	return config{
+		DiscordConfig: discord.LoadConfigFromEnv(),
+		SpotifyConfig: spotify.LoadConfigFromEnv(),
+		Prefix:        os.Getenv("SPOT_PREFIX"),
+	}
+}
+
 func registerCommands(cmdHandler framework.CommandHandler) {
 	cmdHandler.Register("join", cmd.Join)
 	cmdHandler.Register("leave", cmd.Leave)
@@ -94,15 +106,15 @@ func handleMessage(
 
 	content := message.Content
 
-	if len(content) <= len(prefix) {
+	if len(content) <= len(c.Prefix) {
 		return
 	}
 
-	if content[:len(prefix)] != prefix {
+	if content[:len(c.Prefix)] != c.Prefix {
 		return
 	}
 
-	args := strings.Fields(content[len(prefix):])
+	args := strings.Fields(content[len(c.Prefix):])
 	name := strings.ToLower(args[0])
 
 	command, found := ch.Get(name)
