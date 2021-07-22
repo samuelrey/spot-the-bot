@@ -2,24 +2,15 @@ package framework
 
 import "fmt"
 
-type UserQueue interface {
-	Contains(mu MessageUser) bool
-	Head() *MessageUser
-	Length() int
-	Pop() *MessageUser
-	Push(mu MessageUser)
-	Remove(mu MessageUser) bool
-}
-
-type SimpleUserQueue struct {
+type UserQueue struct {
 	queue []MessageUser
 }
 
-func NewSimpleUserQueue(users []MessageUser) SimpleUserQueue {
-	return SimpleUserQueue{queue: users}
+func NewUserQueue(users []MessageUser) UserQueue {
+	return UserQueue{queue: users}
 }
 
-func (s *SimpleUserQueue) Contains(mu MessageUser) bool {
+func (s UserQueue) Contains(mu MessageUser) bool {
 	for _, u := range s.queue {
 		if mu.ID == u.ID {
 			return true
@@ -29,7 +20,7 @@ func (s *SimpleUserQueue) Contains(mu MessageUser) bool {
 	return false
 }
 
-func (s *SimpleUserQueue) Head() *MessageUser {
+func (s UserQueue) Head() *MessageUser {
 	if len(s.queue) == 0 {
 		return nil
 	}
@@ -37,11 +28,11 @@ func (s *SimpleUserQueue) Head() *MessageUser {
 	return &s.queue[0]
 }
 
-func (s *SimpleUserQueue) Length() int {
+func (s UserQueue) Length() int {
 	return len(s.queue)
 }
 
-func (s *SimpleUserQueue) Pop() *MessageUser {
+func (s UserQueue) Pop() *MessageUser {
 	if len(s.queue) == 0 {
 		return nil
 	}
@@ -51,11 +42,11 @@ func (s *SimpleUserQueue) Pop() *MessageUser {
 	return &out
 }
 
-func (s *SimpleUserQueue) Push(mu MessageUser) {
+func (s UserQueue) Push(mu MessageUser) {
 	s.queue = append(s.queue, mu)
 }
 
-func (s *SimpleUserQueue) Remove(mu MessageUser) bool {
+func (s UserQueue) Remove(mu MessageUser) bool {
 	found := -1
 	for i, user := range s.queue {
 		if mu.ID == user.ID {
@@ -72,6 +63,6 @@ func (s *SimpleUserQueue) Remove(mu MessageUser) bool {
 	return false
 }
 
-func (s SimpleUserQueue) String() string {
+func (s UserQueue) String() string {
 	return fmt.Sprintf("%s", s.queue)
 }

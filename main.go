@@ -26,8 +26,7 @@ var (
 func main() {
 	c = loadConfigFromEnv()
 
-	q := framework.NewSimpleUserQueue([]framework.MessageUser{})
-	uq = &q
+	uq = framework.NewUserQueue([]framework.MessageUser{})
 
 	ch = framework.NewCommandHandler()
 	registerCommands(*ch)
