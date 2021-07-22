@@ -27,8 +27,8 @@ func (suite *LeaveTestSuite) TestLeaveUserNotEnrolled() {
 	Leave(&suite.Ctx)
 
 	suite.Messager.AssertNotCalled(suite.T(), "Reply", mock.Anything)
-	expected := framework.NewSimpleUserQueue([]framework.MessageUser{suite.notActor})
-	suite.Require().Equal(&expected, suite.UserQueue)
+	expected := framework.NewUserQueue([]framework.MessageUser{suite.notActor})
+	suite.Require().Equal(expected, suite.UserQueue)
 }
 
 // Test that we only remove the actor if they are enrolled.
@@ -41,8 +41,8 @@ func (suite *LeaveTestSuite) TestLeaveUser() {
 	Leave(&suite.Ctx)
 
 	suite.Messager.AssertCalled(suite.T(), "Reply", content)
-	expected := framework.NewSimpleUserQueue([]framework.MessageUser{suite.notActor})
-	suite.Require().Equal(&expected, suite.UserQueue)
+	expected := framework.NewUserQueue([]framework.MessageUser{suite.notActor})
+	suite.Require().Equal(expected, suite.UserQueue)
 }
 
 func TestLeaveCommand(t *testing.T) {

@@ -28,8 +28,8 @@ func (suite *NextTestSuite) TestActorNotHeadOfQueue() {
 	Next(&suite.Ctx)
 
 	suite.Messager.AssertNotCalled(suite.T(), "Reply", mock.Anything)
-	expected := framework.NewSimpleUserQueue([]framework.MessageUser{suite.notActor, suite.Actor})
-	suite.Require().Equal(&expected, suite.UserQueue)
+	expected := framework.NewUserQueue([]framework.MessageUser{suite.notActor, suite.Actor})
+	suite.Require().Equal(expected, suite.UserQueue)
 }
 
 // Test that we pop/push the user at the head if it is the actor.
@@ -44,8 +44,8 @@ func (suite *NextTestSuite) TestNext() {
 	suite.Messager.AssertCalled(suite.T(), "Reply", content)
 	content = fmt.Sprintf(StrNextUser, suite.notActor)
 	suite.Messager.AssertCalled(suite.T(), "Reply", content)
-	expected := framework.NewSimpleUserQueue([]framework.MessageUser{suite.notActor, suite.Actor})
-	suite.Require().Equal(&expected, suite.UserQueue)
+	expected := framework.NewUserQueue([]framework.MessageUser{suite.notActor, suite.Actor})
+	suite.Require().Equal(expected, suite.UserQueue)
 }
 
 func TestNextCommand(t *testing.T) {

@@ -9,7 +9,7 @@ import (
 type UserQueueSuite struct{ suite.Suite }
 
 func (suite UserQueueSuite) TestHeadPop() {
-	q := SimpleUserQueue{}
+	q := UserQueue{}
 
 	// empty queue
 	actual := q.Head()
@@ -21,7 +21,7 @@ func (suite UserQueueSuite) TestHeadPop() {
 	// nonempty queue
 	au := MessageUser{ID: "amethyst#4422", Username: "amethyst"}
 	ou := MessageUser{ID: "osh#1219", Username: "osh"}
-	q = NewSimpleUserQueue([]MessageUser{au, ou})
+	q = NewUserQueue([]MessageUser{au, ou})
 
 	actual = q.Head()
 	suite.Require().Equal(&au, actual)
@@ -35,7 +35,7 @@ func (suite UserQueueSuite) TestHeadPop() {
 }
 
 func (suite UserQueueSuite) TestPushRemove() {
-	q := SimpleUserQueue{}
+	q := UserQueue{}
 	mu := MessageUser{ID: "amethyst#4422", Username: "amethyst"}
 
 	q.Push(mu)

@@ -129,7 +129,7 @@ func handleMessage(
 		},
 		PlaylistCreator: pc,
 		PlaylistName:    "Einstok",
-		UserQueue:       uq,
+		UserQueue:       &uq,
 		Actor: framework.MessageUser{
 			ID:       user.ID,
 			Username: user.Username,

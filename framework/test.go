@@ -47,14 +47,13 @@ func (suite *CommandTestSuite) SetupTest() {
 	suite.Messager = MockMessager{}
 	suite.PlaylistCreator = MockPlaylistCreator{}
 
-	q := NewUserQueue([]MessageUser{})
-	suite.UserQueue = q
+	suite.UserQueue = NewUserQueue([]MessageUser{})
 
 	suite.Ctx = CommandContext{
 		Messager:        &suite.Messager,
 		PlaylistCreator: &suite.PlaylistCreator,
 		PlaylistName:    "Einstok",
-		UserQueue:       suite.UserQueue,
+		UserQueue:       &suite.UserQueue,
 		Actor:           suite.Actor,
 	}
 }

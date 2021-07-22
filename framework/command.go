@@ -25,6 +25,6 @@ type CommandContext struct {
 	Messager
 	PlaylistCreator
 	PlaylistName string
-	UserQueue    UserQueue
+	UserQueue    *UserQueue
 	Actor        MessageUser
 }
