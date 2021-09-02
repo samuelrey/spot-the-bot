@@ -1,24 +1,24 @@
 package framework
 
 type (
-	Command        func(*CommandContext)
-	CommandMap     map[string]Command
+	command        func(*CommandContext)
+	commandMap     map[string]command
 	CommandRegistry struct {
-		CommandMap
+		commandMap
 	}
 )
 
 func NewCommandRegistry() *CommandRegistry {
-	return &CommandRegistry{make(CommandMap)}
+	return &CommandRegistry{make(commandMap)}
 }
 
-func (cr CommandRegistry) Get(name string) (*Command, bool) {
-	command, found := cr.CommandMap[name]
-	return &command, found
+func (cr CommandRegistry) Get(name string) (*command, bool) {
+	cmd, found := cr.commandMap[name]
+	return &cmd, found
 }
 
-func (cr CommandRegistry) Register(name string, command Command) {
-	cr.CommandMap[name] = command
+func (cr CommandRegistry) Register(name string, cmd command) {
+	cr.commandMap[name] = cmd
 }
 
 type CommandContext struct {
