@@ -14,14 +14,14 @@ const (
 
 type DiscordBuilder struct {
 	session         *discordgo.Session
-	commandHandler  *framework.CommandHandler
+	commandHandler  *framework.CommandRegistry
 	enrolledUsers   *[]framework.MessageUser
 	playlistBuilder framework.PlaylistCreator
 }
 
 func NewDiscordBuilder(
 	config *Config,
-	commandHandler *framework.CommandHandler,
+	commandHandler *framework.CommandRegistry,
 	enrolledUsers *[]framework.MessageUser,
 	playlistBuilder framework.PlaylistCreator,
 ) (*DiscordBuilder, error) {

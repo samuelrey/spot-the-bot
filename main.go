@@ -16,8 +16,8 @@ import (
 func main() {
 	enrolledUsers := make([]framework.MessageUser, 0)
 
-	cmdHandler := framework.NewCommandHandler()
-	registerCommands(*cmdHandler)
+	commandRegistry := framework.NewCommandRegistry()
+	registerCommands(*commandRegistry)
 
 	spotifyConfig := spotify.LoadConfigFromEnv()
 	sa := spotify.NewSpotifyAuthorizer(spotifyConfig)
@@ -28,7 +28,7 @@ func main() {
 	}
 
 	discordConfig := discord.LoadConfigFromEnv()
-	d, err := discord.NewDiscordBuilder(discordConfig, cmdHandler, &enrolledUsers, sp)
+	d, err := discord.NewDiscordBuilder(discordConfig, commandRegistry, &enrolledUsers, sp)
 	if err != nil {
 		log.Println(err)
 		return
@@ -57,10 +57,10 @@ func main() {
 	fmt.Println()
 }
 
-func registerCommands(cmdHandler framework.CommandHandler) {
-	cmdHandler.Register("join", cmd.Join)
-	cmdHandler.Register("leave", cmd.Leave)
-	cmdHandler.Register("list", cmd.List)
-	cmdHandler.Register("next", cmd.Next)
-	cmdHandler.Register("create", cmd.Create)
+func registerCommands(commandRegistry framework.CommandRegistry) {
+	commandRegistry.Register("join", cmd.Join)
+	commandRegistry.Register("leave", cmd.Leave)
+	commandRegistry.Register("list", cmd.List)
+	commandRegistry.Register("next", cmd.Next)
+	commandRegistry.Register("create", cmd.Create)
 }
