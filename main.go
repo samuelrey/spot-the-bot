@@ -58,9 +58,9 @@ func main() {
 }
 
 func registerCommands(commandRegistry framework.CommandRegistry) {
-	commandRegistry.Register("join", cmd.Join)
-	commandRegistry.Register("leave", cmd.Leave)
-	commandRegistry.Register("list", cmd.List)
-	commandRegistry.Register("next", cmd.Next)
-	commandRegistry.Register("create", cmd.Create)
+	commandRegistry.Register("join", cmd.Join, "helloWorld")
+	commandRegistry.Register("leave", cmd.Leave, "helloWorld")
+	commandRegistry.Register("list", cmd.List, "helloWold")
+	commandRegistry.Register("next", cmd.Next, "helloWorld")
+	commandRegistry.Register("create", cmd.Create, "helloWorld")
 }

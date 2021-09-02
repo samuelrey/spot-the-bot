@@ -88,7 +88,7 @@ func (d *DiscordBuilder) handleMessage(
 		},
 	}
 	c := *command
-	c(&ctx)
+	c.RunWithContext(&ctx)
 }
 
 // Open is a wrapper function to open a Discord session.

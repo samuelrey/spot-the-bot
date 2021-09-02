@@ -1,12 +1,19 @@
 package framework
 
 type (
-	command        func(*CommandContext)
+	command        struct {
+		cmd func(*CommandContext)
+		helpMsg string
+	}
 	commandMap     map[string]command
 	CommandRegistry struct {
 		commandMap
 	}
 )
+
+func (c command) RunWithContext(ctx *CommandContext) {
+	c.cmd(ctx)
+}
 
 func NewCommandRegistry() *CommandRegistry {
 	return &CommandRegistry{make(commandMap)}
@@ -17,8 +24,8 @@ func (cr CommandRegistry) Get(name string) (*command, bool) {
 	return &cmd, found
 }
 
-func (cr CommandRegistry) Register(name string, cmd command) {
-	cr.commandMap[name] = cmd
+func (cr CommandRegistry) Register(name string, cmd func(*CommandContext), helpMsg string) {
+	cr.commandMap[name] = command{cmd: cmd, helpMsg: helpMsg}
 }
 
 type CommandContext struct {
