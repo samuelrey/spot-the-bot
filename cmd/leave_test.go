@@ -17,7 +17,7 @@ type LeaveTestSuite struct {
 func (suite *LeaveTestSuite) SetupTest() {
 	suite.CommandTestSuite.SetupTest()
 	suite.notActor = framework.MessageUser{ID: "osh#1219", Username: "osh"}
-	suite.EnrolledUsers = []framework.MessageUser{suite.notActor}
+	suite.UserQueue.Push(suite.notActor)
 }
 
 // Test that we do not remove any users if the actor is not enrolled.
@@ -27,15 +27,13 @@ func (suite *LeaveTestSuite) TestLeaveUserNotEnrolled() {
 	Leave(&suite.Ctx)
 
 	suite.Messager.AssertNotCalled(suite.T(), "Reply", mock.Anything)
-	suite.Require().Equal(
-		[]framework.MessageUser{suite.notActor},
-		suite.EnrolledUsers,
-	)
+	expected := framework.NewUserQueue([]framework.MessageUser{suite.notActor})
+	suite.Require().Equal(expected, suite.UserQueue)
 }
 
 // Test that we only remove the actor if they are enrolled.
 func (suite *LeaveTestSuite) TestLeaveUser() {
-	suite.EnrolledUsers = append(suite.EnrolledUsers, suite.Actor)
+	suite.UserQueue.Push(suite.Actor)
 
 	content := fmt.Sprintf(StrLeaveFmt, suite.Actor)
 	suite.Messager.On("Reply", content).Return(nil)
@@ -43,10 +41,8 @@ func (suite *LeaveTestSuite) TestLeaveUser() {
 	Leave(&suite.Ctx)
 
 	suite.Messager.AssertCalled(suite.T(), "Reply", content)
-	suite.Require().Equal(
-		[]framework.MessageUser{suite.notActor},
-		suite.EnrolledUsers,
-	)
+	expected := framework.NewUserQueue([]framework.MessageUser{suite.notActor})
+	suite.Require().Equal(expected, suite.UserQueue)
 }
 
 func TestLeaveCommand(t *testing.T) {

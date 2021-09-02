@@ -21,7 +21,7 @@ func (suite *CreateTestSuite) SetupTest() {
 // Test that the acting user can create a playlist and the playlist URL is
 // direct messaged to them.
 func (suite *CreateTestSuite) TestCreate() {
-	suite.EnrolledUsers = []framework.MessageUser{suite.Actor}
+	suite.UserQueue.Push(suite.Actor)
 
 	playlist := framework.Playlist{
 		ID:  suite.Ctx.PlaylistName,
@@ -41,7 +41,8 @@ func (suite *CreateTestSuite) TestCreate() {
 // Test that the acting user cannot create a playlist if they are not the head
 // of the queue.
 func (suite *CreateTestSuite) TestActorNotHeadOfQueue() {
-	suite.EnrolledUsers = []framework.MessageUser{suite.notActor, suite.Actor}
+	suite.UserQueue.Push(suite.notActor)
+	suite.UserQueue.Push(suite.Actor)
 	playlist := framework.Playlist{
 		ID:  suite.Ctx.PlaylistName,
 		URL: suite.Ctx.PlaylistName,
@@ -60,7 +61,7 @@ func (suite *CreateTestSuite) TestActorNotHeadOfQueue() {
 // Test that no direct message is sent if the create playlist function returns
 // an error.
 func (suite *CreateTestSuite) TestNoDirectMessageOnError() {
-	suite.EnrolledUsers = []framework.MessageUser{suite.Actor}
+	suite.UserQueue.Push(suite.Actor)
 	suite.Ctx.PlaylistName = "Error"
 	suite.PlaylistCreator.On("CreatePlaylist", suite.Ctx.PlaylistName)
 

@@ -5,44 +5,55 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
+	"github.com/bwmarrin/discordgo"
 	"github.com/samuelrey/spot-the-bot/cmd"
 	"github.com/samuelrey/spot-the-bot/discord"
 	"github.com/samuelrey/spot-the-bot/framework"
 	"github.com/samuelrey/spot-the-bot/spotify"
 )
 
+var (
+	c   config
+	commandRegistry *framework.CommandRegistry
+	pc  framework.PlaylistCreator
+	uq  framework.UserQueue
+	err error
+)
+
 func main() {
-	enrolledUsers := make([]framework.MessageUser, 0)
+	c = loadConfigFromEnv()
 
-	commandRegistry := framework.NewCommandRegistry()
+	commandRegistry = framework.NewCommandRegistry()
 	registerCommands(*commandRegistry)
+	uq = framework.NewUserQueue([]framework.MessageUser{})
 
-	spotifyConfig := spotify.LoadConfigFromEnv()
-	sa := spotify.NewSpotifyAuthorizer(spotifyConfig)
-	sp, err := sa.AuthorizeUser()
+	pc, err = spotify.NewPlaylistCreator(c.SpotifyConfig)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	discordConfig := discord.LoadConfigFromEnv()
-	d, err := discord.NewDiscordBuilder(discordConfig, commandRegistry, &enrolledUsers, sp)
+	discordSession, err := discordgo.New("Bot " + c.Token)
 	if err != nil {
 		log.Println(err)
 		return
 	}
+
+	discordSession.AddHandler(handleMessage)
+	discordSession.Identify.Intents = discordgo.IntentsGuildMessages
 
 	log.Println("Discord session opening.")
-	err = d.Open()
+	err = discordSession.Open()
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
 	defer func() {
-		err := d.Close()
+		err := discordSession.Close()
 		if err != nil {
 			log.Println(err)
 			return
@@ -63,4 +74,65 @@ func registerCommands(commandRegistry framework.CommandRegistry) {
 	commandRegistry.Register("list", cmd.List, "helloWold")
 	commandRegistry.Register("next", cmd.Next, "helloWorld")
 	commandRegistry.Register("create", cmd.Create, "helloWorld")
+}
+
+type config struct {
+	*discord.DiscordConfig
+	spotify.SpotifyConfig
+	Prefix string
+}
+
+func loadConfigFromEnv() config {
+	return config{
+		DiscordConfig: discord.LoadConfigFromEnv(),
+		SpotifyConfig: spotify.LoadConfigFromEnv(),
+		Prefix:        os.Getenv("SPOT_PREFIX"),
+	}
+}
+
+// handleMessage reads messages sent in the guild and runs commands based on
+// those messages.
+func handleMessage(
+	dg *discordgo.Session,
+	message *discordgo.MessageCreate,
+) {
+	user := message.Author
+	if user.Bot {
+		return
+	}
+
+	content := message.Content
+
+	if len(content) <= len(c.Prefix) {
+		return
+	}
+
+	if content[:len(c.Prefix)] != c.Prefix {
+		return
+	}
+
+	args := strings.Fields(content[len(c.Prefix):])
+	name := strings.ToLower(args[0])
+
+	command, found := commandRegistry.Get(name)
+	if !found {
+		return
+	}
+
+	// TODO get playlist name from config
+	// TODO optionally populate dependencies based on command
+	ctx := framework.CommandContext{
+		Messager: &discord.DiscordMessager{
+			Session:   dg,
+			ChannelID: message.ChannelID,
+		},
+		PlaylistCreator: pc,
+		PlaylistName:    "Einstok",
+		UserQueue:       &uq,
+		Actor: framework.MessageUser{
+			ID:       user.ID,
+			Username: user.Username,
+		},
+	}
+	command.RunWithContext(&ctx)
 }

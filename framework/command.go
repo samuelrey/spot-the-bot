@@ -31,7 +31,7 @@ func (cr CommandRegistry) Register(name string, cmd func(*CommandContext), helpM
 type CommandContext struct {
 	Messager
 	PlaylistCreator
-	PlaylistName  string
-	EnrolledUsers *[]MessageUser
-	Actor         MessageUser
+	PlaylistName string
+	UserQueue    *UserQueue
+	Actor        MessageUser
 }

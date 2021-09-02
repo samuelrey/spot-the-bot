@@ -12,21 +12,18 @@ const (
 )
 
 func Next(ctx *framework.CommandContext) {
-	if len(*ctx.EnrolledUsers) <= 1 {
+	head := ctx.UserQueue.Head()
+	if head == nil || ctx.Actor.ID != head.ID {
 		return
 	}
 
-	skipUser := (*ctx.EnrolledUsers)[0]
-	if ctx.Actor.ID != skipUser.ID {
-		return
-	}
-
-	(*ctx.EnrolledUsers) = append((*ctx.EnrolledUsers)[1:], skipUser)
+	ctx.UserQueue.Pop()
+	ctx.UserQueue.Push(*head)
 	content := fmt.Sprintf(StrSkipUser, ctx.Actor)
 	ctx.Reply(content)
 
-	nextUser := (*ctx.EnrolledUsers)[0]
+	head = ctx.UserQueue.Head()
 
-	content = fmt.Sprintf(StrNextUser, nextUser)
+	content = fmt.Sprintf(StrNextUser, head)
 	ctx.Reply(content)
 }

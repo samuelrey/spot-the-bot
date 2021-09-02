@@ -7,23 +7,23 @@ import (
 	"os"
 )
 
-type Config struct {
+type DiscordConfig struct {
 	Token string `json:"DISCORD_TOKEN"`
 }
 
-func LoadConfig(filename string) *Config {
+func LoadConfig(filename string) *DiscordConfig {
 	body, err := ioutil.ReadFile(filename)
 	if err != nil {
 		fmt.Println("error loading config, ", err)
 		return nil
 	}
-	var config Config
+	var config DiscordConfig
 	json.Unmarshal(body, &config)
 	return &config
 }
 
-func LoadConfigFromEnv() *Config {
-	return &Config{
+func LoadConfigFromEnv() *DiscordConfig {
+	return &DiscordConfig{
 		Token: os.Getenv("DISCORD_TOKEN"),
 	}
 }

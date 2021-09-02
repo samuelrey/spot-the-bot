@@ -12,11 +12,8 @@ const StrPlaylistCreatedFmt = "Done! :tada: Now it's up to to you to " +
 	"Then share it in channel! :headphones:\n%s\n"
 
 func Create(ctx *framework.CommandContext) {
-	if len(*ctx.EnrolledUsers) < 1 {
-		return
-	}
-
-	if ctx.Actor.ID != (*ctx.EnrolledUsers)[0].ID {
+	head := ctx.UserQueue.Head()
+	if head == nil || ctx.Actor.ID != head.ID {
 		return
 	}
 

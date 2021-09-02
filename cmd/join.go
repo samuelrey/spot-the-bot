@@ -9,17 +9,11 @@ import (
 const StrJoinFmt = "Welcome to the club, %s!\n"
 
 func Join(ctx *framework.CommandContext) {
-	for _, user := range *ctx.EnrolledUsers {
-		if ctx.Actor.ID == user.ID {
-			return
-		}
+	if ctx.UserQueue.Contains(ctx.Actor) {
+		return
 	}
 
-	user := framework.MessageUser{
-		ID:       ctx.Actor.ID,
-		Username: ctx.Actor.Username,
-	}
-	(*ctx.EnrolledUsers) = append((*ctx.EnrolledUsers), user)
+	ctx.UserQueue.Push(ctx.Actor)
 	content := fmt.Sprintf(StrJoinFmt, ctx.Actor)
 	ctx.Reply(content)
 }
