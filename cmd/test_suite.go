@@ -2,12 +2,13 @@ package cmd
 
 import (
 	"github.com/samuelrey/spot-the-bot/framework"
+	"github.com/samuelrey/spot-the-bot/message"
 	"github.com/stretchr/testify/suite"
 )
 
 type CommandTestSuite struct {
 	suite.Suite
-	Actor           framework.MessageUser
+	Actor           message.MessageUser
 	Ctx             CommandContext
 	UserQueue       framework.UserQueue
 	Messager        framework.MockMessager
@@ -15,11 +16,11 @@ type CommandTestSuite struct {
 }
 
 func (suite *CommandTestSuite) SetupTest() {
-	suite.Actor = framework.MessageUser{ID: "amethyst#4422", Username: "amethyst"}
+	suite.Actor = message.MessageUser{ID: "amethyst#4422", Username: "amethyst"}
 	suite.Messager = framework.MockMessager{}
 	suite.PlaylistCreator = framework.MockPlaylistCreator{}
 
-	suite.UserQueue = framework.NewUserQueue([]framework.MessageUser{})
+	suite.UserQueue = framework.NewUserQueue([]message.MessageUser{})
 
 	suite.Ctx = CommandContext{
 		Messager:        &suite.Messager,

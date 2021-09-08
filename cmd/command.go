@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/samuelrey/spot-the-bot/framework"
+	"github.com/samuelrey/spot-the-bot/message"
 )
 
 type command struct {
@@ -45,9 +46,9 @@ func (cr CommandRegistry) FormatHelpMessage() string {
 }
 
 type CommandContext struct {
-	framework.Messager
+	message.Messager
 	framework.PlaylistCreator
 	PlaylistName string
 	UserQueue    *framework.UserQueue
-	Actor        framework.MessageUser
+	Actor        message.MessageUser
 }

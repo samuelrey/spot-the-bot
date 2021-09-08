@@ -10,8 +10,9 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/samuelrey/spot-the-bot/cmd"
-	"github.com/samuelrey/spot-the-bot/discord"
 	"github.com/samuelrey/spot-the-bot/framework"
+	"github.com/samuelrey/spot-the-bot/message"
+	"github.com/samuelrey/spot-the-bot/message/discord"
 	"github.com/samuelrey/spot-the-bot/spotify"
 )
 
@@ -28,7 +29,7 @@ func main() {
 
 	commandRegistry = cmd.NewCommandRegistry()
 	registerCommands(*commandRegistry)
-	uq = framework.NewUserQueue([]framework.MessageUser{})
+	uq = framework.NewUserQueue([]message.MessageUser{})
 
 	pc, err = spotify.NewPlaylistCreator(c.SpotifyConfig)
 	if err != nil {
@@ -94,14 +95,14 @@ func loadConfigFromEnv() config {
 // those messages.
 func handleMessage(
 	dg *discordgo.Session,
-	message *discordgo.MessageCreate,
+	m *discordgo.MessageCreate,
 ) {
-	user := message.Author
+	user := m.Author
 	if user.Bot {
 		return
 	}
 
-	content := message.Content
+	content := m.Content
 
 	if len(content) <= len(c.Prefix) {
 		return
@@ -124,12 +125,12 @@ func handleMessage(
 	ctx := cmd.CommandContext{
 		Messager: &discord.DiscordMessager{
 			Session:   dg,
-			ChannelID: message.ChannelID,
+			ChannelID: m.ChannelID,
 		},
 		PlaylistCreator: pc,
 		PlaylistName:    "Einstok",
 		UserQueue:       &uq,
-		Actor: framework.MessageUser{
+		Actor: message.MessageUser{
 			ID:       user.ID,
 			Username: user.Username,
 		},

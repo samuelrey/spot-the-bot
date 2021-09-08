@@ -5,17 +5,18 @@ import (
 	"testing"
 
 	"github.com/samuelrey/spot-the-bot/framework"
+	"github.com/samuelrey/spot-the-bot/message"
 	"github.com/stretchr/testify/suite"
 )
 
 type CreateTestSuite struct {
 	CommandTestSuite
-	notActor framework.MessageUser
+	notActor message.MessageUser
 }
 
 func (suite *CreateTestSuite) SetupTest() {
 	suite.CommandTestSuite.SetupTest()
-	suite.notActor = framework.MessageUser{ID: "osh#1219", Username: "osh"}
+	suite.notActor = message.MessageUser{ID: "osh#1219", Username: "osh"}
 }
 
 // Test that the acting user can create a playlist and the playlist URL is

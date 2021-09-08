@@ -5,18 +5,19 @@ import (
 	"testing"
 
 	"github.com/samuelrey/spot-the-bot/framework"
+	"github.com/samuelrey/spot-the-bot/message"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
 
 type LeaveTestSuite struct {
 	CommandTestSuite
-	notActor framework.MessageUser
+	notActor message.MessageUser
 }
 
 func (suite *LeaveTestSuite) SetupTest() {
 	suite.CommandTestSuite.SetupTest()
-	suite.notActor = framework.MessageUser{ID: "osh#1219", Username: "osh"}
+	suite.notActor = message.MessageUser{ID: "osh#1219", Username: "osh"}
 	suite.UserQueue.Push(suite.notActor)
 }
 
@@ -27,7 +28,7 @@ func (suite *LeaveTestSuite) TestLeaveUserNotEnrolled() {
 	Leave(&suite.Ctx)
 
 	suite.Messager.AssertNotCalled(suite.T(), "Reply", mock.Anything)
-	expected := framework.NewUserQueue([]framework.MessageUser{suite.notActor})
+	expected := framework.NewUserQueue([]message.MessageUser{suite.notActor})
 	suite.Require().Equal(expected, suite.UserQueue)
 }
 
@@ -41,7 +42,7 @@ func (suite *LeaveTestSuite) TestLeaveUser() {
 	Leave(&suite.Ctx)
 
 	suite.Messager.AssertCalled(suite.T(), "Reply", content)
-	expected := framework.NewUserQueue([]framework.MessageUser{suite.notActor})
+	expected := framework.NewUserQueue([]message.MessageUser{suite.notActor})
 	suite.Require().Equal(expected, suite.UserQueue)
 }
 

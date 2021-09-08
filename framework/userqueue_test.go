@@ -3,6 +3,7 @@ package framework
 import (
 	"testing"
 
+	"github.com/samuelrey/spot-the-bot/message"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -19,9 +20,9 @@ func (suite UserQueueSuite) TestHeadPop() {
 	suite.Require().Nil(actual)
 
 	// nonempty queue
-	au := MessageUser{ID: "amethyst#4422", Username: "amethyst"}
-	ou := MessageUser{ID: "osh#1219", Username: "osh"}
-	q = NewUserQueue([]MessageUser{au, ou})
+	au := message.MessageUser{ID: "amethyst#4422", Username: "amethyst"}
+	ou := message.MessageUser{ID: "osh#1219", Username: "osh"}
+	q = NewUserQueue([]message.MessageUser{au, ou})
 
 	actual = q.Head()
 	suite.Require().Equal(&au, actual)
@@ -36,7 +37,7 @@ func (suite UserQueueSuite) TestHeadPop() {
 
 func (suite UserQueueSuite) TestPushRemove() {
 	q := UserQueue{}
-	mu := MessageUser{ID: "amethyst#4422", Username: "amethyst"}
+	mu := message.MessageUser{ID: "amethyst#4422", Username: "amethyst"}
 
 	q.Push(mu)
 	actual := q.Head()

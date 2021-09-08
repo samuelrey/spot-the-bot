@@ -1,16 +1,20 @@
 package framework
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/samuelrey/spot-the-bot/message"
+)
 
 type UserQueue struct {
-	queue []MessageUser
+	queue []message.MessageUser
 }
 
-func NewUserQueue(users []MessageUser) UserQueue {
+func NewUserQueue(users []message.MessageUser) UserQueue {
 	return UserQueue{queue: users}
 }
 
-func (s *UserQueue) Contains(mu MessageUser) bool {
+func (s *UserQueue) Contains(mu message.MessageUser) bool {
 	for _, u := range s.queue {
 		if mu.ID == u.ID {
 			return true
@@ -20,7 +24,7 @@ func (s *UserQueue) Contains(mu MessageUser) bool {
 	return false
 }
 
-func (s *UserQueue) Head() *MessageUser {
+func (s *UserQueue) Head() *message.MessageUser {
 	if len(s.queue) == 0 {
 		return nil
 	}
@@ -32,7 +36,7 @@ func (s *UserQueue) Length() int {
 	return len(s.queue)
 }
 
-func (s *UserQueue) Pop() *MessageUser {
+func (s *UserQueue) Pop() *message.MessageUser {
 	if len(s.queue) == 0 {
 		return nil
 	}
@@ -42,11 +46,11 @@ func (s *UserQueue) Pop() *MessageUser {
 	return &out
 }
 
-func (s *UserQueue) Push(mu MessageUser) {
+func (s *UserQueue) Push(mu message.MessageUser) {
 	s.queue = append(s.queue, mu)
 }
 
-func (s *UserQueue) Remove(mu MessageUser) bool {
+func (s *UserQueue) Remove(mu message.MessageUser) bool {
 	found := -1
 	for i, user := range s.queue {
 		if mu.ID == user.ID {

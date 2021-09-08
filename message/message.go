@@ -1,4 +1,4 @@
-package framework
+package message
 
 type Messager interface {
 	Replyer
