@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/samuelrey/spot-the-bot/framework"
 	"github.com/samuelrey/spot-the-bot/message"
+	"github.com/samuelrey/spot-the-bot/playlist"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -24,7 +24,7 @@ func (suite *CreateTestSuite) SetupTest() {
 func (suite *CreateTestSuite) TestCreate() {
 	suite.UserQueue.Push(suite.Actor)
 
-	playlist := framework.Playlist{
+	playlist := playlist.Playlist{
 		ID:  suite.Ctx.PlaylistName,
 		URL: suite.Ctx.PlaylistName,
 	}
@@ -44,7 +44,7 @@ func (suite *CreateTestSuite) TestCreate() {
 func (suite *CreateTestSuite) TestActorNotHeadOfQueue() {
 	suite.UserQueue.Push(suite.notActor)
 	suite.UserQueue.Push(suite.Actor)
-	playlist := framework.Playlist{
+	playlist := playlist.Playlist{
 		ID:  suite.Ctx.PlaylistName,
 		URL: suite.Ctx.PlaylistName,
 	}

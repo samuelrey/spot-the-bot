@@ -13,13 +13,14 @@ import (
 	"github.com/samuelrey/spot-the-bot/framework"
 	"github.com/samuelrey/spot-the-bot/message"
 	"github.com/samuelrey/spot-the-bot/message/discord"
-	"github.com/samuelrey/spot-the-bot/spotify"
+	"github.com/samuelrey/spot-the-bot/playlist"
+	"github.com/samuelrey/spot-the-bot/playlist/spotify"
 )
 
 var (
 	c               config
 	commandRegistry *cmd.CommandRegistry
-	pc              framework.PlaylistCreator
+	pc              playlist.PlaylistCreator
 	uq              framework.UserQueue
 	err             error
 )

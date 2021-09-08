@@ -1,4 +1,4 @@
-package framework
+package playlist
 
 type Playlist struct {
 	ID  string
