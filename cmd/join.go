@@ -2,13 +2,11 @@ package cmd
 
 import (
 	"fmt"
-
-	"github.com/samuelrey/spot-the-bot/framework"
 )
 
 const StrJoinFmt = "Welcome to the club, %s!\n"
 
-func Join(ctx *framework.CommandContext) {
+func Join(ctx *CommandContext) {
 	if ctx.UserQueue.Contains(ctx.Actor) {
 		return
 	}

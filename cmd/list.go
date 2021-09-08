@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"fmt"
-
-	"github.com/samuelrey/spot-the-bot/framework"
 )
 
 const (
@@ -11,7 +9,7 @@ const (
 	StrListUsersFmt = "Here's the queue:\n%s\n"
 )
 
-func List(ctx *framework.CommandContext) {
+func List(ctx *CommandContext) {
 	if ctx.UserQueue.Length() == 0 {
 		ctx.Reply(StrListNoUsers)
 		return

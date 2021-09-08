@@ -1,4 +1,4 @@
-package framework
+package cmd
 
 import (
 	"testing"

@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/stretchr/testify/mock"
-	"github.com/stretchr/testify/suite"
 )
 
 type MockMessager struct{ mock.Mock }
@@ -31,29 +30,4 @@ func (mp *MockPlaylistCreator) CreatePlaylist(playlistName string) (*Playlist, e
 		ID:  playlistName,
 		URL: playlistName,
 	}, nil
-}
-
-type CommandTestSuite struct {
-	suite.Suite
-	Actor           MessageUser
-	Ctx             CommandContext
-	UserQueue       UserQueue
-	Messager        MockMessager
-	PlaylistCreator MockPlaylistCreator
-}
-
-func (suite *CommandTestSuite) SetupTest() {
-	suite.Actor = MessageUser{ID: "amethyst#4422", Username: "amethyst"}
-	suite.Messager = MockMessager{}
-	suite.PlaylistCreator = MockPlaylistCreator{}
-
-	suite.UserQueue = NewUserQueue([]MessageUser{})
-
-	suite.Ctx = CommandContext{
-		Messager:        &suite.Messager,
-		PlaylistCreator: &suite.PlaylistCreator,
-		PlaylistName:    "Einstok",
-		UserQueue:       &suite.UserQueue,
-		Actor:           suite.Actor,
-	}
 }

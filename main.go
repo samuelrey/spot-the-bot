@@ -16,17 +16,17 @@ import (
 )
 
 var (
-	c   config
-	commandRegistry *framework.CommandRegistry
-	pc  framework.PlaylistCreator
-	uq  framework.UserQueue
-	err error
+	c               config
+	commandRegistry *cmd.CommandRegistry
+	pc              framework.PlaylistCreator
+	uq              framework.UserQueue
+	err             error
 )
 
 func main() {
 	c = loadConfigFromEnv()
 
-	commandRegistry = framework.NewCommandRegistry()
+	commandRegistry = cmd.NewCommandRegistry()
 	registerCommands(*commandRegistry)
 	uq = framework.NewUserQueue([]framework.MessageUser{})
 
@@ -68,7 +68,7 @@ func main() {
 	fmt.Println()
 }
 
-func registerCommands(commandRegistry framework.CommandRegistry) {
+func registerCommands(commandRegistry cmd.CommandRegistry) {
 	commandRegistry.Register("join", cmd.Join, "helloWorld")
 	commandRegistry.Register("leave", cmd.Leave, "helloWorld")
 	commandRegistry.Register("list", cmd.List, "helloWold")
@@ -121,7 +121,7 @@ func handleMessage(
 
 	// TODO get playlist name from config
 	// TODO optionally populate dependencies based on command
-	ctx := framework.CommandContext{
+	ctx := cmd.CommandContext{
 		Messager: &discord.DiscordMessager{
 			Session:   dg,
 			ChannelID: message.ChannelID,

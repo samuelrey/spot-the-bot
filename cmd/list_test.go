@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/samuelrey/spot-the-bot/framework"
 	"github.com/stretchr/testify/suite"
 )
 
-type ListTestSuite struct{ framework.CommandTestSuite }
+type ListTestSuite struct{ CommandTestSuite }
 
 // Test that we reply with the expected content given no users have enrolled.
 func (suite *ListTestSuite) TestListNoUsers() {

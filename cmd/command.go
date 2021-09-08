@@ -1,6 +1,10 @@
-package framework
+package cmd
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/samuelrey/spot-the-bot/framework"
+)
 
 type command struct {
 	cmd     func(*CommandContext)
@@ -41,9 +45,9 @@ func (cr CommandRegistry) FormatHelpMessage() string {
 }
 
 type CommandContext struct {
-	Messager
-	PlaylistCreator
+	framework.Messager
+	framework.PlaylistCreator
 	PlaylistName string
-	UserQueue    *UserQueue
-	Actor        MessageUser
+	UserQueue    *framework.UserQueue
+	Actor        framework.MessageUser
 }

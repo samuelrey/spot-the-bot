@@ -10,7 +10,7 @@ import (
 )
 
 type LeaveTestSuite struct {
-	framework.CommandTestSuite
+	CommandTestSuite
 	notActor framework.MessageUser
 }
 

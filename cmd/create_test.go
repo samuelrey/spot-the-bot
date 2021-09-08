@@ -9,7 +9,7 @@ import (
 )
 
 type CreateTestSuite struct {
-	framework.CommandTestSuite
+	CommandTestSuite
 	notActor framework.MessageUser
 }
 

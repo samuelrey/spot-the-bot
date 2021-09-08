@@ -10,7 +10,7 @@ import (
 )
 
 type NextTestSuite struct {
-	framework.CommandTestSuite
+	CommandTestSuite
 	notActor framework.MessageUser
 }
 

@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type JoinTestSuite struct{ framework.CommandTestSuite }
+type JoinTestSuite struct{ CommandTestSuite }
 
 // Test that the acting user is added to the list of enrolled users.
 func (suite *JoinTestSuite) TestJoinUser() {

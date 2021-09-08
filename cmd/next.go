@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"fmt"
-
-	"github.com/samuelrey/spot-the-bot/framework"
 )
 
 const (
@@ -11,7 +9,7 @@ const (
 	StrNextUser = "%s, you're up next!"
 )
 
-func Next(ctx *framework.CommandContext) {
+func Next(ctx *CommandContext) {
 	head := ctx.UserQueue.Head()
 	if head == nil || ctx.Actor.ID != head.ID {
 		return
