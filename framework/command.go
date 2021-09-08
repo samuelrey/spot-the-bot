@@ -2,23 +2,23 @@ package framework
 
 import "fmt"
 
-type (
-	command        struct {
-		cmd func(*CommandContext)
-		helpMsg string
-	}
-	commandMap     map[string]command
-	CommandRegistry struct {
-		commandMap
-	}
-)
+type command struct {
+	cmd     func(*CommandContext)
+	helpMsg string
+}
 
 func (c command) RunWithContext(ctx *CommandContext) {
 	c.cmd(ctx)
 }
 
+type CommandRegistry struct {
+	commandMap map[string]command
+}
+
 func NewCommandRegistry() *CommandRegistry {
-	return &CommandRegistry{make(commandMap)}
+	return &CommandRegistry{
+		commandMap: make(map[string]command),
+	}
 }
 
 func (cr CommandRegistry) Get(name string) (*command, bool) {
