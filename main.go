@@ -29,7 +29,7 @@ func main() {
 
 	commandRegistry = cmd.NewCommandRegistry()
 	registerCommands(*commandRegistry)
-	uq = framework.NewUserQueue([]message.MessageUser{})
+	uq = framework.NewUserQueue([]message.User{})
 
 	pc, err = spotify.NewPlaylistCreator(c.SpotifyConfig)
 	if err != nil {
@@ -130,7 +130,7 @@ func handleMessage(
 		PlaylistCreator: pc,
 		PlaylistName:    "Einstok",
 		UserQueue:       &uq,
-		Actor: message.MessageUser{
+		Actor: message.User{
 			ID:       user.ID,
 			Username: user.Username,
 		},

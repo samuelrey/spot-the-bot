@@ -8,7 +8,7 @@ import (
 
 type CommandTestSuite struct {
 	suite.Suite
-	Actor           message.MessageUser
+	Actor           message.User
 	Ctx             CommandContext
 	UserQueue       framework.UserQueue
 	Messager        framework.MockMessager
@@ -16,11 +16,11 @@ type CommandTestSuite struct {
 }
 
 func (suite *CommandTestSuite) SetupTest() {
-	suite.Actor = message.MessageUser{ID: "amethyst#4422", Username: "amethyst"}
+	suite.Actor = message.User{ID: "amethyst#4422", Username: "amethyst"}
 	suite.Messager = framework.MockMessager{}
 	suite.PlaylistCreator = framework.MockPlaylistCreator{}
 
-	suite.UserQueue = framework.NewUserQueue([]message.MessageUser{})
+	suite.UserQueue = framework.NewUserQueue([]message.User{})
 
 	suite.Ctx = CommandContext{
 		Messager:        &suite.Messager,

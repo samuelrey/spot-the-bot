@@ -20,9 +20,9 @@ func (suite UserQueueSuite) TestHeadPop() {
 	suite.Require().Nil(actual)
 
 	// nonempty queue
-	au := message.MessageUser{ID: "amethyst#4422", Username: "amethyst"}
-	ou := message.MessageUser{ID: "osh#1219", Username: "osh"}
-	q = NewUserQueue([]message.MessageUser{au, ou})
+	au := message.User{ID: "amethyst#4422", Username: "amethyst"}
+	ou := message.User{ID: "osh#1219", Username: "osh"}
+	q = NewUserQueue([]message.User{au, ou})
 
 	actual = q.Head()
 	suite.Require().Equal(&au, actual)
@@ -37,7 +37,7 @@ func (suite UserQueueSuite) TestHeadPop() {
 
 func (suite UserQueueSuite) TestPushRemove() {
 	q := UserQueue{}
-	mu := message.MessageUser{ID: "amethyst#4422", Username: "amethyst"}
+	mu := message.User{ID: "amethyst#4422", Username: "amethyst"}
 
 	q.Push(mu)
 	actual := q.Head()

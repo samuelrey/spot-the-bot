@@ -21,7 +21,7 @@ func (suite *JoinTestSuite) TestJoinUser() {
 
 	suite.Messager.AssertCalled(suite.T(), "Reply", content)
 
-	expected := framework.NewUserQueue([]message.MessageUser{suite.Actor})
+	expected := framework.NewUserQueue([]message.User{suite.Actor})
 	suite.Require().Equal(expected, suite.UserQueue)
 }
 
@@ -34,7 +34,7 @@ func (suite *JoinTestSuite) TestJoinUserAlreadyEnrolled() {
 
 	suite.Messager.AssertNotCalled(suite.T(), "Reply", mock.Anything)
 
-	expected := framework.NewUserQueue([]message.MessageUser{suite.Actor})
+	expected := framework.NewUserQueue([]message.User{suite.Actor})
 	suite.Require().Equal(expected, suite.UserQueue)
 }
 

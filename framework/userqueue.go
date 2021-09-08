@@ -7,14 +7,14 @@ import (
 )
 
 type UserQueue struct {
-	queue []message.MessageUser
+	queue []message.User
 }
 
-func NewUserQueue(users []message.MessageUser) UserQueue {
+func NewUserQueue(users []message.User) UserQueue {
 	return UserQueue{queue: users}
 }
 
-func (s *UserQueue) Contains(mu message.MessageUser) bool {
+func (s *UserQueue) Contains(mu message.User) bool {
 	for _, u := range s.queue {
 		if mu.ID == u.ID {
 			return true
@@ -24,7 +24,7 @@ func (s *UserQueue) Contains(mu message.MessageUser) bool {
 	return false
 }
 
-func (s *UserQueue) Head() *message.MessageUser {
+func (s *UserQueue) Head() *message.User {
 	if len(s.queue) == 0 {
 		return nil
 	}
@@ -36,7 +36,7 @@ func (s *UserQueue) Length() int {
 	return len(s.queue)
 }
 
-func (s *UserQueue) Pop() *message.MessageUser {
+func (s *UserQueue) Pop() *message.User {
 	if len(s.queue) == 0 {
 		return nil
 	}
@@ -46,11 +46,11 @@ func (s *UserQueue) Pop() *message.MessageUser {
 	return &out
 }
 
-func (s *UserQueue) Push(mu message.MessageUser) {
+func (s *UserQueue) Push(mu message.User) {
 	s.queue = append(s.queue, mu)
 }
 
-func (s *UserQueue) Remove(mu message.MessageUser) bool {
+func (s *UserQueue) Remove(mu message.User) bool {
 	found := -1
 	for i, user := range s.queue {
 		if mu.ID == user.ID {

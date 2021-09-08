@@ -12,12 +12,12 @@ import (
 
 type NextTestSuite struct {
 	CommandTestSuite
-	notActor message.MessageUser
+	notActor message.User
 }
 
 func (suite *NextTestSuite) SetupTest() {
 	suite.CommandTestSuite.SetupTest()
-	suite.notActor = message.MessageUser{ID: "osh#1219", Username: "osh"}
+	suite.notActor = message.User{ID: "osh#1219", Username: "osh"}
 }
 
 // Test that we do not pop/push the user at the head if it is not the actor.
@@ -29,7 +29,7 @@ func (suite *NextTestSuite) TestActorNotHeadOfQueue() {
 	Next(&suite.Ctx)
 
 	suite.Messager.AssertNotCalled(suite.T(), "Reply", mock.Anything)
-	expected := framework.NewUserQueue([]message.MessageUser{suite.notActor, suite.Actor})
+	expected := framework.NewUserQueue([]message.User{suite.notActor, suite.Actor})
 	suite.Require().Equal(expected, suite.UserQueue)
 }
 
@@ -45,7 +45,7 @@ func (suite *NextTestSuite) TestNext() {
 	suite.Messager.AssertCalled(suite.T(), "Reply", content)
 	content = fmt.Sprintf(StrNextUser, suite.notActor)
 	suite.Messager.AssertCalled(suite.T(), "Reply", content)
-	expected := framework.NewUserQueue([]message.MessageUser{suite.notActor, suite.Actor})
+	expected := framework.NewUserQueue([]message.User{suite.notActor, suite.Actor})
 	suite.Require().Equal(expected, suite.UserQueue)
 }
 

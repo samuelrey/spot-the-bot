@@ -11,12 +11,12 @@ import (
 
 type CreateTestSuite struct {
 	CommandTestSuite
-	notActor message.MessageUser
+	notActor message.User
 }
 
 func (suite *CreateTestSuite) SetupTest() {
 	suite.CommandTestSuite.SetupTest()
-	suite.notActor = message.MessageUser{ID: "osh#1219", Username: "osh"}
+	suite.notActor = message.User{ID: "osh#1219", Username: "osh"}
 }
 
 // Test that the acting user can create a playlist and the playlist URL is

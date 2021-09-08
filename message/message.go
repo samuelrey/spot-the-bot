@@ -13,11 +13,11 @@ type DirectMessager interface {
 	DirectMessage(recipientID, content string) error
 }
 
-type MessageUser struct {
+type User struct {
 	ID       string
 	Username string
 }
 
-func (u MessageUser) String() string {
+func (u User) String() string {
 	return u.Username
 }

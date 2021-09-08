@@ -50,5 +50,5 @@ type CommandContext struct {
 	framework.PlaylistCreator
 	PlaylistName string
 	UserQueue    *framework.UserQueue
-	Actor        message.MessageUser
+	Actor        message.User
 }
