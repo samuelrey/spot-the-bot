@@ -50,6 +50,6 @@ type CommandContext struct {
 	message.Messager
 	playlist.PlaylistCreator
 	PlaylistName string
-	UserQueue    *rotation.UserQueue
+	UserQueue    *rotation.Rotation
 	Actor        message.User
 }

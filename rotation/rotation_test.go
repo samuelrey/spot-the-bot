@@ -7,10 +7,10 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type UserQueueSuite struct{ suite.Suite }
+type RotationSuite struct{ suite.Suite }
 
-func (suite UserQueueSuite) TestHeadPop() {
-	q := UserQueue{}
+func (suite RotationSuite) TestHeadPop() {
+	q := Rotation{}
 
 	// empty queue
 	actual := q.Head()
@@ -22,7 +22,7 @@ func (suite UserQueueSuite) TestHeadPop() {
 	// nonempty queue
 	au := message.User{ID: "amethyst#4422", Username: "amethyst"}
 	ou := message.User{ID: "osh#1219", Username: "osh"}
-	q = NewUserQueue([]message.User{au, ou})
+	q = NewRotation([]message.User{au, ou})
 
 	actual = q.Head()
 	suite.Require().Equal(&au, actual)
@@ -35,8 +35,8 @@ func (suite UserQueueSuite) TestHeadPop() {
 	suite.Require().Equal(&ou, actual)
 }
 
-func (suite UserQueueSuite) TestPushRemove() {
-	q := UserQueue{}
+func (suite RotationSuite) TestPushRemove() {
+	q := Rotation{}
 	mu := message.User{ID: "amethyst#4422", Username: "amethyst"}
 
 	q.Push(mu)
@@ -48,6 +48,6 @@ func (suite UserQueueSuite) TestPushRemove() {
 	suite.Require().Nil(actual)
 }
 
-func TestUserQueue(t *testing.T) {
-	suite.Run(t, new(UserQueueSuite))
+func TestRotation(t *testing.T) {
+	suite.Run(t, new(RotationSuite))
 }

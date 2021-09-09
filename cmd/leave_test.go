@@ -28,7 +28,7 @@ func (suite *LeaveTestSuite) TestLeaveUserNotEnrolled() {
 	Leave(&suite.Ctx)
 
 	suite.Messager.AssertNotCalled(suite.T(), "Reply", mock.Anything)
-	expected := rotation.NewUserQueue([]message.User{suite.notActor})
+	expected := rotation.NewRotation([]message.User{suite.notActor})
 	suite.Require().Equal(expected, suite.UserQueue)
 }
 
@@ -42,7 +42,7 @@ func (suite *LeaveTestSuite) TestLeaveUser() {
 	Leave(&suite.Ctx)
 
 	suite.Messager.AssertCalled(suite.T(), "Reply", content)
-	expected := rotation.NewUserQueue([]message.User{suite.notActor})
+	expected := rotation.NewRotation([]message.User{suite.notActor})
 	suite.Require().Equal(expected, suite.UserQueue)
 }
 

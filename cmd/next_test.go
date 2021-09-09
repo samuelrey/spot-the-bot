@@ -29,7 +29,7 @@ func (suite *NextTestSuite) TestActorNotHeadOfQueue() {
 	Next(&suite.Ctx)
 
 	suite.Messager.AssertNotCalled(suite.T(), "Reply", mock.Anything)
-	expected := rotation.NewUserQueue([]message.User{suite.notActor, suite.Actor})
+	expected := rotation.NewRotation([]message.User{suite.notActor, suite.Actor})
 	suite.Require().Equal(expected, suite.UserQueue)
 }
 
@@ -45,7 +45,7 @@ func (suite *NextTestSuite) TestNext() {
 	suite.Messager.AssertCalled(suite.T(), "Reply", content)
 	content = fmt.Sprintf(StrNextUser, suite.notActor)
 	suite.Messager.AssertCalled(suite.T(), "Reply", content)
-	expected := rotation.NewUserQueue([]message.User{suite.notActor, suite.Actor})
+	expected := rotation.NewRotation([]message.User{suite.notActor, suite.Actor})
 	suite.Require().Equal(expected, suite.UserQueue)
 }
 
