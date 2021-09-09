@@ -10,18 +10,18 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/samuelrey/spot-the-bot/cmd"
-	"github.com/samuelrey/spot-the-bot/framework"
 	"github.com/samuelrey/spot-the-bot/message"
 	"github.com/samuelrey/spot-the-bot/message/discord"
 	"github.com/samuelrey/spot-the-bot/playlist"
 	"github.com/samuelrey/spot-the-bot/playlist/spotify"
+	"github.com/samuelrey/spot-the-bot/rotation"
 )
 
 var (
 	c               config
 	commandRegistry *cmd.CommandRegistry
 	pc              playlist.PlaylistCreator
-	uq              framework.UserQueue
+	uq              rotation.UserQueue
 	err             error
 )
 
@@ -30,7 +30,7 @@ func main() {
 
 	commandRegistry = cmd.NewCommandRegistry()
 	registerCommands(*commandRegistry)
-	uq = framework.NewUserQueue([]message.User{})
+	uq = rotation.NewUserQueue([]message.User{})
 
 	pc, err = spotify.NewPlaylistCreator(c.SpotifyConfig)
 	if err != nil {

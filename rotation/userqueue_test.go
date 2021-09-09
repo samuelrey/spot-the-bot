@@ -1,4 +1,4 @@
-package framework
+package rotation
 
 import (
 	"testing"

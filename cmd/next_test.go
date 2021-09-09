@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/samuelrey/spot-the-bot/framework"
 	"github.com/samuelrey/spot-the-bot/message"
+	"github.com/samuelrey/spot-the-bot/rotation"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
@@ -29,7 +29,7 @@ func (suite *NextTestSuite) TestActorNotHeadOfQueue() {
 	Next(&suite.Ctx)
 
 	suite.Messager.AssertNotCalled(suite.T(), "Reply", mock.Anything)
-	expected := framework.NewUserQueue([]message.User{suite.notActor, suite.Actor})
+	expected := rotation.NewUserQueue([]message.User{suite.notActor, suite.Actor})
 	suite.Require().Equal(expected, suite.UserQueue)
 }
 
@@ -45,7 +45,7 @@ func (suite *NextTestSuite) TestNext() {
 	suite.Messager.AssertCalled(suite.T(), "Reply", content)
 	content = fmt.Sprintf(StrNextUser, suite.notActor)
 	suite.Messager.AssertCalled(suite.T(), "Reply", content)
-	expected := framework.NewUserQueue([]message.User{suite.notActor, suite.Actor})
+	expected := rotation.NewUserQueue([]message.User{suite.notActor, suite.Actor})
 	suite.Require().Equal(expected, suite.UserQueue)
 }
 

@@ -3,9 +3,9 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/samuelrey/spot-the-bot/framework"
 	"github.com/samuelrey/spot-the-bot/message"
 	"github.com/samuelrey/spot-the-bot/playlist"
+	"github.com/samuelrey/spot-the-bot/rotation"
 )
 
 type command struct {
@@ -50,6 +50,6 @@ type CommandContext struct {
 	message.Messager
 	playlist.PlaylistCreator
 	PlaylistName string
-	UserQueue    *framework.UserQueue
+	UserQueue    *rotation.UserQueue
 	Actor        message.User
 }
