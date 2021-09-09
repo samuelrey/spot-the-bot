@@ -18,10 +18,10 @@ func Next(ctx *CommandContext) {
 	ctx.UserQueue.Pop()
 	ctx.UserQueue.Push(*head)
 	content := fmt.Sprintf(StrSkipUser, ctx.Actor)
-	ctx.Reply(content)
+	ctx.Messager.Reply(content)
 
 	head = ctx.UserQueue.Head()
 
 	content = fmt.Sprintf(StrNextUser, head)
-	ctx.Reply(content)
+	ctx.Messager.Reply(content)
 }

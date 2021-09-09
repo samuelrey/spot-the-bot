@@ -8,7 +8,7 @@ import (
 
 type MockPlaylistCreator struct{ mock.Mock }
 
-func (mp *MockPlaylistCreator) CreatePlaylist(playlistName string) (*Playlist, error) {
+func (mp *MockPlaylistCreator) Create(playlistName string) (*Playlist, error) {
 	mp.Called(playlistName)
 	if playlistName == "Error" {
 		return nil, errors.New("Error")

@@ -13,5 +13,5 @@ func Join(ctx *CommandContext) {
 
 	ctx.UserQueue.Push(ctx.Actor)
 	content := fmt.Sprintf(StrJoinFmt, ctx.Actor)
-	ctx.Reply(content)
+	ctx.Messager.Reply(content)
 }

@@ -28,14 +28,14 @@ func (suite *CreateTestSuite) TestCreate() {
 		ID:  suite.Ctx.PlaylistName,
 		URL: suite.Ctx.PlaylistName,
 	}
-	suite.PlaylistCreator.On("CreatePlaylist", suite.Ctx.PlaylistName).Return(playlist, nil)
+	suite.PlaylistCreator.On("Create", suite.Ctx.PlaylistName).Return(playlist, nil)
 
 	content := fmt.Sprintf(StrPlaylistCreatedFmt, suite.Ctx.PlaylistName)
 	suite.Messager.On("DirectMessage", suite.Actor.ID, content).Return(nil)
 
 	Create(&suite.Ctx)
 
-	suite.PlaylistCreator.AssertCalled(suite.T(), "CreatePlaylist", suite.Ctx.PlaylistName)
+	suite.PlaylistCreator.AssertCalled(suite.T(), "Create", suite.Ctx.PlaylistName)
 	suite.Messager.AssertCalled(suite.T(), "DirectMessage", suite.Actor.ID, content)
 }
 
@@ -48,14 +48,14 @@ func (suite *CreateTestSuite) TestActorNotHeadOfQueue() {
 		ID:  suite.Ctx.PlaylistName,
 		URL: suite.Ctx.PlaylistName,
 	}
-	suite.PlaylistCreator.On("CreatePlaylist", suite.Ctx.PlaylistName).Return(playlist, nil)
+	suite.PlaylistCreator.On("Create", suite.Ctx.PlaylistName).Return(playlist, nil)
 
 	content := fmt.Sprintf(StrPlaylistCreatedFmt, suite.Ctx.PlaylistName)
 	suite.Messager.On("DirectMessage", suite.Actor.ID, content).Return(nil)
 
 	Create(&suite.Ctx)
 
-	suite.PlaylistCreator.AssertNotCalled(suite.T(), "CreatePlaylist", suite.Ctx.PlaylistName)
+	suite.PlaylistCreator.AssertNotCalled(suite.T(), "Create", suite.Ctx.PlaylistName)
 	suite.Messager.AssertNotCalled(suite.T(), "DirectMessage", suite.Actor.ID, content)
 }
 
@@ -64,14 +64,14 @@ func (suite *CreateTestSuite) TestActorNotHeadOfQueue() {
 func (suite *CreateTestSuite) TestNoDirectMessageOnError() {
 	suite.UserQueue.Push(suite.Actor)
 	suite.Ctx.PlaylistName = "Error"
-	suite.PlaylistCreator.On("CreatePlaylist", suite.Ctx.PlaylistName)
+	suite.PlaylistCreator.On("Create", suite.Ctx.PlaylistName)
 
 	content := fmt.Sprintf(StrPlaylistCreatedFmt, suite.Ctx.PlaylistName)
 	suite.Messager.On("DirectMessage", suite.Actor.ID, content).Return(nil)
 
 	Create(&suite.Ctx)
 
-	suite.PlaylistCreator.AssertCalled(suite.T(), "CreatePlaylist", suite.Ctx.PlaylistName)
+	suite.PlaylistCreator.AssertCalled(suite.T(), "Create", suite.Ctx.PlaylistName)
 	suite.Messager.AssertNotCalled(suite.T(), "DirectMessage", suite.Actor.ID, content)
 }
 

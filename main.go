@@ -20,7 +20,7 @@ import (
 var (
 	c               config
 	commandRegistry *cmd.CommandRegistry
-	pc              playlist.PlaylistCreator
+	pc              playlist.Creator
 	uq              rotation.Rotation
 	err             error
 )
@@ -32,7 +32,7 @@ func main() {
 	registerCommands(*commandRegistry)
 	uq = rotation.NewRotation([]message.User{})
 
-	pc, err = spotify.NewPlaylistCreator(c.SpotifyConfig)
+	pc, err = spotify.NewCreator(c.SpotifyConfig)
 	if err != nil {
 		log.Println(err)
 		return
@@ -124,7 +124,7 @@ func handleMessage(
 	// TODO get playlist name from config
 	// TODO optionally populate dependencies based on command
 	ctx := cmd.CommandContext{
-		Messager: &discord.DiscordMessager{
+		Messager: &discord.Messager{
 			Session:   dg,
 			ChannelID: m.ChannelID,
 		},

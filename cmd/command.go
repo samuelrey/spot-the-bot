@@ -47,9 +47,9 @@ func (cr CommandRegistry) FormatHelpMessage() string {
 }
 
 type CommandContext struct {
-	message.Messager
-	playlist.PlaylistCreator
-	PlaylistName string
-	UserQueue    *rotation.Rotation
-	Actor        message.User
+	Messager        message.Messager
+	PlaylistCreator playlist.Creator
+	PlaylistName    string
+	UserQueue       *rotation.Rotation
+	Actor           message.User
 }

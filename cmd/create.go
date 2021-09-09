@@ -15,12 +15,12 @@ func Create(ctx *CommandContext) {
 		return
 	}
 
-	playlist, err := ctx.CreatePlaylist(ctx.PlaylistName)
+	playlist, err := ctx.PlaylistCreator.Create(ctx.PlaylistName)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
 	content := fmt.Sprintf(StrPlaylistCreatedFmt, playlist.URL)
-	ctx.DirectMessage(ctx.Actor.ID, content)
+	ctx.Messager.DirectMessage(ctx.Actor.ID, content)
 }

@@ -11,10 +11,10 @@ const (
 
 func List(ctx *CommandContext) {
 	if ctx.UserQueue.Length() == 0 {
-		ctx.Reply(StrListNoUsers)
+		ctx.Messager.Reply(StrListNoUsers)
 		return
 	}
 
 	content := fmt.Sprintf(StrListUsersFmt, ctx.UserQueue)
-	ctx.Reply(content)
+	ctx.Messager.Reply(content)
 }
