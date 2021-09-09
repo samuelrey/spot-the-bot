@@ -9,7 +9,7 @@ const StrPlaylistCreatedFmt = "Done! :tada: Now it's up to to you to " +
 	"add a few tracks to set the vibe :performing_arts:. " +
 	"Then share it in channel! :headphones:\n%s\n"
 
-func Create(ctx *CommandContext) {
+func Create(ctx *Context) {
 	head := ctx.UserQueue.Head()
 	if head == nil || ctx.Actor.ID != head.ID {
 		return

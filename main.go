@@ -19,7 +19,7 @@ import (
 
 var (
 	c               config
-	commandRegistry *cmd.CommandRegistry
+	commandRegistry *cmd.Registry
 	pc              playlist.Creator
 	uq              rotation.Rotation
 	err             error
@@ -28,7 +28,7 @@ var (
 func main() {
 	c = loadConfigFromEnv()
 
-	commandRegistry = cmd.NewCommandRegistry()
+	commandRegistry = cmd.NewRegistry()
 	registerCommands(*commandRegistry)
 	uq = rotation.NewRotation([]message.User{})
 
@@ -70,7 +70,7 @@ func main() {
 	fmt.Println()
 }
 
-func registerCommands(commandRegistry cmd.CommandRegistry) {
+func registerCommands(commandRegistry cmd.Registry) {
 	commandRegistry.Register("join", cmd.Join, "helloWorld")
 	commandRegistry.Register("leave", cmd.Leave, "helloWorld")
 	commandRegistry.Register("list", cmd.List, "helloWold")
@@ -123,7 +123,7 @@ func handleMessage(
 
 	// TODO get playlist name from config
 	// TODO optionally populate dependencies based on command
-	ctx := cmd.CommandContext{
+	ctx := cmd.Context{
 		Messager: &discord.Messager{
 			Session:   dg,
 			ChannelID: m.ChannelID,

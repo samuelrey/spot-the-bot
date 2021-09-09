@@ -9,7 +9,7 @@ const (
 	StrNextUser = "%s, you're up next!"
 )
 
-func Next(ctx *CommandContext) {
+func Next(ctx *Context) {
 	head := ctx.UserQueue.Head()
 	if head == nil || ctx.Actor.ID != head.ID {
 		return

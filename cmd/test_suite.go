@@ -10,7 +10,7 @@ import (
 type CommandTestSuite struct {
 	suite.Suite
 	Actor           message.User
-	Ctx             CommandContext
+	Ctx             Context
 	UserQueue       rotation.Rotation
 	Messager        message.MockMessager
 	PlaylistCreator playlist.MockPlaylistCreator
@@ -23,7 +23,7 @@ func (suite *CommandTestSuite) SetupTest() {
 
 	suite.UserQueue = rotation.NewRotation([]message.User{})
 
-	suite.Ctx = CommandContext{
+	suite.Ctx = Context{
 		Messager:        &suite.Messager,
 		PlaylistCreator: &suite.PlaylistCreator,
 		PlaylistName:    "Einstok",

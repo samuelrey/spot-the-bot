@@ -6,7 +6,7 @@ import (
 
 const StrJoinFmt = "Welcome to the club, %s!\n"
 
-func Join(ctx *CommandContext) {
+func Join(ctx *Context) {
 	if ctx.UserQueue.Contains(ctx.Actor) {
 		return
 	}

@@ -9,7 +9,7 @@ const (
 	StrListUsersFmt = "Here's the queue:\n%s\n"
 )
 
-func List(ctx *CommandContext) {
+func List(ctx *Context) {
 	if ctx.UserQueue.Length() == 0 {
 		ctx.Messager.Reply(StrListNoUsers)
 		return
