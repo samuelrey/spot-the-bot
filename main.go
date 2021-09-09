@@ -18,18 +18,18 @@ import (
 )
 
 var (
-	c               config
-	commandRegistry *cmd.Registry
-	pc              playlist.Creator
-	uq              rotation.Rotation
-	err             error
+	c   config
+	cr  *cmd.Registry
+	pc  playlist.Creator
+	uq  rotation.Rotation
+	err error
 )
 
 func main() {
 	c = loadConfigFromEnv()
 
-	commandRegistry = cmd.NewRegistry()
-	registerCommands(*commandRegistry)
+	cr = cmd.NewRegistry()
+	registerCommands(*cr)
 	uq = rotation.NewRotation([]message.User{})
 
 	pc, err = spotify.NewCreator(c.SpotifyConfig)
@@ -70,28 +70,6 @@ func main() {
 	fmt.Println()
 }
 
-func registerCommands(commandRegistry cmd.Registry) {
-	commandRegistry.Register("join", cmd.Join, "helloWorld")
-	commandRegistry.Register("leave", cmd.Leave, "helloWorld")
-	commandRegistry.Register("list", cmd.List, "helloWold")
-	commandRegistry.Register("next", cmd.Next, "helloWorld")
-	commandRegistry.Register("create", cmd.Create, "helloWorld")
-}
-
-type config struct {
-	*discord.DiscordConfig
-	spotify.SpotifyConfig
-	Prefix string
-}
-
-func loadConfigFromEnv() config {
-	return config{
-		DiscordConfig: discord.LoadConfig(),
-		SpotifyConfig: spotify.LoadConfig(),
-		Prefix:        os.Getenv("SPOT_PREFIX"),
-	}
-}
-
 // handleMessage reads messages sent in the guild and runs commands based on
 // those messages.
 func handleMessage(
@@ -116,7 +94,7 @@ func handleMessage(
 	args := strings.Fields(content[len(c.Prefix):])
 	name := strings.ToLower(args[0])
 
-	command, found := commandRegistry.Get(name)
+	command, found := cr.Get(name)
 	if !found {
 		return
 	}
