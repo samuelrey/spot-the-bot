@@ -10,18 +10,18 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type NextTestSuite struct {
-	CommandTestSuite
+type NextSuite struct {
+	CommandSuite
 	notActor message.User
 }
 
-func (suite *NextTestSuite) SetupTest() {
-	suite.CommandTestSuite.SetupTest()
+func (suite *NextSuite) SetupTest() {
+	suite.CommandSuite.SetupTest()
 	suite.notActor = message.User{ID: "osh#1219", Username: "osh"}
 }
 
 // Test that we do not pop/push the user at the head if it is not the actor.
-func (suite *NextTestSuite) TestActorNotHeadOfQueue() {
+func (suite *NextSuite) TestActorNotHeadOfQueue() {
 	suite.UserQueue.Push(suite.notActor)
 	suite.UserQueue.Push(suite.Actor)
 	suite.Messager.On("Reply", mock.Anything).Return(nil)
@@ -34,7 +34,7 @@ func (suite *NextTestSuite) TestActorNotHeadOfQueue() {
 }
 
 // Test that we pop/push the user at the head if it is the actor.
-func (suite *NextTestSuite) TestNext() {
+func (suite *NextSuite) TestNext() {
 	suite.UserQueue.Push(suite.Actor)
 	suite.UserQueue.Push(suite.notActor)
 	suite.Messager.On("Reply", mock.Anything).Return(nil)
@@ -50,5 +50,5 @@ func (suite *NextTestSuite) TestNext() {
 }
 
 func TestNextCommand(t *testing.T) {
-	suite.Run(t, new(NextTestSuite))
+	suite.Run(t, new(NextSuite))
 }

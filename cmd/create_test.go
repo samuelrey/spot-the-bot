@@ -9,19 +9,19 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type CreateTestSuite struct {
-	CommandTestSuite
+type CreateSuite struct {
+	CommandSuite
 	notActor message.User
 }
 
-func (suite *CreateTestSuite) SetupTest() {
-	suite.CommandTestSuite.SetupTest()
+func (suite *CreateSuite) SetupTest() {
+	suite.CommandSuite.SetupTest()
 	suite.notActor = message.User{ID: "osh#1219", Username: "osh"}
 }
 
 // Test that the acting user can create a playlist and the playlist URL is
 // direct messaged to them.
-func (suite *CreateTestSuite) TestCreate() {
+func (suite *CreateSuite) TestCreate() {
 	suite.UserQueue.Push(suite.Actor)
 
 	playlist := playlist.Playlist{
@@ -41,7 +41,7 @@ func (suite *CreateTestSuite) TestCreate() {
 
 // Test that the acting user cannot create a playlist if they are not the head
 // of the queue.
-func (suite *CreateTestSuite) TestActorNotHeadOfQueue() {
+func (suite *CreateSuite) TestActorNotHeadOfQueue() {
 	suite.UserQueue.Push(suite.notActor)
 	suite.UserQueue.Push(suite.Actor)
 	playlist := playlist.Playlist{
@@ -61,7 +61,7 @@ func (suite *CreateTestSuite) TestActorNotHeadOfQueue() {
 
 // Test that no direct message is sent if the create playlist function returns
 // an error.
-func (suite *CreateTestSuite) TestNoDirectMessageOnError() {
+func (suite *CreateSuite) TestNoDirectMessageOnError() {
 	suite.UserQueue.Push(suite.Actor)
 	suite.Ctx.PlaylistName = "Error"
 	suite.PlaylistCreator.On("Create", suite.Ctx.PlaylistName)
@@ -76,5 +76,5 @@ func (suite *CreateTestSuite) TestNoDirectMessageOnError() {
 }
 
 func TestCreateCommand(t *testing.T) {
-	suite.Run(t, new(CreateTestSuite))
+	suite.Run(t, new(CreateSuite))
 }

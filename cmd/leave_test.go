@@ -10,19 +10,19 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type LeaveTestSuite struct {
-	CommandTestSuite
+type LeaveSuite struct {
+	CommandSuite
 	notActor message.User
 }
 
-func (suite *LeaveTestSuite) SetupTest() {
-	suite.CommandTestSuite.SetupTest()
+func (suite *LeaveSuite) SetupTest() {
+	suite.CommandSuite.SetupTest()
 	suite.notActor = message.User{ID: "osh#1219", Username: "osh"}
 	suite.UserQueue.Push(suite.notActor)
 }
 
 // Test that we do not remove any users if the actor is not enrolled.
-func (suite *LeaveTestSuite) TestLeaveUserNotEnrolled() {
+func (suite *LeaveSuite) TestLeaveUserNotEnrolled() {
 	suite.Messager.On("Reply", mock.Anything).Return(nil)
 
 	Leave(&suite.Ctx)
@@ -33,7 +33,7 @@ func (suite *LeaveTestSuite) TestLeaveUserNotEnrolled() {
 }
 
 // Test that we only remove the actor if they are enrolled.
-func (suite *LeaveTestSuite) TestLeaveUser() {
+func (suite *LeaveSuite) TestLeaveUser() {
 	suite.UserQueue.Push(suite.Actor)
 
 	content := fmt.Sprintf(StrLeaveFmt, suite.Actor)
@@ -47,5 +47,5 @@ func (suite *LeaveTestSuite) TestLeaveUser() {
 }
 
 func TestLeaveCommand(t *testing.T) {
-	suite.Run(t, new(LeaveTestSuite))
+	suite.Run(t, new(LeaveSuite))
 }

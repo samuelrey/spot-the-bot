@@ -10,10 +10,10 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type JoinTestSuite struct{ CommandTestSuite }
+type JoinSuite struct{ CommandSuite }
 
 // Test that the acting user is added to the list of enrolled users.
-func (suite *JoinTestSuite) TestJoinUser() {
+func (suite *JoinSuite) TestJoinUser() {
 	content := fmt.Sprintf(StrJoinFmt, suite.Actor)
 	suite.Messager.On("Reply", content).Return(nil)
 
@@ -26,7 +26,7 @@ func (suite *JoinTestSuite) TestJoinUser() {
 }
 
 // Test that the acting user is not added again if they are already enrolled.
-func (suite *JoinTestSuite) TestJoinUserAlreadyEnrolled() {
+func (suite *JoinSuite) TestJoinUserAlreadyEnrolled() {
 	suite.UserQueue.Push(suite.Actor)
 	suite.Messager.On("Reply", mock.Anything).Return(nil)
 
@@ -39,5 +39,5 @@ func (suite *JoinTestSuite) TestJoinUserAlreadyEnrolled() {
 }
 
 func TestJoinCommand(t *testing.T) {
-	suite.Run(t, new(JoinTestSuite))
+	suite.Run(t, new(JoinSuite))
 }

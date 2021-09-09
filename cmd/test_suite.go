@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type CommandTestSuite struct {
+type CommandSuite struct {
 	suite.Suite
 	Actor           message.User
 	Ctx             Context
@@ -16,7 +16,7 @@ type CommandTestSuite struct {
 	PlaylistCreator playlist.MockPlaylistCreator
 }
 
-func (suite *CommandTestSuite) SetupTest() {
+func (suite *CommandSuite) SetupTest() {
 	suite.Actor = message.User{ID: "amethyst#4422", Username: "amethyst"}
 	suite.Messager = message.MockMessager{}
 	suite.PlaylistCreator = playlist.MockPlaylistCreator{}

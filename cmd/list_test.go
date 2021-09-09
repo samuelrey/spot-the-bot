@@ -7,10 +7,10 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type ListTestSuite struct{ CommandTestSuite }
+type ListSuite struct{ CommandSuite }
 
 // Test that we reply with the expected content given no users have enrolled.
-func (suite *ListTestSuite) TestListNoUsers() {
+func (suite *ListSuite) TestListNoUsers() {
 	suite.Messager.On("Reply", StrListNoUsers).Return(nil)
 
 	List(&suite.Ctx)
@@ -19,7 +19,7 @@ func (suite *ListTestSuite) TestListNoUsers() {
 }
 
 // Test that we reply with the expected content given users have enrolled.
-func (suite *ListTestSuite) TestListWithUsers() {
+func (suite *ListSuite) TestListWithUsers() {
 	suite.UserQueue.Push(suite.Actor)
 
 	content := fmt.Sprintf(StrListUsersFmt, suite.UserQueue)
@@ -31,5 +31,5 @@ func (suite *ListTestSuite) TestListWithUsers() {
 }
 
 func TestListCommand(t *testing.T) {
-	suite.Run(t, new(ListTestSuite))
+	suite.Run(t, new(ListSuite))
 }
