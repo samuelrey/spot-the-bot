@@ -86,8 +86,8 @@ type config struct {
 
 func loadConfigFromEnv() config {
 	return config{
-		DiscordConfig: discord.LoadConfigFromEnv(),
-		SpotifyConfig: spotify.LoadConfigFromEnv(),
+		DiscordConfig: discord.LoadConfig(),
+		SpotifyConfig: spotify.LoadConfig(),
 		Prefix:        os.Getenv("SPOT_PREFIX"),
 	}
 }
