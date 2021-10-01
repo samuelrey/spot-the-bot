@@ -1,7 +1,6 @@
 package spotify
 
 import (
-	"context"
 	"log"
 
 	"github.com/pkg/errors"
@@ -21,13 +20,7 @@ func NewCreator(conf SpotifyConfig) (playlist.Creator, error) {
 	log.Println("Auth server starting.")
 	a := newAuthenticator(conf)
 	srv := a.startAuthServer()
-	defer func() {
-		if err := srv.Shutdown(context.Background()); err != nil {
-			log.Println(err)
-		} else {
-			log.Println("Auth server shutdown.")
-		}
-	}()
+	defer stopAuthServer(srv)
 
 	log.Printf("Navigate here to authorize Spotify user: %s\n", a.authURL)
 	token, err := getToken()

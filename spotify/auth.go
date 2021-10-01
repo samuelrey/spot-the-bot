@@ -1,6 +1,8 @@
 package spotify
 
 import (
+	"context"
+	"log"
 	"net/http"
 
 	"github.com/zmb3/spotify"
@@ -56,6 +58,14 @@ func (a authenticator) startAuthServer() *http.Server {
 	}()
 
 	return server
+}
+
+func stopAuthServer(srv *http.Server) {
+	if err := srv.Shutdown(context.Background()); err != nil {
+		log.Println(err)
+	} else {
+		log.Println("Auth server shutdown.")
+	}
 }
 
 func getToken() (*oauth2.Token, error) {
