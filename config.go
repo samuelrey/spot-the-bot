@@ -8,7 +8,7 @@ import (
 )
 
 type config struct {
-	*discord.DiscordConfig
+	discord.DiscordConfig
 	spotify.SpotifyConfig
 	Prefix string
 }
