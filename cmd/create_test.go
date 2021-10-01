@@ -4,76 +4,77 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/samuelrey/spot-the-bot/framework"
+	"github.com/samuelrey/spot-the-bot/message"
+	"github.com/samuelrey/spot-the-bot/playlist"
 	"github.com/stretchr/testify/suite"
 )
 
-type CreateTestSuite struct {
-	framework.CommandTestSuite
-	notActor framework.MessageUser
+type CreateSuite struct {
+	CommandSuite
+	notActor message.User
 }
 
-func (suite *CreateTestSuite) SetupTest() {
-	suite.CommandTestSuite.SetupTest()
-	suite.notActor = framework.MessageUser{ID: "osh#1219", Username: "osh"}
+func (suite *CreateSuite) SetupTest() {
+	suite.CommandSuite.SetupTest()
+	suite.notActor = message.User{ID: "osh#1219", Username: "osh"}
 }
 
 // Test that the acting user can create a playlist and the playlist URL is
 // direct messaged to them.
-func (suite *CreateTestSuite) TestCreate() {
+func (suite *CreateSuite) TestCreate() {
 	suite.UserQueue.Push(suite.Actor)
 
-	playlist := framework.Playlist{
+	playlist := playlist.Playlist{
 		ID:  suite.Ctx.PlaylistName,
 		URL: suite.Ctx.PlaylistName,
 	}
-	suite.PlaylistCreator.On("CreatePlaylist", suite.Ctx.PlaylistName).Return(playlist, nil)
+	suite.PlaylistCreator.On("Create", suite.Ctx.PlaylistName).Return(playlist, nil)
 
 	content := fmt.Sprintf(StrPlaylistCreatedFmt, suite.Ctx.PlaylistName)
 	suite.Messager.On("DirectMessage", suite.Actor.ID, content).Return(nil)
 
 	Create(&suite.Ctx)
 
-	suite.PlaylistCreator.AssertCalled(suite.T(), "CreatePlaylist", suite.Ctx.PlaylistName)
+	suite.PlaylistCreator.AssertCalled(suite.T(), "Create", suite.Ctx.PlaylistName)
 	suite.Messager.AssertCalled(suite.T(), "DirectMessage", suite.Actor.ID, content)
 }
 
 // Test that the acting user cannot create a playlist if they are not the head
 // of the queue.
-func (suite *CreateTestSuite) TestActorNotHeadOfQueue() {
+func (suite *CreateSuite) TestActorNotHeadOfQueue() {
 	suite.UserQueue.Push(suite.notActor)
 	suite.UserQueue.Push(suite.Actor)
-	playlist := framework.Playlist{
+	playlist := playlist.Playlist{
 		ID:  suite.Ctx.PlaylistName,
 		URL: suite.Ctx.PlaylistName,
 	}
-	suite.PlaylistCreator.On("CreatePlaylist", suite.Ctx.PlaylistName).Return(playlist, nil)
+	suite.PlaylistCreator.On("Create", suite.Ctx.PlaylistName).Return(playlist, nil)
 
 	content := fmt.Sprintf(StrPlaylistCreatedFmt, suite.Ctx.PlaylistName)
 	suite.Messager.On("DirectMessage", suite.Actor.ID, content).Return(nil)
 
 	Create(&suite.Ctx)
 
-	suite.PlaylistCreator.AssertNotCalled(suite.T(), "CreatePlaylist", suite.Ctx.PlaylistName)
+	suite.PlaylistCreator.AssertNotCalled(suite.T(), "Create", suite.Ctx.PlaylistName)
 	suite.Messager.AssertNotCalled(suite.T(), "DirectMessage", suite.Actor.ID, content)
 }
 
 // Test that no direct message is sent if the create playlist function returns
 // an error.
-func (suite *CreateTestSuite) TestNoDirectMessageOnError() {
+func (suite *CreateSuite) TestNoDirectMessageOnError() {
 	suite.UserQueue.Push(suite.Actor)
 	suite.Ctx.PlaylistName = "Error"
-	suite.PlaylistCreator.On("CreatePlaylist", suite.Ctx.PlaylistName)
+	suite.PlaylistCreator.On("Create", suite.Ctx.PlaylistName)
 
 	content := fmt.Sprintf(StrPlaylistCreatedFmt, suite.Ctx.PlaylistName)
 	suite.Messager.On("DirectMessage", suite.Actor.ID, content).Return(nil)
 
 	Create(&suite.Ctx)
 
-	suite.PlaylistCreator.AssertCalled(suite.T(), "CreatePlaylist", suite.Ctx.PlaylistName)
+	suite.PlaylistCreator.AssertCalled(suite.T(), "Create", suite.Ctx.PlaylistName)
 	suite.Messager.AssertNotCalled(suite.T(), "DirectMessage", suite.Actor.ID, content)
 }
 
 func TestCreateCommand(t *testing.T) {
-	suite.Run(t, new(CreateTestSuite))
+	suite.Run(t, new(CreateSuite))
 }

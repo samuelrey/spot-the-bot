@@ -11,26 +11,28 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/samuelrey/spot-the-bot/cmd"
 	"github.com/samuelrey/spot-the-bot/discord"
-	"github.com/samuelrey/spot-the-bot/framework"
+	"github.com/samuelrey/spot-the-bot/message"
+	"github.com/samuelrey/spot-the-bot/playlist"
+	"github.com/samuelrey/spot-the-bot/rotation"
 	"github.com/samuelrey/spot-the-bot/spotify"
 )
 
 var (
 	c   config
-	commandRegistry *framework.CommandRegistry
-	pc  framework.PlaylistCreator
-	uq  framework.UserQueue
+	cr  *cmd.Registry
+	pc  playlist.Creator
+	uq  rotation.Rotation
 	err error
 )
 
 func main() {
 	c = loadConfigFromEnv()
 
-	commandRegistry = framework.NewCommandRegistry()
-	registerCommands(*commandRegistry)
-	uq = framework.NewUserQueue([]framework.MessageUser{})
+	cr = cmd.NewRegistry()
+	registerCommands(*cr)
+	uq = rotation.NewRotation([]message.User{})
 
-	pc, err = spotify.NewPlaylistCreator(c.SpotifyConfig)
+	pc, err = spotify.NewCreator(c.SpotifyConfig)
 	if err != nil {
 		log.Println(err)
 		return
@@ -68,40 +70,18 @@ func main() {
 	fmt.Println()
 }
 
-func registerCommands(commandRegistry framework.CommandRegistry) {
-	commandRegistry.Register("join", cmd.Join, "helloWorld")
-	commandRegistry.Register("leave", cmd.Leave, "helloWorld")
-	commandRegistry.Register("list", cmd.List, "helloWold")
-	commandRegistry.Register("next", cmd.Next, "helloWorld")
-	commandRegistry.Register("create", cmd.Create, "helloWorld")
-}
-
-type config struct {
-	*discord.DiscordConfig
-	spotify.SpotifyConfig
-	Prefix string
-}
-
-func loadConfigFromEnv() config {
-	return config{
-		DiscordConfig: discord.LoadConfigFromEnv(),
-		SpotifyConfig: spotify.LoadConfigFromEnv(),
-		Prefix:        os.Getenv("SPOT_PREFIX"),
-	}
-}
-
 // handleMessage reads messages sent in the guild and runs commands based on
 // those messages.
 func handleMessage(
 	dg *discordgo.Session,
-	message *discordgo.MessageCreate,
+	m *discordgo.MessageCreate,
 ) {
-	user := message.Author
+	user := m.Author
 	if user.Bot {
 		return
 	}
 
-	content := message.Content
+	content := m.Content
 
 	if len(content) <= len(c.Prefix) {
 		return
@@ -114,22 +94,22 @@ func handleMessage(
 	args := strings.Fields(content[len(c.Prefix):])
 	name := strings.ToLower(args[0])
 
-	command, found := commandRegistry.Get(name)
+	command, found := cr.Get(name)
 	if !found {
 		return
 	}
 
 	// TODO get playlist name from config
 	// TODO optionally populate dependencies based on command
-	ctx := framework.CommandContext{
-		Messager: &discord.DiscordMessager{
+	ctx := cmd.Context{
+		Messager: &discord.Messager{
 			Session:   dg,
-			ChannelID: message.ChannelID,
+			ChannelID: m.ChannelID,
 		},
 		PlaylistCreator: pc,
 		PlaylistName:    "Einstok",
 		UserQueue:       &uq,
-		Actor: framework.MessageUser{
+		Actor: message.User{
 			ID:       user.ID,
 			Username: user.Username,
 		},

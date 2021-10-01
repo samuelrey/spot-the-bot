@@ -1,4 +1,4 @@
-package framework
+package cmd
 
 import (
 	"testing"
@@ -6,18 +6,18 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type CommandRegistrySuite struct{ suite.Suite }
+type RegistrySuite struct{ suite.Suite }
 
-func (suite CommandRegistrySuite) TestFormatHelpMessageNoCommand() {
-	cr := NewCommandRegistry()
+func (suite RegistrySuite) TestFormatHelpMessageNoCommand() {
+	cr := NewRegistry()
 
 	helpMsg := cr.FormatHelpMessage()
 
 	suite.Require().Empty(helpMsg)
 }
 
-func (suite CommandRegistrySuite) TestFormatHelpMessageWithCommand() {
-	cr := NewCommandRegistry()
+func (suite RegistrySuite) TestFormatHelpMessageWithCommand() {
+	cr := NewRegistry()
 	cr.Register("rocktheboat", nil, "don't rock the boat baby")
 
 	helpMsg := cr.FormatHelpMessage()
@@ -26,5 +26,5 @@ func (suite CommandRegistrySuite) TestFormatHelpMessageWithCommand() {
 }
 
 func TestCommandRegistry(t *testing.T) {
-	suite.Run(t, new(CommandRegistrySuite))
+	suite.Run(t, new(RegistrySuite))
 }

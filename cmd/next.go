@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"fmt"
-
-	"github.com/samuelrey/spot-the-bot/framework"
 )
 
 const (
@@ -11,7 +9,7 @@ const (
 	StrNextUser = "%s, you're up next!"
 )
 
-func Next(ctx *framework.CommandContext) {
+func Next(ctx *Context) {
 	head := ctx.UserQueue.Head()
 	if head == nil || ctx.Actor.ID != head.ID {
 		return
@@ -20,10 +18,10 @@ func Next(ctx *framework.CommandContext) {
 	ctx.UserQueue.Pop()
 	ctx.UserQueue.Push(*head)
 	content := fmt.Sprintf(StrSkipUser, ctx.Actor)
-	ctx.Reply(content)
+	ctx.Messager.Reply(content)
 
 	head = ctx.UserQueue.Head()
 
 	content = fmt.Sprintf(StrNextUser, head)
-	ctx.Reply(content)
+	ctx.Messager.Reply(content)
 }

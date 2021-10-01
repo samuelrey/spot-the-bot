@@ -4,15 +4,16 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/samuelrey/spot-the-bot/framework"
+	"github.com/samuelrey/spot-the-bot/message"
+	"github.com/samuelrey/spot-the-bot/rotation"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
 
-type JoinTestSuite struct{ framework.CommandTestSuite }
+type JoinSuite struct{ CommandSuite }
 
 // Test that the acting user is added to the list of enrolled users.
-func (suite *JoinTestSuite) TestJoinUser() {
+func (suite *JoinSuite) TestJoinUser() {
 	content := fmt.Sprintf(StrJoinFmt, suite.Actor)
 	suite.Messager.On("Reply", content).Return(nil)
 
@@ -20,12 +21,12 @@ func (suite *JoinTestSuite) TestJoinUser() {
 
 	suite.Messager.AssertCalled(suite.T(), "Reply", content)
 
-	expected := framework.NewUserQueue([]framework.MessageUser{suite.Actor})
+	expected := rotation.NewRotation([]message.User{suite.Actor})
 	suite.Require().Equal(expected, suite.UserQueue)
 }
 
 // Test that the acting user is not added again if they are already enrolled.
-func (suite *JoinTestSuite) TestJoinUserAlreadyEnrolled() {
+func (suite *JoinSuite) TestJoinUserAlreadyEnrolled() {
 	suite.UserQueue.Push(suite.Actor)
 	suite.Messager.On("Reply", mock.Anything).Return(nil)
 
@@ -33,10 +34,10 @@ func (suite *JoinTestSuite) TestJoinUserAlreadyEnrolled() {
 
 	suite.Messager.AssertNotCalled(suite.T(), "Reply", mock.Anything)
 
-	expected := framework.NewUserQueue([]framework.MessageUser{suite.Actor})
+	expected := rotation.NewRotation([]message.User{suite.Actor})
 	suite.Require().Equal(expected, suite.UserQueue)
 }
 
 func TestJoinCommand(t *testing.T) {
-	suite.Run(t, new(JoinTestSuite))
+	suite.Run(t, new(JoinSuite))
 }

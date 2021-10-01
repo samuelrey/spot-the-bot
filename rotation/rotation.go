@@ -1,16 +1,20 @@
-package framework
+package rotation
 
-import "fmt"
+import (
+	"fmt"
 
-type UserQueue struct {
-	queue []MessageUser
+	"github.com/samuelrey/spot-the-bot/message"
+)
+
+type Rotation struct {
+	queue []message.User
 }
 
-func NewUserQueue(users []MessageUser) UserQueue {
-	return UserQueue{queue: users}
+func NewRotation(users []message.User) Rotation {
+	return Rotation{queue: users}
 }
 
-func (s *UserQueue) Contains(mu MessageUser) bool {
+func (s *Rotation) Contains(mu message.User) bool {
 	for _, u := range s.queue {
 		if mu.ID == u.ID {
 			return true
@@ -20,7 +24,7 @@ func (s *UserQueue) Contains(mu MessageUser) bool {
 	return false
 }
 
-func (s *UserQueue) Head() *MessageUser {
+func (s *Rotation) Head() *message.User {
 	if len(s.queue) == 0 {
 		return nil
 	}
@@ -28,11 +32,11 @@ func (s *UserQueue) Head() *MessageUser {
 	return &s.queue[0]
 }
 
-func (s *UserQueue) Length() int {
+func (s *Rotation) Length() int {
 	return len(s.queue)
 }
 
-func (s *UserQueue) Pop() *MessageUser {
+func (s *Rotation) Pop() *message.User {
 	if len(s.queue) == 0 {
 		return nil
 	}
@@ -42,11 +46,11 @@ func (s *UserQueue) Pop() *MessageUser {
 	return &out
 }
 
-func (s *UserQueue) Push(mu MessageUser) {
+func (s *Rotation) Push(mu message.User) {
 	s.queue = append(s.queue, mu)
 }
 
-func (s *UserQueue) Remove(mu MessageUser) bool {
+func (s *Rotation) Remove(mu message.User) bool {
 	found := -1
 	for i, user := range s.queue {
 		if mu.ID == user.ID {
@@ -63,6 +67,6 @@ func (s *UserQueue) Remove(mu MessageUser) bool {
 	return false
 }
 
-func (s UserQueue) String() string {
+func (s Rotation) String() string {
 	return fmt.Sprintf("%s", s.queue)
 }
