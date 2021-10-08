@@ -20,19 +20,6 @@ func (suite *NextSuite) SetupTest() {
 	suite.notActor = message.User{ID: "osh#1219", Username: "osh"}
 }
 
-// Test that we do not pop/Next the user at the head if it is not the actor.
-func (suite *NextSuite) TestActorNotHeadOfQueue() {
-	suite.UserQueue.Join(suite.notActor)
-	suite.UserQueue.Join(suite.Actor)
-	suite.Messager.On("Reply", mock.Anything).Return(nil)
-
-	Next(&suite.Ctx)
-
-	suite.Messager.AssertNotCalled(suite.T(), "Reply", mock.Anything)
-	expected := rotation.NewRotation([]message.User{suite.notActor, suite.Actor})
-	suite.Require().Equal(expected, suite.UserQueue)
-}
-
 // Test that we pop/Next the user at the head if it is the actor.
 func (suite *NextSuite) TestNext() {
 	suite.UserQueue.Join(suite.Actor)

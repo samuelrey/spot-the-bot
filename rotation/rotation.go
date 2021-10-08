@@ -24,13 +24,12 @@ func (s *Rotation) Join(mu message.User) error {
 	return nil
 }
 
-func (s *Rotation) Rotate(mu message.User) (*message.User, error) {
-	head := s.Head()
-	if head == nil || mu.ID != head.ID {
-		return nil, errors.New("user is not current")
+func (s *Rotation) Rotate() (*message.User, error) {
+	if s.Length() == 0 {
+		return nil, errors.New("rotation is empty")
 	}
 
-	s.pop()
+	head := s.pop()
 	s.push(*head)
 	return s.Head(), nil
 }

@@ -10,7 +10,7 @@ const (
 )
 
 func Next(ctx *Context) {
-	nextUser, err := ctx.UserQueue.Rotate(ctx.Actor)
+	nextUser, err := ctx.UserQueue.Rotate()
 	if err != nil {
 		log.Println(err)
 	} else {
