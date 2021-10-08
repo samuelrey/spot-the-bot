@@ -1,6 +1,7 @@
 package rotation
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/samuelrey/spot-the-bot/message"
@@ -14,7 +15,16 @@ func NewRotation(users []message.User) Rotation {
 	return Rotation{queue: users}
 }
 
-func (s *Rotation) Contains(mu message.User) bool {
+func (s *Rotation) Join(mu message.User) error {
+	if s.contains(mu) {
+		return errors.New("duplicate user")
+	}
+
+	s.Push(mu)
+	return nil
+}
+
+func (s *Rotation) contains(mu message.User) bool {
 	for _, u := range s.queue {
 		if mu.ID == u.ID {
 			return true
