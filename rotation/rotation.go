@@ -60,7 +60,7 @@ func (s *Rotation) Push(mu message.User) {
 	s.queue = append(s.queue, mu)
 }
 
-func (s *Rotation) Remove(mu message.User) bool {
+func (s *Rotation) Leave(mu message.User) bool {
 	found := -1
 	for i, user := range s.queue {
 		if mu.ID == user.ID {

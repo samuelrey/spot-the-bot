@@ -43,7 +43,7 @@ func (suite RotationSuite) TestPushRemove() {
 	actual := q.Head()
 	suite.Require().Equal(&mu, actual)
 
-	q.Remove(mu)
+	q.Leave(mu)
 	actual = q.Head()
 	suite.Require().Nil(actual)
 }
