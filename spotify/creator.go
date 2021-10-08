@@ -1,8 +1,6 @@
 package spotify
 
 import (
-	"log"
-
 	"github.com/pkg/errors"
 	"github.com/samuelrey/spot-the-bot/playlist"
 	"github.com/zmb3/spotify"
@@ -17,25 +15,18 @@ type Creator struct {
 // returns a PlaylistCreator which is tied to a single Spotify user's account.
 // We recommend creating an account on Spotify specific for this bot.
 func NewCreator(conf SpotifyConfig) (playlist.Creator, error) {
-	log.Println("Auth server starting.")
-	a := newAuthenticator(conf)
-	srv := a.startAuthServer()
-	defer stopAuthServer(srv)
-
-	log.Printf("Navigate here to authorize Spotify user: %s\n", a.authURL)
-	token, err := getToken()
+	client, err := newSpotifyClient(conf)	
 	if err != nil {
-		return nil, errors.Wrap(err, "authorize spotify user")
+		return nil, errors.Wrap(err, "cannot create client")
 	}
 
-	client := a.NewClient(token)
 	spotifyUser, err := client.CurrentUser()
 	if err != nil {
 		return nil, errors.Wrap(err, "authorize spotify user")
 	}
 
 	return &Creator{
-		Client: &client,
+		Client: client,
 		user:   &spotifyUser.User,
 	}, nil
 }
