@@ -24,7 +24,7 @@ func (s *Rotation) Join(mu message.User) error {
 	return nil
 }
 
-func (s *Rotation) Next(mu message.User) (*message.User, error) {
+func (s *Rotation) Rotate(mu message.User) (*message.User, error) {
 	head := s.Head()
 	if head == nil || mu.ID != head.ID {
 		return nil, errors.New("user is not current")
