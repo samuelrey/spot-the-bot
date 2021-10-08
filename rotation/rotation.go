@@ -44,6 +44,22 @@ func (s *Rotation) Leave(mu message.User) bool {
 	return false
 }
 
+func (s *Rotation) Current() *message.User {
+	if len(s.queue) == 0 {
+		return nil
+	}
+
+	return &s.queue[0]
+}
+
+func (s *Rotation) Length() int {
+	return len(s.queue)
+}
+
+func (s Rotation) String() string {
+	return fmt.Sprintf("%s", s.queue)
+}
+
 func (s *Rotation) contains(mu message.User) bool {
 	for _, user := range s.queue {
 		if mu.ID == user.ID {
@@ -64,18 +80,6 @@ func (s *Rotation) indexOf(mu message.User) int {
 	return -1
 }
 
-func (s *Rotation) Current() *message.User {
-	if len(s.queue) == 0 {
-		return nil
-	}
-
-	return &s.queue[0]
-}
-
-func (s *Rotation) Length() int {
-	return len(s.queue)
-}
-
 func (s *Rotation) pop() *message.User {
 	if len(s.queue) == 0 {
 		return nil
@@ -88,8 +92,4 @@ func (s *Rotation) pop() *message.User {
 
 func (s *Rotation) push(mu message.User) {
 	s.queue = append(s.queue, mu)
-}
-
-func (s Rotation) String() string {
-	return fmt.Sprintf("%s", s.queue)
 }
