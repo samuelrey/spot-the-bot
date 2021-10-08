@@ -16,7 +16,7 @@ func (suite RotationSuite) TestHeadPop() {
 	actual := q.Head()
 	suite.Require().Nil(actual)
 
-	actual = q.Pop()
+	actual = q.pop()
 	suite.Require().Nil(actual)
 
 	// nonempty queue
@@ -27,7 +27,7 @@ func (suite RotationSuite) TestHeadPop() {
 	actual = q.Head()
 	suite.Require().Equal(&au, actual)
 
-	actual = q.Pop()
+	actual = q.pop()
 	suite.Require().Equal(&au, actual)
 	suite.Require().Equal(1, q.Length())
 
@@ -39,7 +39,7 @@ func (suite RotationSuite) TestPushRemove() {
 	q := Rotation{}
 	mu := message.User{ID: "amethyst#4422", Username: "amethyst"}
 
-	q.Push(mu)
+	q.push(mu)
 	actual := q.Head()
 	suite.Require().Equal(&mu, actual)
 

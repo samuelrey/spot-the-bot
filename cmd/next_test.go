@@ -20,10 +20,10 @@ func (suite *NextSuite) SetupTest() {
 	suite.notActor = message.User{ID: "osh#1219", Username: "osh"}
 }
 
-// Test that we do not pop/push the user at the head if it is not the actor.
+// Test that we do not pop/Next the user at the head if it is not the actor.
 func (suite *NextSuite) TestActorNotHeadOfQueue() {
-	suite.UserQueue.Push(suite.notActor)
-	suite.UserQueue.Push(suite.Actor)
+	suite.UserQueue.Next(suite.notActor)
+	suite.UserQueue.Next(suite.Actor)
 	suite.Messager.On("Reply", mock.Anything).Return(nil)
 
 	Next(&suite.Ctx)
@@ -33,10 +33,10 @@ func (suite *NextSuite) TestActorNotHeadOfQueue() {
 	suite.Require().Equal(expected, suite.UserQueue)
 }
 
-// Test that we pop/push the user at the head if it is the actor.
+// Test that we pop/Next the user at the head if it is the actor.
 func (suite *NextSuite) TestNext() {
-	suite.UserQueue.Push(suite.Actor)
-	suite.UserQueue.Push(suite.notActor)
+	suite.UserQueue.Next(suite.Actor)
+	suite.UserQueue.Next(suite.notActor)
 	suite.Messager.On("Reply", mock.Anything).Return(nil)
 
 	Next(&suite.Ctx)

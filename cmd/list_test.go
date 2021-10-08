@@ -20,7 +20,7 @@ func (suite *ListSuite) TestListNoUsers() {
 
 // Test that we reply with the expected content given users have enrolled.
 func (suite *ListSuite) TestListWithUsers() {
-	suite.UserQueue.Push(suite.Actor)
+	suite.UserQueue.Next(suite.Actor)
 
 	content := fmt.Sprintf(StrListUsersFmt, suite.UserQueue)
 	suite.Messager.On("Reply", content).Return(nil)

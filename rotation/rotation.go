@@ -20,7 +20,7 @@ func (s *Rotation) Join(mu message.User) error {
 		return errors.New("duplicate user")
 	}
 
-	s.Push(mu)
+	s.push(mu)
 	return nil
 }
 
@@ -30,9 +30,26 @@ func (s *Rotation) Next(mu message.User) (*message.User, error) {
 		return nil, errors.New("user is not current")
 	}
 
-	s.Pop()
-	s.Push(*head)
+	s.pop()
+	s.push(*head)
 	return s.Head(), nil
+}
+
+func (s *Rotation) Leave(mu message.User) bool {
+	found := -1
+	for i, user := range s.queue {
+		if mu.ID == user.ID {
+			found = i
+			break
+		}
+	}
+
+	if found != -1 {
+		s.queue = append(s.queue[:found], s.queue[found+1:]...)
+		return true
+	}
+
+	return false
 }
 
 func (s *Rotation) contains(mu message.User) bool {
@@ -57,7 +74,7 @@ func (s *Rotation) Length() int {
 	return len(s.queue)
 }
 
-func (s *Rotation) Pop() *message.User {
+func (s *Rotation) pop() *message.User {
 	if len(s.queue) == 0 {
 		return nil
 	}
@@ -67,25 +84,8 @@ func (s *Rotation) Pop() *message.User {
 	return &out
 }
 
-func (s *Rotation) Push(mu message.User) {
+func (s *Rotation) push(mu message.User) {
 	s.queue = append(s.queue, mu)
-}
-
-func (s *Rotation) Leave(mu message.User) bool {
-	found := -1
-	for i, user := range s.queue {
-		if mu.ID == user.ID {
-			found = i
-			break
-		}
-	}
-
-	if found != -1 {
-		s.queue = append(s.queue[:found], s.queue[found+1:]...)
-		return true
-	}
-
-	return false
 }
 
 func (s Rotation) String() string {

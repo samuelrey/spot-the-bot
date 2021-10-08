@@ -27,7 +27,7 @@ func (suite *JoinSuite) TestJoinUser() {
 
 // Test that the acting user is not added again if they are already enrolled.
 func (suite *JoinSuite) TestJoinUserAlreadyEnrolled() {
-	suite.UserQueue.Push(suite.Actor)
+	suite.UserQueue.Next(suite.Actor)
 	suite.Messager.On("Reply", mock.Anything).Return(nil)
 
 	Join(&suite.Ctx)
