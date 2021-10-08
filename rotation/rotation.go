@@ -31,7 +31,7 @@ func (s *Rotation) Rotate() (*message.User, error) {
 
 	head := s.pop()
 	s.push(*head)
-	return s.Head(), nil
+	return s.Current(), nil
 }
 
 func (s *Rotation) Leave(mu message.User) bool {
@@ -45,8 +45,8 @@ func (s *Rotation) Leave(mu message.User) bool {
 }
 
 func (s *Rotation) contains(mu message.User) bool {
-	for _, u := range s.queue {
-		if mu.ID == u.ID {
+	for _, user := range s.queue {
+		if mu.ID == user.ID {
 			return true
 		}
 	}
@@ -64,7 +64,7 @@ func (s *Rotation) indexOf(mu message.User) int {
 	return -1
 }
 
-func (s *Rotation) Head() *message.User {
+func (s *Rotation) Current() *message.User {
 	if len(s.queue) == 0 {
 		return nil
 	}
