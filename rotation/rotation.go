@@ -35,16 +35,9 @@ func (s *Rotation) Rotate() (*message.User, error) {
 }
 
 func (s *Rotation) Leave(mu message.User) bool {
-	found := -1
-	for i, user := range s.queue {
-		if mu.ID == user.ID {
-			found = i
-			break
-		}
-	}
-
-	if found != -1 {
-		s.queue = append(s.queue[:found], s.queue[found+1:]...)
+	i := s.indexOf(mu)
+	if i != -1 {
+		s.queue = append(s.queue[:i], s.queue[i+1:]...)
 		return true
 	}
 
@@ -59,6 +52,16 @@ func (s *Rotation) contains(mu message.User) bool {
 	}
 
 	return false
+}
+
+func (s *Rotation) indexOf(mu message.User) int {
+	for i, user := range s.queue {
+		if mu.ID == user.ID {
+			return i
+		}
+	}
+
+	return -1
 }
 
 func (s *Rotation) Head() *message.User {
