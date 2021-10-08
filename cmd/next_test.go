@@ -41,9 +41,7 @@ func (suite *NextSuite) TestNext() {
 
 	Next(&suite.Ctx)
 
-	content := fmt.Sprintf(StrSkipUser, suite.Actor)
-	suite.Messager.AssertCalled(suite.T(), "Reply", content)
-	content = fmt.Sprintf(StrNextUser, suite.notActor)
+	content := fmt.Sprintf(StrNextUser, suite.Actor, suite.notActor)
 	suite.Messager.AssertCalled(suite.T(), "Reply", content)
 	expected := rotation.NewRotation([]message.User{suite.notActor, suite.Actor})
 	suite.Require().Equal(expected, suite.UserQueue)

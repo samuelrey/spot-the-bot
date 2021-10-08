@@ -24,6 +24,17 @@ func (s *Rotation) Join(mu message.User) error {
 	return nil
 }
 
+func (s *Rotation) Next(mu message.User) (*message.User, error) {
+	head := s.Head()
+	if head == nil || mu.ID != head.ID {
+		return nil, errors.New("user is not current")
+	}
+
+	s.Pop()
+	s.Push(*head)
+	return s.Head(), nil
+}
+
 func (s *Rotation) contains(mu message.User) bool {
 	for _, u := range s.queue {
 		if mu.ID == u.ID {
