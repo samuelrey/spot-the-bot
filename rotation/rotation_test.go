@@ -48,6 +48,23 @@ func (suite RotationSuite) TestPushRemove() {
 	suite.Require().Nil(actual)
 }
 
+func (suite RotationSuite) TestJoin() {
+	q := Rotation{}
+	mu := message.User{ID: "amethyst#4422", Username: "amethyst"}
+
+	err := q.Join(mu)
+
+	suite.Require().Nil(err)
+	suite.Require().Equal(1, q.Length())
+	suite.Require().Equal(true, q.contains(mu))
+
+	err = q.Join(mu)
+
+	suite.Require().NotNil(err)
+	suite.Require().Equal(1, q.Length())
+	suite.Require().Equal(true, q.contains(mu))
+}
+
 func TestRotation(t *testing.T) {
 	suite.Run(t, new(RotationSuite))
 }
