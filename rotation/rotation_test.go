@@ -56,13 +56,31 @@ func (suite RotationSuite) TestJoin() {
 
 	suite.Require().Nil(err)
 	suite.Require().Equal(1, q.Length())
-	suite.Require().Equal(true, q.contains(mu))
+	suite.Require().True(q.contains(mu))
 
 	err = q.Join(mu)
 
 	suite.Require().NotNil(err)
 	suite.Require().Equal(1, q.Length())
-	suite.Require().Equal(true, q.contains(mu))
+	suite.Require().True(q.contains(mu))
+}
+
+func (suite RotationSuite) TestLeave() {
+	q := Rotation{}
+	mu := message.User{ID: "amethyst#4422", Username: "amethyst"}
+
+	succeed := q.Leave(mu)
+
+	suite.Require().False(succeed)
+	suite.Require().Equal(0, q.Length())
+	suite.Require().False(q.contains(mu))
+
+	_ = q.Join(mu)
+	succeed = q.Leave(mu)
+
+	suite.Require().True(succeed)
+	suite.Require().Equal(0, q.Length())
+	suite.Require().False(q.contains(mu))
 }
 
 func TestRotation(t *testing.T) {
