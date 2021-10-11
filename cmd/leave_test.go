@@ -18,7 +18,7 @@ type LeaveSuite struct {
 func (suite *LeaveSuite) SetupTest() {
 	suite.CommandSuite.SetupTest()
 	suite.notActor = message.User{ID: "osh#1219", Username: "osh"}
-	suite.UserQueue.Push(suite.notActor)
+	suite.UserQueue.Join(suite.notActor)
 }
 
 // Test that we do not remove any users if the actor is not enrolled.
@@ -34,7 +34,7 @@ func (suite *LeaveSuite) TestLeaveUserNotEnrolled() {
 
 // Test that we only remove the actor if they are enrolled.
 func (suite *LeaveSuite) TestLeaveUser() {
-	suite.UserQueue.Push(suite.Actor)
+	suite.UserQueue.Join(suite.Actor)
 
 	content := fmt.Sprintf(StrLeaveFmt, suite.Actor)
 	suite.Messager.On("Reply", content).Return(nil)

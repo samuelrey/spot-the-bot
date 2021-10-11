@@ -20,30 +20,15 @@ func (suite *NextSuite) SetupTest() {
 	suite.notActor = message.User{ID: "osh#1219", Username: "osh"}
 }
 
-// Test that we do not pop/push the user at the head if it is not the actor.
-func (suite *NextSuite) TestActorNotHeadOfQueue() {
-	suite.UserQueue.Push(suite.notActor)
-	suite.UserQueue.Push(suite.Actor)
-	suite.Messager.On("Reply", mock.Anything).Return(nil)
-
-	Next(&suite.Ctx)
-
-	suite.Messager.AssertNotCalled(suite.T(), "Reply", mock.Anything)
-	expected := rotation.NewRotation([]message.User{suite.notActor, suite.Actor})
-	suite.Require().Equal(expected, suite.UserQueue)
-}
-
-// Test that we pop/push the user at the head if it is the actor.
+// Test that we pop/Next the user at the head if it is the actor.
 func (suite *NextSuite) TestNext() {
-	suite.UserQueue.Push(suite.Actor)
-	suite.UserQueue.Push(suite.notActor)
+	suite.UserQueue.Join(suite.Actor)
+	suite.UserQueue.Join(suite.notActor)
 	suite.Messager.On("Reply", mock.Anything).Return(nil)
 
 	Next(&suite.Ctx)
 
-	content := fmt.Sprintf(StrSkipUser, suite.Actor)
-	suite.Messager.AssertCalled(suite.T(), "Reply", content)
-	content = fmt.Sprintf(StrNextUser, suite.notActor)
+	content := fmt.Sprintf(StrNextUser, suite.Actor, suite.notActor)
 	suite.Messager.AssertCalled(suite.T(), "Reply", content)
 	expected := rotation.NewRotation([]message.User{suite.notActor, suite.Actor})
 	suite.Require().Equal(expected, suite.UserQueue)

@@ -1,8 +1,11 @@
 package spotify
 
 import (
+	"context"
+	"log"
 	"net/http"
 
+	"github.com/pkg/errors"
 	"github.com/zmb3/spotify"
 	"golang.org/x/oauth2"
 )
@@ -11,6 +14,22 @@ const STATE = "spot-the-bot"
 
 var tokenChan = make(chan *oauth2.Token)
 var errChan = make(chan error)
+
+func newSpotifyClient(conf SpotifyConfig) (*spotify.Client, error) {
+	log.Println("Auth server starting.")
+	a := newAuthenticator(conf)
+	srv := a.startAuthServer()
+	defer stopAuthServer(srv)
+
+	log.Printf("Navigate here to authorize Spotify user: %s\n", a.authURL)
+	token, err := getToken()
+	if err != nil {
+		return nil, errors.Wrap(err, "authorize spotify user")
+	}
+
+	client := a.NewClient(token)
+	return &client, nil
+}
 
 type authenticator struct {
 	spotify.Authenticator
@@ -56,6 +75,14 @@ func (a authenticator) startAuthServer() *http.Server {
 	}()
 
 	return server
+}
+
+func stopAuthServer(srv *http.Server) {
+	if err := srv.Shutdown(context.Background()); err != nil {
+		log.Println(err)
+	} else {
+		log.Println("Auth server shutdown.")
+	}
 }
 
 func getToken() (*oauth2.Token, error) {
