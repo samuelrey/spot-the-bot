@@ -9,7 +9,7 @@ const (
 	StrNextUser = "%s, see you next time around!\n%s, you're up next!"
 )
 
-func Next(ctx *Context) {
+func Rotate(ctx *Context) {
 	nextUser, err := ctx.UserQueue.Rotate()
 	if err != nil {
 		log.Println(err)

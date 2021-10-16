@@ -10,23 +10,23 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type NextSuite struct {
+type RotateSuite struct {
 	CommandSuite
 	notActor message.User
 }
 
-func (suite *NextSuite) SetupTest() {
+func (suite *RotateSuite) SetupTest() {
 	suite.CommandSuite.SetupTest()
 	suite.notActor = message.User{ID: "osh#1219", Username: "osh"}
 }
 
 // Test that we pop/Next the user at the head if it is the actor.
-func (suite *NextSuite) TestNext() {
+func (suite *RotateSuite) TestRotate() {
 	suite.UserQueue.Join(suite.Actor)
 	suite.UserQueue.Join(suite.notActor)
 	suite.Messager.On("Reply", mock.Anything).Return(nil)
 
-	Next(&suite.Ctx)
+	Rotate(&suite.Ctx)
 
 	content := fmt.Sprintf(StrNextUser, suite.Actor, suite.notActor)
 	suite.Messager.AssertCalled(suite.T(), "Reply", content)
@@ -35,5 +35,5 @@ func (suite *NextSuite) TestNext() {
 }
 
 func TestNextCommand(t *testing.T) {
-	suite.Run(t, new(NextSuite))
+	suite.Run(t, new(RotateSuite))
 }
