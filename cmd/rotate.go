@@ -10,11 +10,23 @@ const (
 )
 
 func Rotate(ctx *Context) {
-	nextUser, err := ctx.UserQueue.Rotate()
+	rotation, err := ctx.RotationRepository.FindOne(ctx.ServerID)
 	if err != nil {
 		log.Println(err)
-	} else {
-		content := fmt.Sprintf(StrNextUser, ctx.Actor, nextUser)
-		ctx.Messager.Reply(content)
+		return
 	}
+
+	nextUser, err := rotation.Rotate()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	err = ctx.RotationRepository.Upsert(*rotation)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	content := fmt.Sprintf(StrNextUser, ctx.Actor, nextUser)
+	ctx.Messager.Reply(content)
 }

@@ -10,7 +10,13 @@ const StrPlaylistCreatedFmt = "Done! :tada: Now it's up to to you to " +
 	"Then share it in channel! :headphones:\n%s\n"
 
 func Create(ctx *Context) {
-	head := ctx.UserQueue.Current()
+	rotation, err := ctx.RotationRepository.FindOne(ctx.ServerID)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	head := rotation.Current()
 	if head == nil || ctx.Actor.ID != head.ID {
 		return
 	}

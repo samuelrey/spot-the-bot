@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/samuelrey/spot-the-bot/message"
-	"github.com/samuelrey/spot-the-bot/rotation"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
@@ -22,16 +21,18 @@ func (suite *RotateSuite) SetupTest() {
 
 // Test that we pop/Next the user at the head if it is the actor.
 func (suite *RotateSuite) TestRotate() {
-	suite.UserQueue.Join(suite.Actor)
-	suite.UserQueue.Join(suite.notActor)
+	suite.Rotation.Join(suite.Actor)
+	suite.Rotation.Join(suite.notActor)
+	suite.RotationRepository.On("FindOne", mock.Anything).Return(&suite.Rotation, nil)
+	suite.RotationRepository.On("Upsert", mock.Anything).Return(nil)
 	suite.Messager.On("Reply", mock.Anything).Return(nil)
 
 	Rotate(&suite.Ctx)
 
-	content := fmt.Sprintf(StrNextUser, suite.Actor, suite.notActor)
+	content := fmt.Sprintf(StrNextUser, suite.Actor, &suite.notActor)
 	suite.Messager.AssertCalled(suite.T(), "Reply", content)
-	expected := rotation.NewRotation([]message.User{suite.notActor, suite.Actor})
-	suite.Require().Equal(expected, suite.UserQueue)
+	expected := message.NewRotation([]message.User{suite.notActor, suite.Actor}, "einstok")
+	suite.Require().Equal(expected, suite.Rotation)
 }
 
 func TestNextCommand(t *testing.T) {

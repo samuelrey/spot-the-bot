@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -13,32 +14,38 @@ import (
 	"github.com/samuelrey/spot-the-bot/discord"
 	"github.com/samuelrey/spot-the-bot/message"
 	"github.com/samuelrey/spot-the-bot/playlist"
-	"github.com/samuelrey/spot-the-bot/rotation"
 	"github.com/samuelrey/spot-the-bot/spotify"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var (
-	c   config
-	cr  *cmd.Registry
-	pc  playlist.Creator
-	uq  rotation.Rotation
-	err error
+	conf            config
+	commandRegistry *cmd.Registry
+	playlistCreator playlist.Creator
+	rotationRepo    *message.RotationRepository
+	err             error
 )
 
 func main() {
-	c = loadConfigFromEnv()
+	conf = loadConfigFromEnv()
 
-	cr = cmd.NewRegistry()
-	registerCommands(*cr)
-	uq = rotation.NewRotation([]message.User{})
+	commandRegistry = cmd.NewRegistry()
+	registerCommands(*commandRegistry)
 
-	pc, err = spotify.NewCreator(c.SpotifyConfig)
+	playlistCreator, err = spotify.NewCreator(conf.SpotifyConfig)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	discordSession, err := discordgo.New("Bot " + c.Token)
+	rotationRepo, err = getRotationRepository()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	discordSession, err := discordgo.New("Bot " + conf.Token)
 	if err != nil {
 		log.Println(err)
 		return
@@ -83,18 +90,18 @@ func handleMessage(
 
 	content := m.Content
 
-	if len(content) <= len(c.Prefix) {
+	if len(content) <= len(conf.Prefix) {
 		return
 	}
 
-	if content[:len(c.Prefix)] != c.Prefix {
+	if content[:len(conf.Prefix)] != conf.Prefix {
 		return
 	}
 
-	args := strings.Fields(content[len(c.Prefix):])
+	args := strings.Fields(content[len(conf.Prefix):])
 	name := strings.ToLower(args[0])
 
-	command, found := cr.Get(name)
+	command, found := commandRegistry.Get(name)
 	if !found {
 		return
 	}
@@ -106,13 +113,56 @@ func handleMessage(
 			Session:   dg,
 			ChannelID: m.ChannelID,
 		},
-		PlaylistCreator: pc,
-		PlaylistName:    "Einstok",
-		UserQueue:       &uq,
+		PlaylistCreator:    playlistCreator,
+		PlaylistName:       "Einstok",
+		RotationRepository: rotationRepo,
+		ServerID:           m.GuildID,
 		Actor: message.User{
 			ID:       user.ID,
 			Username: user.Username,
 		},
 	}
 	command.RunWithContext(&ctx)
+}
+
+type config struct {
+	discord.DiscordConfig
+	spotify.SpotifyConfig
+	Prefix   string
+	MongoURI string
+}
+
+func loadConfigFromEnv() config {
+	return config{
+		DiscordConfig: discord.LoadConfig(),
+		SpotifyConfig: spotify.LoadConfig(),
+		Prefix:        os.Getenv("SPOT_PREFIX"),
+		MongoURI:      os.Getenv("MONGO_URI"),
+	}
+}
+
+func registerCommands(cr cmd.Registry) {
+	cr.Register("join", cmd.Join, "Join the rotation of people to start a playlist.")
+	cr.Register("leave", cmd.Leave, "Leave the rotation. Remember you could still listen and add to playlists!")
+	cr.Register("list", cmd.List, "See the rotation.")
+	cr.Register("rotate", cmd.Rotate, "Move to the next person in the rotation.")
+	cr.Register("create", cmd.Create, "Create a playlist.")
+}
+
+func getRotationRepository() (*message.RotationRepository, error) {
+	dbOpt := options.Client().ApplyURI(conf.MongoURI)
+	mongoClient, err := mongo.Connect(context.TODO(), dbOpt)
+	if err != nil {
+		return nil, err
+	}
+
+	err = mongoClient.Ping(context.TODO(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	mongoDB := mongoClient.Database("spot-the-bot")
+	rotationCollection := mongoDB.Collection("rotations")
+
+	return message.NewRotationRepository(rotationCollection), nil
 }

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 )
 
 const (
@@ -10,11 +11,17 @@ const (
 )
 
 func List(ctx *Context) {
-	if ctx.UserQueue.Length() == 0 {
+	rotation, err := ctx.RotationRepository.FindOne(ctx.ServerID)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	if rotation.Length() == 0 {
 		ctx.Messager.Reply(StrListNoUsers)
 		return
 	}
 
-	content := fmt.Sprintf(StrListUsersFmt, ctx.UserQueue)
+	content := fmt.Sprintf(StrListUsersFmt, rotation)
 	ctx.Messager.Reply(content)
 }
