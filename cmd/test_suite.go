@@ -27,7 +27,6 @@ func (suite *CommandSuite) SetupTest() {
 		Messager:           &suite.Messager,
 		PlaylistCreator:    &suite.Creator,
 		PlaylistName:       "Einstok",
-		Rotation:           &suite.Rotation,
 		Actor:              suite.Actor,
 		RotationRepository: &suite.RotationRepository,
 		ServerID:           "Einstok",
