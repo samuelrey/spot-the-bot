@@ -23,7 +23,7 @@ var (
 	conf            config
 	commandRegistry *cmd.Registry
 	playlistCreator playlist.Creator
-	rotationRepo    *message.RotationRepository
+	rotationRepo    message.IRotationRepository
 	err             error
 )
 
@@ -39,7 +39,13 @@ func main() {
 		return
 	}
 
-	rotationRepo, err = getRotationRepository()
+	repoProvider, err := newRepositoryProvider()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	rotationRepo = repoProvider.getRotationRepository()
 	if err != nil {
 		log.Println(err)
 		return
@@ -181,22 +187,4 @@ func newRepositoryProvider() (iRepositoryProvider, error) {
 
 func (rp *repositoryProvider) getRotationRepository() message.IRotationRepository {
 	return rp.rotationRepository
-}
-
-func getRotationRepository() (*message.RotationRepository, error) {
-	dbOpt := options.Client().ApplyURI(conf.MongoURI)
-	mongoClient, err := mongo.Connect(context.TODO(), dbOpt)
-	if err != nil {
-		return nil, err
-	}
-
-	err = mongoClient.Ping(context.TODO(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	mongoDB := mongoClient.Database("spot-the-bot")
-	rotationCollection := mongoDB.Collection("rotations")
-
-	return message.NewRotationRepository(rotationCollection), nil
 }
