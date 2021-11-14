@@ -10,6 +10,6 @@ type Context struct {
 	PlaylistCreator    playlist.Creator
 	PlaylistName       string
 	Actor              message.User
-	RotationRepository message.RotationUpserterFinder
+	RotationRepository message.IRotationRepository
 	ServerID           string
 }

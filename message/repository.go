@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type RotationUpserterFinder interface {
+type IRotationRepository interface {
 	RotationUpserter
 	RotationFinder
 }

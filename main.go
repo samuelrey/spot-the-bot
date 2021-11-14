@@ -149,6 +149,40 @@ func registerCommands(cr cmd.Registry) {
 	cr.Register("create", cmd.Create, "Create a playlist.")
 }
 
+type iRepositoryProvider interface {
+	getRotationRepository() message.IRotationRepository
+}
+
+type repositoryProvider struct {
+	database           *mongo.Database
+	rotationRepository message.IRotationRepository
+}
+
+func newRepositoryProvider() (iRepositoryProvider, error) {
+	dbOpt := options.Client().ApplyURI(conf.MongoURI)
+	mongoClient, err := mongo.Connect(context.TODO(), dbOpt)
+	if err != nil {
+		return nil, err
+	}
+
+	err = mongoClient.Ping(context.TODO(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	database := mongoClient.Database("spot-the-bot")
+	rotationCollection := database.Collection("rotations")
+	provider := repositoryProvider{
+		database:           database,
+		rotationRepository: message.NewRotationRepository(rotationCollection),
+	}
+	return &provider, nil
+}
+
+func (rp *repositoryProvider) getRotationRepository() message.IRotationRepository {
+	return rp.rotationRepository
+}
+
 func getRotationRepository() (*message.RotationRepository, error) {
 	dbOpt := options.Client().ApplyURI(conf.MongoURI)
 	mongoClient, err := mongo.Connect(context.TODO(), dbOpt)
