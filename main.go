@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
@@ -14,9 +13,8 @@ import (
 	"github.com/samuelrey/spot-the-bot/discord"
 	"github.com/samuelrey/spot-the-bot/message"
 	"github.com/samuelrey/spot-the-bot/playlist"
+	"github.com/samuelrey/spot-the-bot/repository"
 	"github.com/samuelrey/spot-the-bot/spotify"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var (
@@ -39,13 +37,13 @@ func main() {
 		return
 	}
 
-	repoProvider, err := newRepositoryProvider()
+	repoProvider, err := repository.NewRepositoryProvider(conf.MongoURI)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	rotationRepo = repoProvider.getRotationRepository()
+	rotationRepo = repoProvider.GetRotationRepository()
 	if err != nil {
 		log.Println(err)
 		return
@@ -153,38 +151,4 @@ func registerCommands(cr cmd.Registry) {
 	cr.Register("list", cmd.List, "See the rotation.")
 	cr.Register("rotate", cmd.Rotate, "Move to the next person in the rotation.")
 	cr.Register("create", cmd.Create, "Create a playlist.")
-}
-
-type iRepositoryProvider interface {
-	getRotationRepository() message.IRotationRepository
-}
-
-type repositoryProvider struct {
-	database           *mongo.Database
-	rotationRepository message.IRotationRepository
-}
-
-func newRepositoryProvider() (iRepositoryProvider, error) {
-	dbOpt := options.Client().ApplyURI(conf.MongoURI)
-	mongoClient, err := mongo.Connect(context.TODO(), dbOpt)
-	if err != nil {
-		return nil, err
-	}
-
-	err = mongoClient.Ping(context.TODO(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	database := mongoClient.Database("spot-the-bot")
-	rotationCollection := database.Collection("rotations")
-	provider := repositoryProvider{
-		database:           database,
-		rotationRepository: message.NewRotationRepository(rotationCollection),
-	}
-	return &provider, nil
-}
-
-func (rp *repositoryProvider) getRotationRepository() message.IRotationRepository {
-	return rp.rotationRepository
 }
