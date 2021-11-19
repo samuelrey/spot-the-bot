@@ -31,7 +31,6 @@ func (suite *CommandSuite) SetupTest() {
 		PlaylistCreator:    &suite.Creator,
 		PlaylistName:       "Einstok",
 		Actor:              suite.Actor,
-		RotationRepository: &suite.RotationRepository,
 		RepositoryProvider: &suite.RepositoryProvider,
 		ServerID:           "Einstok",
 	}

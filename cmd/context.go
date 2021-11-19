@@ -11,7 +11,6 @@ type Context struct {
 	PlaylistCreator    playlist.Creator
 	PlaylistName       string
 	Actor              message.User
-	RotationRepository message.IRotationRepository
 	RepositoryProvider repository.IProvider
 	ServerID           string
 }

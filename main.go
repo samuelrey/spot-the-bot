@@ -21,7 +21,6 @@ var (
 	conf            config
 	commandRegistry *cmd.Registry
 	playlistCreator playlist.Creator
-	rotationRepo    message.IRotationRepository
 	provider        repository.IProvider
 	err             error
 )
@@ -39,12 +38,6 @@ func main() {
 	}
 
 	provider, err = repository.NewProvider(conf.MongoURI)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	rotationRepo = provider.GetRotationRepository()
 	if err != nil {
 		log.Println(err)
 		return
@@ -120,7 +113,6 @@ func handleMessage(
 		},
 		PlaylistCreator:    playlistCreator,
 		PlaylistName:       "Einstok",
-		RotationRepository: rotationRepo,
 		RepositoryProvider: provider,
 		ServerID:           m.GuildID,
 		Actor: message.User{

@@ -10,7 +10,8 @@ import (
 const StrJoinFmt = "Welcome to the club, %s!\n"
 
 func Join(ctx *Context) {
-	rotation, err := ctx.RotationRepository.FindOne(ctx.ServerID)
+	rotationRepository := ctx.RepositoryProvider.GetRotationRepository()
+	rotation, err := rotationRepository.FindOne(ctx.ServerID)
 	if err != nil {
 		r := message.NewRotation([]message.User{}, ctx.ServerID)
 		rotation = &r
@@ -22,7 +23,7 @@ func Join(ctx *Context) {
 		return
 	}
 
-	err = ctx.RotationRepository.Upsert(*rotation)
+	err = rotationRepository.Upsert(*rotation)
 	if err != nil {
 		log.Println(err)
 		return
