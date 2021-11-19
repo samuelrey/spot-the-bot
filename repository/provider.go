@@ -8,16 +8,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type IRepositoryProvider interface {
+type IProvider interface {
 	GetRotationRepository() message.IRotationRepository
 }
 
-type RepositoryProvider struct {
+type Provider struct {
 	database           *mongo.Database
 	rotationRepository message.IRotationRepository
 }
 
-func NewRepositoryProvider(mongoURI string) (IRepositoryProvider, error) {
+func NewProvider(mongoURI string) (IProvider, error) {
 	dbOpt := options.Client().ApplyURI(mongoURI)
 	mongoClient, err := mongo.Connect(context.TODO(), dbOpt)
 	if err != nil {
@@ -31,13 +31,13 @@ func NewRepositoryProvider(mongoURI string) (IRepositoryProvider, error) {
 
 	database := mongoClient.Database("spot-the-bot")
 	rotationCollection := database.Collection("rotations")
-	provider := RepositoryProvider{
+	provider := Provider{
 		database:           database,
 		rotationRepository: message.NewRotationRepository(rotationCollection),
 	}
 	return &provider, nil
 }
 
-func (rp *RepositoryProvider) GetRotationRepository() message.IRotationRepository {
+func (rp *Provider) GetRotationRepository() message.IRotationRepository {
 	return rp.rotationRepository
 }

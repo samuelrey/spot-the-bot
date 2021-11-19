@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/samuelrey/spot-the-bot/message"
 	"github.com/samuelrey/spot-the-bot/playlist"
+	"github.com/samuelrey/spot-the-bot/repository"
 )
 
 type Context struct {
@@ -11,5 +12,6 @@ type Context struct {
 	PlaylistName       string
 	Actor              message.User
 	RotationRepository message.IRotationRepository
+	RepositoryProvider repository.IProvider
 	ServerID           string
 }
