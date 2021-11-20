@@ -11,7 +11,8 @@ const (
 )
 
 func List(ctx *Context) {
-	rotation, err := ctx.RotationRepository.FindOne(ctx.ServerID)
+	rotationRepository := ctx.RepositoryProvider.GetRotationRepository()
+	rotation, err := rotationRepository.FindOne(ctx.ServerID)
 	if err != nil {
 		log.Println(err)
 		return

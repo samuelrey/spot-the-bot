@@ -8,14 +8,15 @@ import (
 const StrLeaveFmt = "No hard feelings, %s!\n"
 
 func Leave(ctx *Context) {
-	rotation, err := ctx.RotationRepository.FindOne(ctx.ServerID)
+	rotationRepository := ctx.RepositoryProvider.GetRotationRepository()
+	rotation, err := rotationRepository.FindOne(ctx.ServerID)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
 	if rotation.Leave(ctx.Actor) {
-		err = ctx.RotationRepository.Upsert(*rotation)
+		err = rotationRepository.Upsert(*rotation)
 		if err != nil {
 			log.Println(err)
 			return
